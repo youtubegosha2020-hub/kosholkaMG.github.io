@@ -518,7 +518,18 @@
         const BUCKET = 'chat-files';
         // ============================================================
 
-        const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ===== СОЗДАЕМ КЛИЕНТ С НАСТРОЙКАМИ ДЛЯ WEBSOCKET =====
+        const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            realtime: {
+                params: {
+                    eventsPerSecond: 10,
+                    heartbeatIntervalMs: 5000,
+                },
+                reconnectAfterMs: function(attempts) {
+                    return Math.min(1000 * Math.pow(2, attempts), 30000);
+                }
+            }
+        });
 
         // ---------- ЭЛЕМЕНТЫ ----------
         const loginScreen = document.getElementById('loginScreen');
@@ -549,12 +560,17 @@
         let currentChat = null; // 'general' или ник пользователя
         let currentChatType = 'general'; // 'general' или 'private'
         let channel = null;
+        let privateChannel = null;
         let isSubscribed = false;
         let isLoginMode = true;
         let allUsers = [];
-        let chats = []; // список чатов [{id, name, type, lastMsg, time}]
-        let privateChannel = null;
+        let chats = [];
         let isMobile = window.innerWidth <= 600;
+
+        // ===== НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ ПОЛЛИНГА =====
+        let pollingInterval = null;
+        let lastMsgId = 0;
+        let lastPrivateMsgId = 0;
 
         // ============================================================
         //  АВТОРИЗАЦИЯ
@@ -689,6 +705,8 @@
                 channel = null; }
             if (privateChannel) { privateChannel.unsubscribe();
                 privateChannel = null; }
+            if (pollingInterval) { clearInterval(pollingInterval);
+                pollingInterval = null; }
             clearSession();
             username = '';
             userId = null;
@@ -731,7 +749,6 @@
 
         async function loadChats() {
             try {
-                // Загружаем всех пользователей (для чатов)
                 const { data: users, error: userError } = await sbClient
                     .from('users')
                     .select('username, last_seen')
@@ -742,7 +759,6 @@
 
                 allUsers = users || [];
 
-                // Загружаем последние сообщения для каждого пользователя
                 const chatListData = [];
                 for (const u of allUsers) {
                     const { data: msgs } = await sbClient
@@ -774,7 +790,6 @@
                     }
                 }
 
-                // Сортируем по времени (сначала новые)
                 chatListData.sort((a, b) => {
                     if (!a.time) return 1;
                     if (!b.time) return -1;
@@ -793,7 +808,6 @@
         function renderChats(filter = '') {
             chatList.innerHTML = '';
 
-            // Всегда добавляем общий чат
             const generalChat = {
                 id: 'general',
                 name: '# Общий',
@@ -850,18 +864,18 @@
                 channel = null; }
             if (privateChannel) { privateChannel.unsubscribe();
                 privateChannel = null; }
+            if (pollingInterval) { clearInterval(pollingInterval);
+                pollingInterval = null; }
             isSubscribed = false;
 
             currentChat = id;
             currentChatType = type;
             chatTitle.textContent = name;
 
-            // Разблокируем ввод
             msgInput.disabled = false;
             sendBtn.disabled = false;
             msgInput.focus();
 
-            // Мобилка: открываем правую панель
             if (window.innerWidth <= 600) {
                 document.getElementById('chatArea').classList.add('open');
                 document.getElementById('sidebar').style.display = 'none';
@@ -870,13 +884,131 @@
             if (type === 'general') {
                 loadMessages('general');
                 subscribeToGeneral();
+                startPolling('general');
             } else {
                 loadPrivateMessages(id);
                 subscribeToPrivate(id);
+                startPrivatePolling(id);
             }
 
-            // Обновляем активный чат в списке
             renderChats(searchInput.value.trim());
+        }
+
+        // ============================================================
+        //  ===== НОВЫЙ ПОЛЛИНГ ДЛЯ ОБЩЕГО ЧАТА =====
+        // ============================================================
+
+        function startPolling(room) {
+            // Сначала загружаем последний ID
+            loadLastMessageId(room);
+            
+            if (pollingInterval) clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const { data, error } = await sbClient
+                        .from('messages')
+                        .select('*')
+                        .eq('room', room)
+                        .gt('id', lastMsgId)
+                        .order('created_at', { ascending: true });
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        console.log(`📩 Polling: ${data.length} новых сообщений`);
+                        data.forEach(msg => {
+                            if (msg.id > lastMsgId) {
+                                if (msg.username !== username) {
+                                    appendMessage(msg);
+                                }
+                                lastMsgId = msg.id;
+                            }
+                        });
+                    }
+                } catch (err) {
+                    // Игнорируем ошибки
+                }
+            }, 2000);
+        }
+
+        // ===== НОВЫЙ ПОЛЛИНГ ДЛЯ ЛИЧНЫХ СООБЩЕНИЙ =====
+
+        function startPrivatePolling(target) {
+            if (pollingInterval) clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const { data, error } = await sbClient
+                        .from('private_messages')
+                        .select('*')
+                        .or(`and(sender.eq.${username},receiver.eq.${target}),and(sender.eq.${target},receiver.eq.${username})`)
+                        .gt('id', lastPrivateMsgId)
+                        .order('created_at', { ascending: true });
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        console.log(`📩 Private Polling: ${data.length} новых сообщений`);
+                        data.forEach(msg => {
+                            if (msg.id > lastPrivateMsgId) {
+                                if (msg.sender !== username) {
+                                    appendPrivateMessage(msg);
+                                }
+                                lastPrivateMsgId = msg.id;
+                            }
+                        });
+                    }
+                } catch (err) {
+                    // Игнорируем ошибки
+                }
+            }, 2000);
+        }
+
+        // ===== ЗАГРУЗКА ПОСЛЕДНЕГО ID ДЛЯ ОБЩЕГО ЧАТА =====
+
+        async function loadLastMessageId(room) {
+            try {
+                const { data } = await sbClient
+                    .from('messages')
+                    .select('id')
+                    .eq('room', room)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                
+                if (data && data.length > 0) {
+                    lastMsgId = data[0].id;
+                } else {
+                    lastMsgId = 0;
+                }
+                console.log(`📌 Last message ID для ${room}: ${lastMsgId}`);
+            } catch(e) {
+                console.error('Ошибка загрузки lastMsgId:', e);
+                lastMsgId = 0;
+            }
+        }
+
+        // ===== ЗАГРУЗКА ПОСЛЕДНЕГО ID ДЛЯ ЛИЧНЫХ СООБЩЕНИЙ =====
+
+        async function loadLastPrivateMessageId(target) {
+            try {
+                const { data } = await sbClient
+                    .from('private_messages')
+                    .select('id')
+                    .or(`and(sender.eq.${username},receiver.eq.${target}),and(sender.eq.${target},receiver.eq.${username})`)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                
+                if (data && data.length > 0) {
+                    lastPrivateMsgId = data[0].id;
+                } else {
+                    lastPrivateMsgId = 0;
+                }
+                console.log(`📌 Last private message ID для ${target}: ${lastPrivateMsgId}`);
+            } catch(e) {
+                console.error('Ошибка загрузки lastPrivateMsgId:', e);
+                lastPrivateMsgId = 0;
+            }
         }
 
         // ============================================================
@@ -895,6 +1027,11 @@
                     .limit(200);
 
                 if (error) throw error;
+
+                // Обновляем lastMsgId
+                if (data && data.length > 0) {
+                    lastMsgId = data[data.length - 1].id;
+                }
 
                 messagesEl.innerHTML = '';
                 if (!data || data.length === 0) {
@@ -931,6 +1068,11 @@
 
                 if (error) throw error;
 
+                // Обновляем lastPrivateMsgId
+                if (data && data.length > 0) {
+                    lastPrivateMsgId = data[data.length - 1].id;
+                }
+
                 messagesEl.innerHTML = '';
                 if (!data || data.length === 0) {
                     messagesEl.innerHTML =
@@ -954,8 +1096,13 @@
         // ============================================================
 
         function appendMessage(msg) {
+            // Проверяем, нет ли уже такого сообщения
+            const exists = document.querySelector(`[data-msg-id="${msg.id}"]`);
+            if (exists) return;
+
             const div = document.createElement('div');
             div.className = `msg ${msg.username === username ? 'self' : 'other'}`;
+            div.setAttribute('data-msg-id', msg.id);
 
             let content = '';
             if (msg.text) {
@@ -987,8 +1134,13 @@
         }
 
         function appendPrivateMessage(msg) {
+            // Проверяем, нет ли уже такого сообщения
+            const exists = document.querySelector(`[data-msg-id="${msg.id}"]`);
+            if (exists) return;
+
             const div = document.createElement('div');
             div.className = `msg ${msg.sender === username ? 'self' : 'other'}`;
+            div.setAttribute('data-msg-id', msg.id);
 
             let content = '';
             if (msg.text) {
@@ -1018,7 +1170,7 @@
 
             try {
                 if (currentChatType === 'general') {
-                    const { error } = await sbClient
+                    const { data, error } = await sbClient
                         .from('messages')
                         .insert([{
                             username: username,
@@ -1026,20 +1178,19 @@
                             text: text || null,
                             file_url: fileUrl || null,
                             file_name: fileName || null,
-                        }]);
+                        }])
+                        .select();
+
                     if (error) throw error;
 
-                    const fakeMsg = {
-                        username: username,
-                        text: text,
-                        file_url: fileUrl,
-                        file_name: fileName,
-                        created_at: new Date().toISOString()
-                    };
-                    appendMessage(fakeMsg);
+                    // Добавляем с ID из БД
+                    if (data && data.length > 0) {
+                        appendMessage(data[0]);
+                        lastMsgId = data[0].id;
+                    }
 
                 } else {
-                    const { error } = await sbClient
+                    const { data, error } = await sbClient
                         .from('private_messages')
                         .insert([{
                             sender: username,
@@ -1047,20 +1198,16 @@
                             text: text || null,
                             file_url: fileUrl || null,
                             file_name: fileName || null,
-                        }]);
+                        }])
+                        .select();
+
                     if (error) throw error;
 
-                    const fakeMsg = {
-                        sender: username,
-                        receiver: currentChat,
-                        text: text,
-                        file_url: fileUrl,
-                        file_name: fileName,
-                        created_at: new Date().toISOString()
-                    };
-                    appendPrivateMessage(fakeMsg);
+                    if (data && data.length > 0) {
+                        appendPrivateMessage(data[0]);
+                        lastPrivateMsgId = data[0].id;
+                    }
 
-                    // Обновляем список чатов
                     setTimeout(loadChats, 500);
                 }
 
@@ -1124,61 +1271,73 @@
         }
 
         // ============================================================
-        //  REALTIME ПОДПИСКИ
+        //  REALTIME ПОДПИСКИ (улучшенные)
         // ============================================================
 
         function subscribeToGeneral() {
-            if (channel) { channel.unsubscribe();
-                channel = null; }
+            if (channel) { 
+                try { channel.unsubscribe(); } catch(e) {}
+                channel = null; 
+            }
 
             channel = sbClient
                 .channel(`messages-${currentChat}`)
-                .on(
-                    'postgres_changes', {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'messages',
-                        filter: `room=eq.${currentChat}`,
-                    },
-                    (payload) => {
-                        const msg = payload.new;
-                        if (msg.username === username) return;
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `room=eq.${currentChat}`,
+                }, (payload) => {
+                    const msg = payload.new;
+                    console.log('⚡ Realtime общее сообщение:', msg);
+                    // Проверяем, что не от себя и нет дубликата
+                    if (msg.username !== username && msg.id > lastMsgId) {
                         appendMessage(msg);
+                        lastMsgId = msg.id;
                     }
-                )
+                })
                 .subscribe((status) => {
+                    console.log(`📡 Realtime общий статус:`, status);
                     if (status === 'SUBSCRIBED') {
                         isSubscribed = true;
                         console.log(`✅ Подписка на ${currentChat} активна`);
+                    } else if (status === 'CHANNEL_ERROR' || status === 'closed') {
+                        console.log(`⚠️ Канал закрыт, переподключаемся...`);
+                        setTimeout(() => subscribeToGeneral(), 3000);
                     }
                 });
         }
 
         function subscribeToPrivate(target) {
-            if (privateChannel) { privateChannel.unsubscribe();
-                privateChannel = null; }
+            if (privateChannel) { 
+                try { privateChannel.unsubscribe(); } catch(e) {}
+                privateChannel = null; 
+            }
 
             privateChannel = sbClient
                 .channel(`private-${username}-${target}`)
-                .on(
-                    'postgres_changes', {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'private_messages',
-                        filter: `or(and(sender.eq.${username},receiver.eq.${target}),and(sender.eq.${target},receiver.eq.${username}))`,
-                    },
-                    (payload) => {
-                        const msg = payload.new;
-                        if (msg.sender === username) return;
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'private_messages',
+                    filter: `or(and(sender.eq.${username},receiver.eq.${target}),and(sender.eq.${target},receiver.eq.${username}))`,
+                }, (payload) => {
+                    const msg = payload.new;
+                    console.log('⚡ Realtime личное сообщение:', msg);
+                    if (msg.sender !== username && msg.id > lastPrivateMsgId) {
                         appendPrivateMessage(msg);
-                        // Обновляем список чатов
+                        lastPrivateMsgId = msg.id;
                         setTimeout(loadChats, 500);
                     }
-                )
+                })
                 .subscribe((status) => {
+                    console.log(`📡 Realtime личный статус (${target}):`, status);
                     if (status === 'SUBSCRIBED') {
                         isSubscribed = true;
                         console.log(`✅ Подписка на личку с ${target} активна`);
+                    } else if (status === 'CHANNEL_ERROR' || status === 'closed') {
+                        console.log(`⚠️ Канал закрыт, переподключаемся...`);
+                        setTimeout(() => subscribeToPrivate(target), 3000);
                     }
                 });
         }
@@ -1204,6 +1363,7 @@
         }
 
         function escapeHtml(text) {
+            if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
@@ -1247,7 +1407,6 @@
             document.getElementById('sidebar').style.display = 'flex';
         });
 
-        // Обработка resize для мобилки
         window.addEventListener('resize', () => {
             isMobile = window.innerWidth <= 600;
             if (!isMobile) {
@@ -1271,6 +1430,7 @@
         console.log('🔐 Есть регистрация и вход');
         console.log('👥 Список чатов слева, как в телеграме');
         console.log('💾 Сессия сохраняется');
+        console.log('🔄 Polling включен — сообщения будут приходить даже если Realtime не работает!');
     </script>
 </body>
 </html>
