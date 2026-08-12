@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
-        /* ===== ВСЕ СТИЛИ (КОРОТКО) ===== */
+        /* ===== ВСЕ СТИЛИ (ТАКИЕ ЖЕ) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -688,23 +688,6 @@
         .modal .admin-actions .btn-admin.danger:hover {
             background: rgba(255, 50, 50, 0.1);
         }
-        #callOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.92);
-            z-index: 2000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        #callOverlay.active {
-            display: flex;
-        }
         .toast {
             position: fixed;
             bottom: 30px;
@@ -905,7 +888,7 @@
         </div>
     </div>
 
-    <div id="callOverlay">
+    <div id="callOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:2000;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
         <div class="call-container" style="width:100%;max-width:800px;position:relative;border-radius:20px;overflow:hidden;background:#0b0b0f;">
             <div class="call-info" style="position:absolute;top:20px;left:50%;transform:translateX(-50%);text-align:center;color:#fff;font-size:18px;font-weight:600;text-shadow:0 2px 10px rgba(0,0,0,0.5);">
                 <div id="callPartnerName">Собеседник</div>
@@ -1124,7 +1107,7 @@
         }
 
         // ============================================================
-        //  РЕГИСТРАЦИЯ И ВХОД (ИСПРАВЛЕННЫЕ)
+        //  РЕГИСТРАЦИЯ И ВХОД
         // ============================================================
         async function handleRegister() {
             const name = loginUsername.value.trim();
@@ -1257,7 +1240,7 @@
         }
 
         // ============================================================
-        //  ЗАГРУЗКА ПРОФИЛЯ
+        //  ЗАГРУЗКА ПРОФИЛЯ (ИСПРАВЛЕННАЯ)
         // ============================================================
         async function loadUserData() {
             try {
@@ -1287,22 +1270,33 @@
                 userData = data;
                 isAdmin = data.is_admin || false;
 
-                document.getElementById('myDisplayName').textContent = data.display_name || username;
-                document.getElementById('myUsername').textContent = '@' + username;
-                document.getElementById('sidebarUser').textContent = data.display_name || username;
-
-                const avatarEl = document.getElementById('myAvatarSmall');
-                if (data.avatar_url) {
-                    avatarEl.innerHTML = `<img src="${data.avatar_url}" />`;
-                } else {
-                    avatarEl.innerHTML = `<span>👤</span>`;
+                // Обновляем UI - проверяем наличие элементов
+                const displayNameEl = document.getElementById('myDisplayName');
+                if (displayNameEl) {
+                    displayNameEl.textContent = data.display_name || username;
+                }
+                
+                const usernameEl = document.getElementById('myUsername');
+                if (usernameEl) {
+                    usernameEl.textContent = '@' + username;
                 }
 
+                const avatarEl = document.getElementById('myAvatarSmall');
+                if (avatarEl) {
+                    if (data.avatar_url) {
+                        avatarEl.innerHTML = `<img src="${data.avatar_url}" />`;
+                    } else {
+                        avatarEl.innerHTML = `<span>👤</span>`;
+                    }
+                }
+
+                // Загружаем чаты
                 loadChats();
                 subscribeToSignaling();
 
             } catch (err) {
                 console.error('Ошибка загрузки профиля:', err);
+                showToast('❌ Ошибка загрузки профиля: ' + err.message, 'error');
             }
         }
 
@@ -2043,8 +2037,10 @@
                 userData.display_name = displayName;
                 userData.bio = bio;
 
-                document.getElementById('myDisplayName').textContent = displayName;
-                document.getElementById('sidebarUser').textContent = displayName;
+                const displayNameEl = document.getElementById('myDisplayName');
+                if (displayNameEl) {
+                    displayNameEl.textContent = displayName;
+                }
 
                 showToast('✅ Профиль сохранён', 'success');
                 closeModal('profileModal');
@@ -2100,10 +2096,14 @@
                 userData.avatar_url = avatarUrl;
 
                 const avatarEl = document.getElementById('myAvatarSmall');
-                avatarEl.innerHTML = `<img src="${avatarUrl}" />`;
+                if (avatarEl) {
+                    avatarEl.innerHTML = `<img src="${avatarUrl}" />`;
+                }
 
                 const preview = document.querySelector('#profileAvatarPreview');
-                preview.innerHTML = `<img src="${avatarUrl}" />`;
+                if (preview) {
+                    preview.innerHTML = `<img src="${avatarUrl}" />`;
+                }
 
                 showToast('✅ Аватар обновлён', 'success');
 
@@ -2203,12 +2203,12 @@
                     el.dataset.msgText = newText;
                     const content = el.querySelector('.msg-actions')?.previousElementSibling;
                     if (content) {
+                        let newContent = escapeHtml(newText);
                         // Сохраняем файлы если есть
                         const fileLinks = content.querySelectorAll('.file-link');
                         const imgElements = content.querySelectorAll('img');
                         const videoElements = content.querySelectorAll('video');
                         
-                        let newContent = escapeHtml(newText);
                         fileLinks.forEach(link => {
                             newContent += `<br><a href="${link.href}" target="_blank" class="file-link">${link.textContent}</a>`;
                         });
@@ -2473,7 +2473,7 @@
         }
 
         // ============================================================
-        //  СИГНАЛИНГ (ЗВОНКИ) - УПРОЩЁННЫЙ
+        //  СИГНАЛИНГ (ЗВОНКИ)
         // ============================================================
         function subscribeToSignaling() {
             if (signalingChannel) {
