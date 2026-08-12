@@ -232,7 +232,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 </div>
 <div class="search"><input id="searchInput" type="text" placeholder="🔍 Поиск..."></div>
 <div id="chatList"><div class="empty-state">Загрузка...</div></div>
-<div style="padding:12px 16px;border-top:1px solid var(--border-color)"><button class="logout-btn" id="logoutBtn">🚪 Выйти</button></div>
+<div style="padding:12px 16px;border-top:1px solid var(--border-color)">
+<button class="logout-btn" id="moderationBtn" style="display:none;background:rgba(255,215,0,0.05);color:#ffd700;margin-bottom:8px;">🛡️ Модерация</button>
+<button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
+</div>
 </div>
 <div id="chatArea" class="bg-none style-classic">
 <div id="chatHeader">
@@ -280,6 +283,24 @@ let username='',userId=null,currentChat=null,currentChatType='general',currentGr
 let peerConnection=null,localStream=null,isCallActive=0,isMuted=0,isVideoOff=0,callType='audio';
 let mediaRecorder=null,audioChunks=[],isRecording=0,recordingTimer=null,recordingSeconds=0,currentAudio=null,voiceMode='voice';
 let selectedMsgId=null,selectedMsgIsOwn=0,selectedMsgTable=null,replyToMsgId=null,replyToMsgText='',replyToMsgSender='';
+
+// ============================================================
+//  ЗАЩИТА ОТ ОШИБОК - СОЗДАЁМ КНОПКУ ЕСЛИ НЕТ
+// ============================================================
+if (!MOD_BTN) {
+    const footer = document.querySelector('#sidebar > div:last-child');
+    if (footer) {
+        const btn = document.createElement('button');
+        btn.className = 'logout-btn';
+        btn.id = 'moderationBtn';
+        btn.style.cssText = 'display:none;background:rgba(255,215,0,0.05);color:#ffd700;margin-bottom:8px;';
+        btn.textContent = '🛡️ Модерация';
+        footer.insertBefore(btn, footer.firstChild);
+    }
+}
+// Обновляем ссылку
+const MOD_BTN2 = document.getElementById('moderationBtn');
+if (MOD_BTN2) window.MOD_BTN = MOD_BTN2;
 
 function showToast(m,t){const e=document.querySelector('.toast');if(e)e.remove();const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3e3)}
 function openModal(i){const e=document.getElementById(i);if(e)e.classList.add('active')}
@@ -378,7 +399,8 @@ loadSettings();
 const dN=document.getElementById('myDisplayName');if(dN)dN.textContent=data.display_name||username;
 const uN=document.getElementById('myUsername');if(uN)uN.textContent='@'+username;
 const aE=document.getElementById('myAvatarSmall');if(aE){if(data.avatar_url){aE.innerHTML='<img src="'+data.avatar_url+'" />'}else{aE.innerHTML='<span>👤</span>'}}
-if(isAdmin){MOD_BTN.style.display='block';MOD_BTN.onclick=showModerationPanel}else{MOD_BTN.style.display='none'}
+const modBtn=document.getElementById('moderationBtn');
+if(modBtn){if(isAdmin){modBtn.style.display='block';modBtn.onclick=showModerationPanel}else{modBtn.style.display='none'}}
 loadChats();loadGroups();subscribeToSignaling();subscribeToTyping();
 }catch(err){console.error('Ошибка загрузки профиля:',err);showToast('❌ Ошибка загрузки профиля: '+err.message,'error')}}
 
@@ -387,15 +409,17 @@ if(!isAdmin)return;
 try{
 const{data:users,error}=await sbClient.from('users').select('*').eq('is_approved',false).eq('is_banned',false).order('registered_at',{ascending:false});
 if(error)throw error;
-MOD_LIST.innerHTML='';
-if(!users||users.length===0){MOD_LIST.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:20px;">✅ Нет новых аккаунтов</div>';openModal('moderationModal');return}
+const list=document.getElementById('moderationList');
+if(!list){showToast('❌ Ошибка: элемент не найден','error');return}
+list.innerHTML='';
+if(!users||users.length===0){list.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:20px;">✅ Нет новых аккаунтов</div>';openModal('moderationModal');return}
 users.forEach(u=>{
 const d=document.createElement('div');d.style.cssText='padding:12px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;';
 const i=document.createElement('div');i.innerHTML='<strong style="color:var(--text-primary);">'+escapeHtml(u.username)+'</strong><span style="color:var(--text-muted);font-size:12px;display:block;">🖥️ IP: '+escapeHtml(u.ip||'неизвестен')+' | 📅 '+formatTime(u.registered_at)+'</span>';
 const a=document.createElement('div');a.style.cssText='display:flex;gap:6px;';
 const ap=document.createElement('button');ap.textContent='✅ Одобрить';ap.style.cssText='padding:6px 14px;border-radius:10px;border:none;background:rgba(111,207,151,0.2);color:#6fcf97;cursor:pointer;font-size:12px;';ap.onclick=()=>approveUser(u.username);
 const bn=document.createElement('button');bn.textContent='🚫 Заблокировать';bn.style.cssText='padding:6px 14px;border-radius:10px;border:none;background:rgba(255,77,109,0.15);color:#ff4d6d;cursor:pointer;font-size:12px;';bn.onclick=()=>{const r=prompt('Причина блокировки:');if(r!==null)banUser(u.username,r||'Без причины')};
-a.appendChild(ap);a.appendChild(bn);d.appendChild(i);d.appendChild(a);MOD_LIST.appendChild(d)});
+a.appendChild(ap);a.appendChild(bn);d.appendChild(i);d.appendChild(a);list.appendChild(d)});
 openModal('moderationModal');
 }catch(err){showToast('❌ '+err.message,'error')}}
 
@@ -415,12 +439,11 @@ groups=gD||[];renderChats();
 
 async function loadChats(){
 try{
-const{data:users,error:uE}=await sbClient.from('users').select('username,last_seen_at,last_seen,is_ghost,is_approved').neq('username',username);
+const{data:users,error:uE}=await sbClient.from('users').select('username,last_seen_at,last_seen,is_ghost,is_approved');
 if(uE)throw uE;
 const{data:profiles}=await sbClient.from('profiles').select('username,display_name,avatar_url,is_admin,show_admin_badge,ghost_mode,ghost_since');
 const pMap={};if(profiles){profiles.forEach(p=>{pMap[p.username]=p})}
 const cData=[];
-// Избранное
 cData.push({id:'favorites',name:'⭐ Избранное',type:'favorites',lastMsg:'Ваши сохранённые сообщения',time:null,online:1,avatar:'⭐'});
 for(const u of users){
 if(!u.is_approved)continue;
