@@ -558,15 +558,22 @@
             display: none !important;
         }
         .msg.deleted-admin {
-            opacity: 0.5;
+            opacity: 0.7;
             background: rgba(255, 0, 0, 0.05) !important;
-            border-color: rgba(255, 0, 0, 0.1) !important;
+            border: 1px solid rgba(255, 0, 0, 0.15) !important;
             display: block !important;
         }
         .msg .deleted-badge {
             font-size: 11px;
             color: #ff4d6d;
             font-style: italic;
+        }
+        .msg .deleted-text {
+            font-size: 12px;
+            color: rgba(255, 77, 109, 0.5);
+            font-style: italic;
+            margin-top: 2px;
+            display: block;
         }
         .msg.group-msg .sender {
             color: #00d4ff;
@@ -2927,8 +2934,12 @@
             let content = '';
             if (isDeleted && isAdmin) {
                 content = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                content += '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
-                    '') + ')</span>';
+                if (msg.text) {
+                    content += '<span class="deleted-text">📝 ' + escapeHtml(msg.text) + '</span>';
+                }
+                if (msg.file_url) {
+                    content += '<span class="deleted-text">📎 ' + escapeHtml(msg.file_name || 'Файл') + '</span>';
+                }
             } else {
                 if (msg.type === 'voice') {
                     content = renderVoiceMessage(msg);
@@ -2978,8 +2989,12 @@
             let content = '';
             if (isDeleted && isAdmin) {
                 content = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                content += '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
-                    '') + ')</span>';
+                if (msg.text) {
+                    content += '<span class="deleted-text">📝 ' + escapeHtml(msg.text) + '</span>';
+                }
+                if (msg.file_url) {
+                    content += '<span class="deleted-text">📎 ' + escapeHtml(msg.file_name || 'Файл') + '</span>';
+                }
             } else {
                 if (msg.type === 'voice') {
                     content = renderVoiceMessage(msg);
@@ -3016,8 +3031,12 @@
             let content = '';
             if (isDeleted && isAdmin) {
                 content = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                content += '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
-                    '') + ')</span>';
+                if (msg.text) {
+                    content += '<span class="deleted-text">📝 ' + escapeHtml(msg.text) + '</span>';
+                }
+                if (msg.file_url) {
+                    content += '<span class="deleted-text">📎 ' + escapeHtml(msg.file_name || 'Файл') + '</span>';
+                }
             } else {
                 if (msg.type === 'voice') {
                     content = renderVoiceMessage(msg);
@@ -3245,7 +3264,7 @@
         });
 
         // ============================================================
-        //  УДАЛЕНИЕ
+        //  УДАЛЕНИЕ (АДМИН ВИДИТ ТЕКСТ)
         // ============================================================
         window.deleteMessage = async function(id, table) {
             const confirm = window.confirm('🗑️ Удалить сообщение?');
@@ -3253,14 +3272,34 @@
 
             try {
                 if (isAdmin) {
+                    // Админ может полностью удалить или просто пометить как удалённое
+                    // Для сохранения текста для админа - помечаем как удалённое, но не удаляем полностью
                     const { error } = await sbClient
                         .from(table)
-                        .delete()
+                        .update({
+                            is_deleted: true
+                            // текст не очищаем, чтобы админ мог его видеть
+                        })
                         .eq('id', id);
 
                     if (error) throw error;
-                    showToast('✅ Сообщение удалено (админ)', 'success');
+                    showToast('✅ Сообщение помечено как удалённое (админ видит текст)', 'success');
+
+                    // Обновляем отображение
+                    const el = document.querySelector('[data-msg-id="' + id + '"]');
+                    if (el) {
+                        el.classList.add('deleted-admin');
+                        const content = el.querySelector('.sender')?.nextElementSibling;
+                        if (content) {
+                            const msgText = el.dataset.msgText || '';
+                            content.innerHTML = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
+                            if (msgText) {
+                                content.innerHTML += '<span class="deleted-text">📝 ' + escapeHtml(msgText) + '</span>';
+                            }
+                        }
+                    }
                 } else {
+                    // Обычный пользователь - помечаем как удалённое и скрываем
                     const { error } = await sbClient
                         .from(table)
                         .update({
@@ -3271,13 +3310,9 @@
 
                     if (error) throw error;
                     showToast('✅ Сообщение удалено', 'success');
-                }
 
-                const el = document.querySelector('[data-msg-id="' + id + '"]');
-                if (el) {
-                    if (isAdmin) {
-                        el.remove();
-                    } else {
+                    const el = document.querySelector('[data-msg-id="' + id + '"]');
+                    if (el) {
                         el.style.display = 'none';
                     }
                 }
@@ -3442,7 +3477,7 @@
         };
 
         // ============================================================
-        //  ЗАПИСЬ ГОЛОСОВЫХ/КРУЖОЧКОВ (НОВАЯ ЛОГИКА)
+        //  ЗАПИСЬ ГОЛОСОВЫХ/КРУЖОЧКОВ
         // ============================================================
         // Выбор режима через выпадающее меню
         voiceMainBtn.addEventListener('click', (e) => {
@@ -3930,9 +3965,10 @@
                                     if (content) {
                                         content.innerHTML =
                                             '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                                        content.innerHTML +=
-                                            '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' +
-                                            escapeHtml(msg.text || '') + ')</span>';
+                                        if (msg.text) {
+                                            content.innerHTML +=
+                                                '<span class="deleted-text">📝 ' + escapeHtml(msg.text) + '</span>';
+                                        }
                                     }
                                 } else {
                                     el.style.display = 'none';
@@ -4001,9 +4037,10 @@
                                     if (content) {
                                         content.innerHTML =
                                             '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                                        content.innerHTML +=
-                                            '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' +
-                                            escapeHtml(msg.text || '') + ')</span>';
+                                        if (msg.text) {
+                                            content.innerHTML +=
+                                                '<span class="deleted-text">📝 ' + escapeHtml(msg.text) + '</span>';
+                                        }
                                     }
                                 } else {
                                     el.style.display = 'none';
@@ -4070,9 +4107,10 @@
                                     if (content) {
                                         content.innerHTML =
                                             '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                                        content.innerHTML +=
-                                            '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' +
-                                            escapeHtml(msg.text || '') + ')</span>';
+                                        if (msg.text) {
+                                            content.innerHTML +=
+                                                '<span class="deleted-text">📝 ' + escapeHtml(msg.text) + '</span>';
+                                        }
                                     }
                                 } else {
                                     el.style.display = 'none';
@@ -4861,7 +4899,7 @@
         // Загружаем настройки из localStorage
         loadSettings();
 
-        console.log('💬 Братанский мессенджер v5.0');
+        console.log('💬 Братанский мессенджер v5.1');
         console.log('🎨 5 тем оформления');
         console.log('🖼️ 6 фоновых рисунков');
         console.log('📐 4 стиля чатов');
@@ -4874,6 +4912,7 @@
         console.log('📱 Адаптив под телефон и компьютер');
         console.log('💡 Клик по сообщению → меню: копировать, редактировать, удалить, реакции');
         console.log('🔒 Настройки сохраняются в БД и не слетают после перезагрузки');
+        console.log('👁️ Админ видит текст удалённых сообщений');
     </script>
 </body>
 </html>
