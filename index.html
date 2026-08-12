@@ -25,61 +25,55 @@
 
         #app {
             width: 100%;
-            max-width: 900px;
             height: 100vh;
-            max-height: 700px;
             background: #11131e;
-            border-radius: 0;
             display: flex;
             overflow: hidden;
             position: relative;
         }
-        @media (min-width:600px) {
-            #app {
-                border-radius: 24px;
-                height: 90vh;
-            }
-        }
 
         /* ===== ЛЕВАЯ ПАНЕЛЬ (список чатов) ===== */
         #sidebar {
-            width: 280px;
-            min-width: 200px;
+            width: 320px;
+            min-width: 280px;
             background: #0e0f17;
             border-right: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+            transition: transform 0.3s ease;
         }
 
         #sidebar .header {
-            padding: 16px 16px 12px 16px;
+            padding: 16px 20px 12px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         #sidebar .header h2 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             background: linear-gradient(135deg, #00d4ff, #7b2ffc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         #sidebar .header .user-info {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.2);
-            margin-top: 4px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
         }
 
         #sidebar .search {
-            padding: 8px 12px;
+            padding: 10px 16px;
         }
         #sidebar .search input {
             width: 100%;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 10px 16px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.04);
             color: #fff;
-            font-size: 13px;
+            font-size: 14px;
             outline: none;
         }
         #sidebar .search input:focus {
@@ -95,7 +89,7 @@
             padding: 4px 0;
         }
         #chatList::-webkit-scrollbar {
-            width: 3px;
+            width: 4px;
         }
         #chatList::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.08);
@@ -105,28 +99,28 @@
         .chat-item {
             display: flex;
             align-items: center;
-            padding: 10px 14px;
+            padding: 12px 16px;
             cursor: pointer;
             transition: background 0.15s;
             gap: 12px;
             border-left: 3px solid transparent;
         }
         .chat-item:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.03);
         }
         .chat-item.active {
-            background: rgba(0, 212, 255, 0.05);
+            background: rgba(0, 212, 255, 0.06);
             border-left-color: #00d4ff;
         }
         .chat-item .avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: linear-gradient(135deg, #00d4ff22, #7b2ffc22);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             flex-shrink: 0;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
@@ -135,46 +129,47 @@
             min-width: 0;
         }
         .chat-item .info .name {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.8);
         }
         .chat-item .info .last-msg {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.2);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.25);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .chat-item .time {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.1);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.15);
             flex-shrink: 0;
         }
-        .chat-item .badge {
+        .chat-item .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .chat-item .online-dot.online {
+            background: #6fcf97;
+        }
+        .chat-item .online-dot.offline {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .chat-item .unread-badge {
             background: #00d4ff;
             color: #000;
             border-radius: 50%;
-            padding: 0 6px;
             font-size: 10px;
             font-weight: 700;
-            min-width: 18px;
-            height: 18px;
+            min-width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-        }
-
-        .chat-item .logout-btn {
-            background: rgba(255, 50, 50, 0.1);
-            border: 1px solid rgba(255, 50, 50, 0.1);
-            border-radius: 20px;
-            padding: 4px 14px;
-            color: #ff4d6d;
-            font-size: 11px;
-            cursor: pointer;
-            margin-left: 8px;
+            padding: 0 5px;
         }
 
         /* ===== ПРАВАЯ ПАНЕЛЬ (чат) ===== */
@@ -190,52 +185,96 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
+            padding: 12px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             flex-shrink: 0;
-            min-height: 60px;
+            min-height: 68px;
+            gap: 12px;
+        }
+        #chatHeader .chat-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
         }
         #chatHeader .chat-title {
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.85);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         #chatHeader .chat-title small {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.2);
             font-weight: 400;
             margin-left: 8px;
         }
-        #chatHeader button {
+        #chatHeader .chat-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        #chatHeader .chat-actions button {
             background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 20px;
-            padding: 4px 14px;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
             cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #chatHeader .chat-actions button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        #chatHeader .chat-actions button.call-active {
+            background: rgba(0, 212, 255, 0.15);
+            border-color: #00d4ff;
+            color: #00d4ff;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+        #chatHeader .back-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.04);
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 4px 8px;
         }
 
         #messages {
             flex: 1;
             overflow-y: auto;
-            padding: 12px 16px;
+            padding: 16px 20px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
         #messages::-webkit-scrollbar {
-            width: 3px;
+            width: 4px;
         }
         #messages::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 10px;
         }
         .msg {
-            max-width: 85%;
-            padding: 8px 12px;
-            border-radius: 14px;
-            font-size: 14px;
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 15px;
             line-height: 1.4;
             word-wrap: break-word;
             animation: fadeIn 0.2s;
@@ -247,19 +286,19 @@
         }
         .msg.other {
             align-self: flex-start;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .msg .sender {
-            font-size: 10px;
+            font-size: 11px;
             color: #00d4ffaa;
             font-weight: 600;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
         .msg .time {
-            font-size: 9px;
+            font-size: 10px;
             color: rgba(255, 255, 255, 0.15);
-            margin-top: 2px;
+            margin-top: 4px;
             text-align: right;
         }
         .msg img {
@@ -293,34 +332,37 @@
         #inputArea {
             display: flex;
             gap: 8px;
-            padding: 10px 12px;
+            padding: 12px 16px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
             flex-shrink: 0;
             align-items: center;
         }
         #inputArea input[type="text"] {
             flex: 1;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.04);
             color: #fff;
-            font-size: 14px;
+            font-size: 15px;
             outline: none;
+            min-height: 44px;
         }
         #inputArea input[type="text"]:focus {
             border-color: rgba(0, 212, 255, 0.2);
         }
         #inputArea .btn-send {
-            padding: 10px 18px;
+            padding: 12px 20px;
             border-radius: 30px;
             border: none;
             background: linear-gradient(135deg, #00d4ff, #7b2ffc);
             color: #fff;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             flex-shrink: 0;
+            min-height: 44px;
+            min-width: 44px;
         }
         #inputArea .btn-file {
             padding: 10px 14px;
@@ -328,9 +370,14 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.04);
             color: #fff;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             flex-shrink: 0;
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #inputArea .btn-file:active,
         #inputArea .btn-send:active {
@@ -340,11 +387,11 @@
             display: none;
         }
         #uploadStatus {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.15);
-            padding: 2px 12px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.2);
+            padding: 2px 16px;
             text-align: center;
-            min-height: 16px;
+            min-height: 20px;
         }
 
         /* ===== ЭКРАН ВХОДА ===== */
@@ -359,15 +406,15 @@
             background: radial-gradient(circle at center, #151725, #07080b);
         }
         #loginScreen h1 {
-            font-size: 28px;
+            font-size: 32px;
             background: linear-gradient(135deg, #00d4ff, #7b2ffc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         #loginScreen input {
             width: 100%;
-            max-width: 300px;
-            padding: 14px 16px;
+            max-width: 320px;
+            padding: 16px 18px;
             border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.04);
@@ -380,13 +427,13 @@
         }
         #loginScreen button {
             width: 100%;
-            max-width: 300px;
-            padding: 14px;
+            max-width: 320px;
+            padding: 16px;
             border-radius: 14px;
             border: none;
             background: linear-gradient(135deg, #00d4ff, #7b2ffc);
             color: #fff;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 700;
             cursor: pointer;
         }
@@ -396,48 +443,197 @@
             min-height: 20px;
         }
         #loginScreen .switch {
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 13px;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 14px;
             cursor: pointer;
         }
         #loginScreen .switch:active {
             color: #00d4ff;
         }
 
-        /* ===== АДАПТИВ (мобилка) ===== */
+        /* ===== ВИДЕОЗВОНОК ===== */
+        #callOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        #callOverlay.active {
+            display: flex;
+        }
+        #callOverlay .call-container {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #0b0b0f;
+        }
+        #callOverlay .remote-video {
+            width: 100%;
+            background: #0b0b0f;
+            border-radius: 20px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #callOverlay .remote-video video {
+            width: 100%;
+            height: auto;
+            max-height: 70vh;
+            background: #0b0b0f;
+            border-radius: 20px;
+        }
+        #callOverlay .remote-video .no-video {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 48px;
+        }
+        #callOverlay .local-video {
+            position: absolute;
+            bottom: 80px;
+            right: 16px;
+            width: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: #0b0b0f;
+        }
+        #callOverlay .local-video video {
+            width: 100%;
+            display: block;
+        }
+        #callOverlay .call-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 12px 24px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+        #callOverlay .call-controls button {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #callOverlay .call-controls button:hover {
+            transform: scale(1.05);
+        }
+        #callOverlay .call-controls .btn-end-call {
+            background: #ff4d6d;
+            color: #fff;
+        }
+        #callOverlay .call-controls .btn-end-call:hover {
+            background: #ff1744;
+        }
+        #callOverlay .call-controls .btn-toggle-mic {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        #callOverlay .call-controls .btn-toggle-mic.muted {
+            background: #ff4d6d44;
+            color: #ff4d6d;
+        }
+        #callOverlay .call-controls .btn-toggle-video {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        #callOverlay .call-controls .btn-toggle-video.video-off {
+            background: #ff4d6d44;
+            color: #ff4d6d;
+        }
+        #callOverlay .call-info {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        #callOverlay .call-info .call-status {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.5);
+        }
         @media (max-width: 600px) {
+            #callOverlay .local-video {
+                width: 100px;
+                bottom: 70px;
+                right: 10px;
+            }
+            #callOverlay .call-controls {
+                padding: 8px 16px;
+                gap: 10px;
+            }
+            #callOverlay .call-controls button {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+            #callOverlay .remote-video {
+                min-height: 300px;
+            }
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
             #sidebar {
                 width: 100%;
                 min-width: unset;
                 border-right: none;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10;
+                transform: translateX(0);
             }
-            #app {
-                flex-direction: column;
-                max-height: 100vh;
-                border-radius: 0;
+            #sidebar.hidden {
+                transform: translateX(-100%);
             }
             #chatArea {
-                display: none;
+                width: 100%;
             }
-            #chatArea.open {
-                display: flex;
-            }
-            #sidebar .mobile-back {
+            #chatHeader .back-btn {
                 display: block;
             }
-            .chat-item .mobile-back {
-                display: none;
+            .msg {
+                max-width: 85%;
             }
         }
-        .mobile-back {
-            display: none;
-            background: rgba(255, 255, 255, 0.04);
-            border: none;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 18px;
-            cursor: pointer;
-            padding: 4px 8px;
+
+        @media (min-width: 769px) {
+            #sidebar {
+                position: relative !important;
+                transform: none !important;
+            }
+            #sidebar.hidden {
+                transform: none !important;
+            }
         }
 
         /* ===== ПУСТОЕ СОСТОЯНИЕ ===== */
@@ -446,6 +642,21 @@
             color: rgba(255, 255, 255, 0.05);
             padding: 30px 0;
             font-size: 13px;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 50, 50, 0.1);
+            background: rgba(255, 50, 50, 0.05);
+            color: #ff4d6d;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 50, 50, 0.1);
         }
     </style>
 </head>
@@ -465,7 +676,7 @@
         </div>
 
         <!-- ===== ОСНОВНОЙ ИНТЕРФЕЙС ===== -->
-        <div id="mainUI" style="display:none;width:100%;height:100%;">
+        <div id="mainUI" style="display:none;width:100%;height:100%;position:relative;">
 
             <!-- ЛЕВАЯ ПАНЕЛЬ -->
             <div id="sidebar">
@@ -479,19 +690,22 @@
                 <div id="chatList">
                     <div class="empty-state">Загрузка...</div>
                 </div>
-                <div style="padding:8px 12px;border-top:1px solid rgba(255,255,255,0.04);">
-                    <button id="logoutBtn" style="width:100%;padding:8px;border-radius:20px;border:1px solid rgba(255,50,50,0.1);background:rgba(255,50,50,0.05);color:#ff4d6d;font-size:12px;cursor:pointer;">🚪 Выйти</button>
+                <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.04);">
+                    <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
                 </div>
             </div>
 
             <!-- ПРАВАЯ ПАНЕЛЬ (чат) -->
             <div id="chatArea">
                 <div id="chatHeader">
-                    <div>
-                        <button class="mobile-back" id="mobileBack">←</button>
+                    <div class="chat-left">
+                        <button class="back-btn" id="mobileBack">←</button>
                         <span class="chat-title" id="chatTitle">Выберите чат</span>
                     </div>
-                    <span style="font-size:11px;color:rgba(255,255,255,0.1);" id="chatStatus">онлайн</span>
+                    <div class="chat-actions">
+                        <button id="callBtn" title="Звонок" style="display:none;">📞</button>
+                        <button id="videoCallBtn" title="Видеозвонок" style="display:none;">📹</button>
+                    </div>
                 </div>
                 <div id="messages">
                     <div class="empty-state">👈 Выберите чат слева</div>
@@ -509,6 +723,28 @@
 
     </div>
 
+    <!-- ===== ОВЕРЛЕЙ ЗВОНКА ===== -->
+    <div id="callOverlay">
+        <div class="call-container">
+            <div class="call-info">
+                <div id="callPartnerName">Собеседник</div>
+                <div class="call-status" id="callStatus">Подключение...</div>
+            </div>
+            <div class="remote-video">
+                <video id="remoteVideo" autoplay playsinline></video>
+                <div class="no-video" id="noRemoteVideo">📹</div>
+            </div>
+            <div class="local-video">
+                <video id="localVideo" autoplay playsinline muted></video>
+            </div>
+            <div class="call-controls">
+                <button class="btn-toggle-mic" id="toggleMicBtn" title="Микрофон">🎤</button>
+                <button class="btn-toggle-video" id="toggleVideoBtn" title="Видео">📹</button>
+                <button class="btn-end-call" id="endCallBtn">📞</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================================
         //  ⚡ ТВОИ ДАННЫЕ SUPABASE
@@ -518,7 +754,7 @@
         const BUCKET = 'chat-files';
         // ============================================================
 
-        // ===== СОЗДАЕМ КЛИЕНТ С НАСТРОЙКАМИ ДЛЯ WEBSOCKET =====
+        // ===== СОЗДАЕМ КЛИЕНТ =====
         const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             realtime: {
                 params: {
@@ -544,7 +780,6 @@
         const sidebarUser = document.getElementById('sidebarUser');
         const chatList = document.getElementById('chatList');
         const chatTitle = document.getElementById('chatTitle');
-        const chatStatus = document.getElementById('chatStatus');
         const messagesEl = document.getElementById('messages');
         const msgInput = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -553,24 +788,85 @@
         const uploadStatus = document.getElementById('uploadStatus');
         const searchInput = document.getElementById('searchInput');
         const mobileBack = document.getElementById('mobileBack');
+        const callBtn = document.getElementById('callBtn');
+        const videoCallBtn = document.getElementById('videoCallBtn');
+        const sidebar = document.getElementById('sidebar');
+        const chatArea = document.getElementById('chatArea');
 
         // ---------- СОСТОЯНИЕ ----------
         let username = '';
         let userId = null;
-        let currentChat = null; // 'general' или ник пользователя
-        let currentChatType = 'general'; // 'general' или 'private'
+        let currentChat = null;
+        let currentChatType = 'general';
         let channel = null;
         let privateChannel = null;
-        let isSubscribed = false;
         let isLoginMode = true;
         let allUsers = [];
         let chats = [];
-        let isMobile = window.innerWidth <= 600;
-
-        // ===== НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ ПОЛЛИНГА =====
         let pollingInterval = null;
         let lastMsgId = 0;
         let lastPrivateMsgId = 0;
+        let unreadCounts = {};
+        let isPageFocused = true;
+
+        // ===== ЗВУК УВЕДОМЛЕНИЯ (генерируем через Web Audio) =====
+        function playNotificationSound() {
+            try {
+                const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                
+                // Первый звук (высокий)
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                gain1.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(audioCtx.currentTime);
+                osc1.stop(audioCtx.currentTime + 0.15);
+
+                // Второй звук (чуть ниже) через паузу
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(1000, audioCtx.currentTime);
+                    osc2.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.12);
+                    gain2.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.start(audioCtx.currentTime);
+                    osc2.stop(audioCtx.currentTime + 0.15);
+                }, 120);
+            } catch (e) {
+                // Если Web Audio не работает, пробуем через <audio>
+                try {
+                    const audio = new Audio('data:audio/wav;base64,U3R1ZmZUdXJlIQ==');
+                    audio.volume = 0.5;
+                    audio.play().catch(() => {});
+                } catch(e2) {}
+            }
+        }
+
+        // ===== ОТСЛЕЖИВАНИЕ ФОКУСА СТРАНИЦЫ =====
+        document.addEventListener('visibilitychange', () => {
+            isPageFocused = !document.hidden;
+            if (isPageFocused) {
+                document.title = '💬 Братанский';
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            isPageFocused = true;
+            document.title = '💬 Братанский';
+        });
+
+        window.addEventListener('blur', () => {
+            isPageFocused = false;
+        });
 
         // ============================================================
         //  АВТОРИЗАЦИЯ
@@ -721,6 +1017,8 @@
             chatTitle.textContent = 'Выберите чат';
             msgInput.disabled = true;
             sendBtn.disabled = true;
+            callBtn.style.display = 'none';
+            videoCallBtn.style.display = 'none';
         });
 
         switchAuth.addEventListener('click', () => {
@@ -763,7 +1061,7 @@
                 for (const u of allUsers) {
                     const { data: msgs } = await sbClient
                         .from('private_messages')
-                        .select('text, created_at, sender')
+                        .select('text, created_at, sender, id')
                         .or(`and(sender.eq.${username},receiver.eq.${u.username}),and(sender.eq.${u.username},receiver.eq.${username})`)
                         .order('created_at', { ascending: false })
                         .limit(1);
@@ -831,8 +1129,10 @@
 
             items.forEach(chat => {
                 const div = document.createElement('div');
-                div.className = `chat-item ${currentChat === chat.id && currentChatType === chat.type ? 'active' : ''}`;
+                const isActive = currentChat === chat.id && currentChatType === chat.type;
+                div.className = `chat-item ${isActive ? 'active' : ''}`;
                 const isOnline = chat.online !== undefined ? chat.online : true;
+                const unread = unreadCounts[chat.id + '_' + chat.type] || 0;
 
                 div.innerHTML = `
                     <div class="avatar">${chat.type === 'general' ? '💬' : '👤'}</div>
@@ -842,11 +1142,16 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
                         ${chat.time ? `<span class="time">${formatTime(chat.time)}</span>` : ''}
-                        ${chat.type === 'private' ? `<span style="font-size:8px;color:${isOnline ? '#6fcf97' : 'rgba(255,255,255,0.1)'};">${isOnline ? '🟢' : '⚫'}</span>` : ''}
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            ${chat.type === 'private' ? `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>` : ''}
+                            ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                        </div>
                     </div>
                 `;
 
                 div.addEventListener('click', () => {
+                    // Сбрасываем счетчик непрочитанных
+                    unreadCounts[chat.id + '_' + chat.type] = 0;
                     openChat(chat.id, chat.type, chat.name);
                 });
 
@@ -859,14 +1164,12 @@
         // ============================================================
 
         function openChat(id, type, name) {
-            // Отписываемся от старого
             if (channel) { channel.unsubscribe();
                 channel = null; }
             if (privateChannel) { privateChannel.unsubscribe();
                 privateChannel = null; }
             if (pollingInterval) { clearInterval(pollingInterval);
                 pollingInterval = null; }
-            isSubscribed = false;
 
             currentChat = id;
             currentChatType = type;
@@ -876,9 +1179,18 @@
             sendBtn.disabled = false;
             msgInput.focus();
 
-            if (window.innerWidth <= 600) {
-                document.getElementById('chatArea').classList.add('open');
-                document.getElementById('sidebar').style.display = 'none';
+            // Показываем кнопки звонка только для личных чатов
+            if (type === 'private') {
+                callBtn.style.display = 'flex';
+                videoCallBtn.style.display = 'flex';
+            } else {
+                callBtn.style.display = 'none';
+                videoCallBtn.style.display = 'none';
+            }
+
+            // Мобилка: прячем сайдбар
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('hidden');
             }
 
             if (type === 'general') {
@@ -895,15 +1207,13 @@
         }
 
         // ============================================================
-        //  ===== НОВЫЙ ПОЛЛИНГ ДЛЯ ОБЩЕГО ЧАТА =====
+        //  ПОЛЛИНГ С УВЕДОМЛЕНИЯМИ
         // ============================================================
 
         function startPolling(room) {
-            // Сначала загружаем последний ID
             loadLastMessageId(room);
-            
             if (pollingInterval) clearInterval(pollingInterval);
-            
+
             pollingInterval = setInterval(async () => {
                 try {
                     const { data, error } = await sbClient
@@ -912,19 +1222,33 @@
                         .eq('room', room)
                         .gt('id', lastMsgId)
                         .order('created_at', { ascending: true });
-                    
+
                     if (error) throw error;
-                    
+
                     if (data && data.length > 0) {
                         console.log(`📩 Polling: ${data.length} новых сообщений`);
                         data.forEach(msg => {
                             if (msg.id > lastMsgId) {
-                                if (msg.username !== username) {
+                                const isOwn = msg.username === username;
+                                // Если сообщение не от себя и чат не активен или страница не в фокусе
+                                if (!isOwn) {
+                                    const isCurrentChat = currentChat === room && currentChatType === 'general';
+                                    if (!isCurrentChat || !isPageFocused) {
+                                        playNotificationSound();
+                                        // Обновляем счетчик непрочитанных
+                                        const key = room + '_general';
+                                        unreadCounts[key] = (unreadCounts[key] || 0) + 1;
+                                        // Меняем заголовок
+                                        if (!isPageFocused) {
+                                            document.title = `💬 Новое сообщение от ${msg.username}`;
+                                        }
+                                    }
                                     appendMessage(msg);
                                 }
                                 lastMsgId = msg.id;
                             }
                         });
+                        renderChats(searchInput.value.trim());
                     }
                 } catch (err) {
                     // Игнорируем ошибки
@@ -932,11 +1256,9 @@
             }, 2000);
         }
 
-        // ===== НОВЫЙ ПОЛЛИНГ ДЛЯ ЛИЧНЫХ СООБЩЕНИЙ =====
-
         function startPrivatePolling(target) {
             if (pollingInterval) clearInterval(pollingInterval);
-            
+
             pollingInterval = setInterval(async () => {
                 try {
                     const { data, error } = await sbClient
@@ -945,19 +1267,30 @@
                         .or(`and(sender.eq.${username},receiver.eq.${target}),and(sender.eq.${target},receiver.eq.${username})`)
                         .gt('id', lastPrivateMsgId)
                         .order('created_at', { ascending: true });
-                    
+
                     if (error) throw error;
-                    
+
                     if (data && data.length > 0) {
                         console.log(`📩 Private Polling: ${data.length} новых сообщений`);
                         data.forEach(msg => {
                             if (msg.id > lastPrivateMsgId) {
-                                if (msg.sender !== username) {
+                                const isOwn = msg.sender === username;
+                                if (!isOwn) {
+                                    const isCurrentChat = currentChat === target && currentChatType === 'private';
+                                    if (!isCurrentChat || !isPageFocused) {
+                                        playNotificationSound();
+                                        const key = target + '_private';
+                                        unreadCounts[key] = (unreadCounts[key] || 0) + 1;
+                                        if (!isPageFocused) {
+                                            document.title = `💬 Новое сообщение от ${msg.sender}`;
+                                        }
+                                    }
                                     appendPrivateMessage(msg);
                                 }
                                 lastPrivateMsgId = msg.id;
                             }
                         });
+                        renderChats(searchInput.value.trim());
                     }
                 } catch (err) {
                     // Игнорируем ошибки
@@ -965,7 +1298,9 @@
             }, 2000);
         }
 
-        // ===== ЗАГРУЗКА ПОСЛЕДНЕГО ID ДЛЯ ОБЩЕГО ЧАТА =====
+        // ============================================================
+        //  ЗАГРУЗКА СООБЩЕНИЙ
+        // ============================================================
 
         async function loadLastMessageId(room) {
             try {
@@ -975,45 +1310,16 @@
                     .eq('room', room)
                     .order('created_at', { ascending: false })
                     .limit(1);
-                
+
                 if (data && data.length > 0) {
                     lastMsgId = data[0].id;
                 } else {
                     lastMsgId = 0;
                 }
-                console.log(`📌 Last message ID для ${room}: ${lastMsgId}`);
-            } catch(e) {
-                console.error('Ошибка загрузки lastMsgId:', e);
+            } catch (e) {
                 lastMsgId = 0;
             }
         }
-
-        // ===== ЗАГРУЗКА ПОСЛЕДНЕГО ID ДЛЯ ЛИЧНЫХ СООБЩЕНИЙ =====
-
-        async function loadLastPrivateMessageId(target) {
-            try {
-                const { data } = await sbClient
-                    .from('private_messages')
-                    .select('id')
-                    .or(`and(sender.eq.${username},receiver.eq.${target}),and(sender.eq.${target},receiver.eq.${username})`)
-                    .order('created_at', { ascending: false })
-                    .limit(1);
-                
-                if (data && data.length > 0) {
-                    lastPrivateMsgId = data[0].id;
-                } else {
-                    lastPrivateMsgId = 0;
-                }
-                console.log(`📌 Last private message ID для ${target}: ${lastPrivateMsgId}`);
-            } catch(e) {
-                console.error('Ошибка загрузки lastPrivateMsgId:', e);
-                lastPrivateMsgId = 0;
-            }
-        }
-
-        // ============================================================
-        //  ЗАГРУЗКА ОБЩИХ СООБЩЕНИЙ
-        // ============================================================
 
         async function loadMessages(room) {
             messagesEl.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.05);padding:20px;font-size:13px;">Загрузка...</div>';
@@ -1028,7 +1334,6 @@
 
                 if (error) throw error;
 
-                // Обновляем lastMsgId
                 if (data && data.length > 0) {
                     lastMsgId = data[data.length - 1].id;
                 }
@@ -1051,10 +1356,6 @@
             }
         }
 
-        // ============================================================
-        //  ЗАГРУЗКА ЛИЧНЫХ СООБЩЕНИЙ
-        // ============================================================
-
         async function loadPrivateMessages(target) {
             messagesEl.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.05);padding:20px;font-size:13px;">Загрузка...</div>';
 
@@ -1068,7 +1369,6 @@
 
                 if (error) throw error;
 
-                // Обновляем lastPrivateMsgId
                 if (data && data.length > 0) {
                     lastPrivateMsgId = data[data.length - 1].id;
                 }
@@ -1096,7 +1396,6 @@
         // ============================================================
 
         function appendMessage(msg) {
-            // Проверяем, нет ли уже такого сообщения
             const exists = document.querySelector(`[data-msg-id="${msg.id}"]`);
             if (exists) return;
 
@@ -1134,7 +1433,6 @@
         }
 
         function appendPrivateMessage(msg) {
-            // Проверяем, нет ли уже такого сообщения
             const exists = document.querySelector(`[data-msg-id="${msg.id}"]`);
             if (exists) return;
 
@@ -1183,7 +1481,6 @@
 
                     if (error) throw error;
 
-                    // Добавляем с ID из БД
                     if (data && data.length > 0) {
                         appendMessage(data[0]);
                         lastMsgId = data[0].id;
@@ -1271,13 +1568,13 @@
         }
 
         // ============================================================
-        //  REALTIME ПОДПИСКИ (улучшенные)
+        //  REALTIME ПОДПИСКИ
         // ============================================================
 
         function subscribeToGeneral() {
-            if (channel) { 
-                try { channel.unsubscribe(); } catch(e) {}
-                channel = null; 
+            if (channel) {
+                try { channel.unsubscribe(); } catch (e) {}
+                channel = null;
             }
 
             channel = sbClient
@@ -1290,28 +1587,36 @@
                 }, (payload) => {
                     const msg = payload.new;
                     console.log('⚡ Realtime общее сообщение:', msg);
-                    // Проверяем, что не от себя и нет дубликата
                     if (msg.username !== username && msg.id > lastMsgId) {
+                        // Звук, если не в этом чате
+                        const isCurrentChat = currentChat === 'general' && currentChatType === 'general';
+                        if (!isCurrentChat || !isPageFocused) {
+                            playNotificationSound();
+                            const key = 'general_general';
+                            unreadCounts[key] = (unreadCounts[key] || 0) + 1;
+                            if (!isPageFocused) {
+                                document.title = `💬 Новое сообщение от ${msg.username}`;
+                            }
+                        }
                         appendMessage(msg);
                         lastMsgId = msg.id;
+                        renderChats(searchInput.value.trim());
                     }
                 })
                 .subscribe((status) => {
                     console.log(`📡 Realtime общий статус:`, status);
                     if (status === 'SUBSCRIBED') {
-                        isSubscribed = true;
                         console.log(`✅ Подписка на ${currentChat} активна`);
                     } else if (status === 'CHANNEL_ERROR' || status === 'closed') {
-                        console.log(`⚠️ Канал закрыт, переподключаемся...`);
                         setTimeout(() => subscribeToGeneral(), 3000);
                     }
                 });
         }
 
         function subscribeToPrivate(target) {
-            if (privateChannel) { 
-                try { privateChannel.unsubscribe(); } catch(e) {}
-                privateChannel = null; 
+            if (privateChannel) {
+                try { privateChannel.unsubscribe(); } catch (e) {}
+                privateChannel = null;
             }
 
             privateChannel = sbClient
@@ -1325,20 +1630,299 @@
                     const msg = payload.new;
                     console.log('⚡ Realtime личное сообщение:', msg);
                     if (msg.sender !== username && msg.id > lastPrivateMsgId) {
+                        const isCurrentChat = currentChat === target && currentChatType === 'private';
+                        if (!isCurrentChat || !isPageFocused) {
+                            playNotificationSound();
+                            const key = target + '_private';
+                            unreadCounts[key] = (unreadCounts[key] || 0) + 1;
+                            if (!isPageFocused) {
+                                document.title = `💬 Новое сообщение от ${msg.sender}`;
+                            }
+                        }
                         appendPrivateMessage(msg);
                         lastPrivateMsgId = msg.id;
                         setTimeout(loadChats, 500);
+                        renderChats(searchInput.value.trim());
                     }
                 })
                 .subscribe((status) => {
                     console.log(`📡 Realtime личный статус (${target}):`, status);
                     if (status === 'SUBSCRIBED') {
-                        isSubscribed = true;
                         console.log(`✅ Подписка на личку с ${target} активна`);
                     } else if (status === 'CHANNEL_ERROR' || status === 'closed') {
-                        console.log(`⚠️ Канал закрыт, переподключаемся...`);
                         setTimeout(() => subscribeToPrivate(target), 3000);
                     }
+                });
+        }
+
+        // ============================================================
+        //  АУДИО/ВИДЕО ЗВОНКИ (WebRTC)
+        // ============================================================
+
+        let peerConnection = null;
+        let localStream = null;
+        let callType = 'audio'; // 'audio' или 'video'
+        let isCallActive = false;
+        let isMuted = false;
+        let isVideoOff = false;
+
+        const configuration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+            ]
+        };
+
+        async function startCall(type) {
+            if (isCallActive) return;
+            if (!currentChat || currentChatType !== 'private') {
+                uploadStatus.textContent = '❌ Звонки доступны только в личных чатах';
+                uploadStatus.style.color = '#ff4d6d';
+                setTimeout(() => { uploadStatus.textContent = ''; }, 3000);
+                return;
+            }
+
+            callType = type;
+            isCallActive = true;
+
+            try {
+                const constraints = {
+                    audio: true,
+                    video: type === 'video'
+                };
+
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                document.getElementById('localVideo').srcObject = localStream;
+
+                peerConnection = new RTCPeerConnection(configuration);
+
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+
+                peerConnection.ontrack = (event) => {
+                    document.getElementById('remoteVideo').srcObject = event.streams[0];
+                    document.getElementById('noRemoteVideo').style.display = 'none';
+                };
+
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        // Отправляем кандидат через Supabase
+                        sendSignalingData({
+                            type: 'candidate',
+                            candidate: event.candidate,
+                            target: currentChat,
+                            sender: username
+                        });
+                    }
+                };
+
+                peerConnection.onconnectionstatechange = () => {
+                    const status = document.getElementById('callStatus');
+                    switch (peerConnection.connectionState) {
+                        case 'connecting':
+                            status.textContent = 'Подключение...';
+                            break;
+                        case 'connected':
+                            status.textContent = 'Соединено';
+                            break;
+                        case 'disconnected':
+                            status.textContent = 'Разъединено';
+                            break;
+                        case 'failed':
+                            status.textContent = 'Ошибка соединения';
+                            break;
+                        case 'closed':
+                            status.textContent = 'Закрыто';
+                            break;
+                    }
+                };
+
+                // Создаем оффер
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+
+                // Отправляем оффер собеседнику
+                await sendSignalingData({
+                    type: 'offer',
+                    offer: offer,
+                    target: currentChat,
+                    sender: username,
+                    callType: type
+                });
+
+                document.getElementById('callOverlay').classList.add('active');
+                document.getElementById('callPartnerName').textContent = currentChat;
+                document.getElementById('callStatus').textContent = 'Ожидание ответа...';
+
+                // Обновляем кнопки в чате
+                updateCallButtons(true);
+
+            } catch (err) {
+                console.error('Ошибка звонка:', err);
+                uploadStatus.textContent = '❌ ' + err.message;
+                uploadStatus.style.color = '#ff4d6d';
+                setTimeout(() => { uploadStatus.textContent = ''; }, 3000);
+                endCall();
+            }
+        }
+
+        async function handleIncomingCall(data) {
+            if (isCallActive) {
+                // Отвечаем занято
+                await sendSignalingData({
+                    type: 'busy',
+                    target: data.sender,
+                    sender: username
+                });
+                return;
+            }
+
+            callType = data.callType || 'audio';
+            isCallActive = true;
+
+            try {
+                const constraints = {
+                    audio: true,
+                    video: callType === 'video'
+                };
+
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                document.getElementById('localVideo').srcObject = localStream;
+
+                peerConnection = new RTCPeerConnection(configuration);
+
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+
+                peerConnection.ontrack = (event) => {
+                    document.getElementById('remoteVideo').srcObject = event.streams[0];
+                    document.getElementById('noRemoteVideo').style.display = 'none';
+                };
+
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        sendSignalingData({
+                            type: 'candidate',
+                            candidate: event.candidate,
+                            target: data.sender,
+                            sender: username
+                        });
+                    }
+                };
+
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+
+                await sendSignalingData({
+                    type: 'answer',
+                    answer: answer,
+                    target: data.sender,
+                    sender: username
+                });
+
+                document.getElementById('callOverlay').classList.add('active');
+                document.getElementById('callPartnerName').textContent = data.sender;
+                document.getElementById('callStatus').textContent = 'Соединение...';
+
+            } catch (err) {
+                console.error('Ошибка ответа на звонок:', err);
+                endCall();
+            }
+        }
+
+        function endCall() {
+            isCallActive = false;
+
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+
+            document.getElementById('localVideo').srcObject = null;
+            document.getElementById('remoteVideo').srcObject = null;
+            document.getElementById('noRemoteVideo').style.display = 'flex';
+            document.getElementById('callOverlay').classList.remove('active');
+
+            updateCallButtons(false);
+        }
+
+        function updateCallButtons(active) {
+            if (active) {
+                callBtn.classList.add('call-active');
+                videoCallBtn.classList.add('call-active');
+            } else {
+                callBtn.classList.remove('call-active');
+                videoCallBtn.classList.remove('call-active');
+            }
+        }
+
+        // ===== ОТПРАВКА СИГНАЛЬНЫХ ДАННЫХ ЧЕРЕЗ SUPABASE =====
+        async function sendSignalingData(data) {
+            try {
+                await sbClient
+                    .from('signaling')
+                    .insert([{
+                        sender: data.sender,
+                        receiver: data.target,
+                        type: data.type,
+                        data: JSON.stringify(data)
+                    }]);
+            } catch (err) {
+                console.error('Ошибка отправки сигнальных данных:', err);
+            }
+        }
+
+        // ===== ПОДПИСКА НА СИГНАЛЬНЫЕ СООБЩЕНИЯ =====
+        let signalingChannel = null;
+
+        function subscribeToSignaling() {
+            if (signalingChannel) {
+                signalingChannel.unsubscribe();
+                signalingChannel = null;
+            }
+
+            signalingChannel = sbClient
+                .channel(`signaling-${username}`)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'signaling',
+                    filter: `receiver=eq.${username}`
+                }, async (payload) => {
+                    const data = JSON.parse(payload.new.data);
+                    console.log('📡 Сигнальное сообщение:', data);
+
+                    if (!isCallActive && data.type === 'offer') {
+                        handleIncomingCall(data);
+                    } else if (isCallActive && peerConnection) {
+                        if (data.type === 'answer') {
+                            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                            document.getElementById('callStatus').textContent = 'Соединено';
+                        } else if (data.type === 'candidate') {
+                            try {
+                                await peerConnection.addIceCandidate(data.candidate);
+                            } catch (e) {}
+                        } else if (data.type === 'busy') {
+                            document.getElementById('callStatus').textContent = 'Собеседник занят';
+                            setTimeout(endCall, 2000);
+                        } else if (data.type === 'end') {
+                            document.getElementById('callStatus').textContent = 'Собеседник завершил звонок';
+                            setTimeout(endCall, 1000);
+                        }
+                    }
+                })
+                .subscribe((status) => {
+                    console.log('📡 Signaling статус:', status);
                 });
         }
 
@@ -1357,6 +1941,7 @@
             const d = new Date(date);
             const now = new Date();
             const diff = (now - d) / 1000 / 60;
+            if (diff < 1) return 'только что';
             if (diff < 60) return Math.floor(diff) + 'м';
             if (diff < 1440) return Math.floor(diff / 60) + 'ч';
             return d.toLocaleDateString('ru', { day: '2-digit', month: '2-digit' });
@@ -1403,16 +1988,39 @@
         });
 
         mobileBack.addEventListener('click', () => {
-            document.getElementById('chatArea').classList.remove('open');
-            document.getElementById('sidebar').style.display = 'flex';
+            sidebar.classList.remove('hidden');
         });
 
-        window.addEventListener('resize', () => {
-            isMobile = window.innerWidth <= 600;
-            if (!isMobile) {
-                document.getElementById('chatArea').classList.remove('open');
-                document.getElementById('sidebar').style.display = 'flex';
+        // Кнопки звонков
+        callBtn.addEventListener('click', () => startCall('audio'));
+        videoCallBtn.addEventListener('click', () => startCall('video'));
+
+        // Кнопки управления звонком
+        document.getElementById('endCallBtn').addEventListener('click', () => {
+            if (isCallActive && peerConnection) {
+                sendSignalingData({
+                    type: 'end',
+                    target: currentChat,
+                    sender: username
+                });
             }
+            endCall();
+        });
+
+        document.getElementById('toggleMicBtn').addEventListener('click', () => {
+            if (!localStream) return;
+            isMuted = !isMuted;
+            localStream.getAudioTracks().forEach(track => track.enabled = !isMuted);
+            document.getElementById('toggleMicBtn').classList.toggle('muted');
+            document.getElementById('toggleMicBtn').textContent = isMuted ? '🔇' : '🎤';
+        });
+
+        document.getElementById('toggleVideoBtn').addEventListener('click', () => {
+            if (!localStream) return;
+            isVideoOff = !isVideoOff;
+            localStream.getVideoTracks().forEach(track => track.enabled = !isVideoOff);
+            document.getElementById('toggleVideoBtn').classList.toggle('video-off');
+            document.getElementById('toggleVideoBtn').textContent = isVideoOff ? '🚫' : '📹';
         });
 
         // ============================================================
@@ -1424,13 +2032,16 @@
         if (!hasSession) {
             loginScreen.style.display = 'flex';
             mainUI.style.display = 'none';
+        } else {
+            // Подписываемся на сигнальные сообщения
+            subscribeToSignaling();
         }
 
-        console.log('💬 Братанский мессенджер PRO (Telegram-стиль)!');
+        console.log('💬 Братанский мессенджер PRO');
         console.log('🔐 Есть регистрация и вход');
-        console.log('👥 Список чатов слева, как в телеграме');
-        console.log('💾 Сессия сохраняется');
-        console.log('🔄 Polling включен — сообщения будут приходить даже если Realtime не работает!');
+        console.log('🔔 Звук уведомлений при новых сообщениях');
+        console.log('📞 Аудио и видео звонки через WebRTC');
+        console.log('📱 Адаптив под телефон и компьютер');
     </script>
 </body>
 </html>
