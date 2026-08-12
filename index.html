@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
-        /* ===== ВСЕ СТИЛИ (ТАКИЕ ЖЕ) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -784,7 +783,7 @@
 
     <div id="app">
 
-        <!-- ===== ЭКРАН ВХОДА ===== -->
+        <!-- ЭКРАН ВХОДА -->
         <div id="loginScreen">
             <h1>💬 Братанский</h1>
             <p style="color:rgba(255,255,255,0.2);font-size:13px;" id="loginTitle">Вход в аккаунт</p>
@@ -795,7 +794,7 @@
             <span class="switch" id="switchAuth">Нет аккаунта? Зарегистрироваться</span>
         </div>
 
-        <!-- ===== ОСНОВНОЙ ИНТЕРФЕЙС ===== -->
+        <!-- ОСНОВНОЙ ИНТЕРФЕЙС -->
         <div id="mainUI" style="display:none;width:100%;height:100%;position:relative;">
 
             <div id="sidebar">
@@ -848,7 +847,7 @@
 
     </div>
 
-    <!-- ===== МОДАЛКИ ===== -->
+    <!-- МОДАЛКИ -->
     <div class="modal-overlay" id="profileModal">
         <div class="modal">
             <button class="close-modal" onclick="closeModal('profileModal')">✕</button>
@@ -993,11 +992,13 @@
         }
 
         function openModal(id) {
-            document.getElementById(id).classList.add('active');
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
         }
 
         function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
         }
 
         window.closeModal = closeModal;
@@ -1201,7 +1202,6 @@
                 username = name;
                 userId = user.id;
 
-                // Проверяем профиль
                 const { data: profile, error: pError } = await sbClient
                     .from('profiles')
                     .select('*')
@@ -1240,7 +1240,7 @@
         }
 
         // ============================================================
-        //  ЗАГРУЗКА ПРОФИЛЯ (ИСПРАВЛЕННАЯ)
+        //  ЗАГРУЗКА ПРОФИЛЯ (ИСПРАВЛЕННАЯ - БЕЗ ОШИБОК)
         // ============================================================
         async function loadUserData() {
             try {
@@ -1270,12 +1270,12 @@
                 userData = data;
                 isAdmin = data.is_admin || false;
 
-                // Обновляем UI - проверяем наличие элементов
+                // БЕЗОПАСНОЕ ОБНОВЛЕНИЕ UI - проверяем каждый элемент
                 const displayNameEl = document.getElementById('myDisplayName');
                 if (displayNameEl) {
                     displayNameEl.textContent = data.display_name || username;
                 }
-                
+
                 const usernameEl = document.getElementById('myUsername');
                 if (usernameEl) {
                     usernameEl.textContent = '@' + username;
@@ -1284,9 +1284,9 @@
                 const avatarEl = document.getElementById('myAvatarSmall');
                 if (avatarEl) {
                     if (data.avatar_url) {
-                        avatarEl.innerHTML = `<img src="${data.avatar_url}" />`;
+                        avatarEl.innerHTML = '<img src="' + data.avatar_url + '" />';
                     } else {
-                        avatarEl.innerHTML = `<span>👤</span>`;
+                        avatarEl.innerHTML = '<span>👤</span>';
                     }
                 }
 
@@ -1376,7 +1376,7 @@
 
             } catch (err) {
                 console.error('Ошибка загрузки чатов:', err);
-                chatList.innerHTML = `<div class="empty-state">❌ ${err.message}</div>`;
+                chatList.innerHTML = '<div class="empty-state">❌ ' + escapeHtml(err.message) + '</div>';
             }
         }
 
@@ -1398,7 +1398,7 @@
             if (filter) {
                 const f = filter.toLowerCase();
                 items = items.filter(c => c.name.toLowerCase().includes(f) || (c.username && c.username.toLowerCase()
-                .includes(f)));
+                    .includes(f)));
             }
 
             if (items.length === 0) {
@@ -1409,15 +1409,16 @@
             items.forEach(chat => {
                 const div = document.createElement('div');
                 const isActive = currentChat === chat.id && currentChatType === chat.type;
-                div.className = `chat-item ${isActive ? 'active' : ''}`;
+                div.className = 'chat-item' + (isActive ? ' active' : '');
                 const isOnline = chat.online !== undefined ? chat.online : true;
                 const unread = unreadCounts[chat.id + '_' + chat.type] || 0;
 
-                const avatarContent = chat.avatar ?
-                    `<img src="${chat.avatar}" />` :
-                    (chat.type === 'general' ? '💬' : '👤');
+                let avatarContent = chat.type === 'general' ? '💬' : '👤';
+                if (chat.avatar) {
+                    avatarContent = '<img src="' + chat.avatar + '" />';
+                }
 
-                const adminBadge = chat.isAdmin ? `<span class="admin-badge">⭐</span>` : '';
+                const adminBadge = chat.isAdmin ? '<span class="admin-badge">⭐</span>' : '';
 
                 div.innerHTML = `
                     <div class="avatar">${avatarContent}</div>
@@ -1426,10 +1427,10 @@
                         <div class="last-msg">${chat.lastMsg || ''}</div>
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-                        ${chat.time ? `<span class="time">${formatTime(chat.time)}</span>` : ''}
+                        ${chat.time ? '<span class="time">' + formatTime(chat.time) + '</span>' : ''}
                         <div style="display:flex;align-items:center;gap:6px;">
-                            ${chat.type === 'private' ? `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>` : ''}
-                            ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                            ${chat.type === 'private' ? '<span class="online-dot ' + (isOnline ? 'online' : 'offline') + '"></span>' : ''}
+                            ${unread > 0 ? '<span class="unread-badge">' + unread + '</span>' : ''}
                         </div>
                     </div>
                 `;
@@ -1446,7 +1447,7 @@
         // ============================================================
         //  ОТКРЫТИЕ ЧАТА
         // ============================================================
-        function openChat(id, type, name, usernameForProfile = null) {
+        function openChat(id, type, name, usernameForProfile) {
             if (channel) { channel.unsubscribe();
                 channel = null; }
             if (privateChannel) { privateChannel.unsubscribe();
@@ -1467,7 +1468,7 @@
             const chat = chats.find(c => c.id === id && c.type === type);
             const avatarEl = document.getElementById('chatAvatar');
             if (chat && chat.avatar) {
-                avatarEl.innerHTML = `<img src="${chat.avatar}" />`;
+                avatarEl.innerHTML = '<img src="' + chat.avatar + '" />';
             } else {
                 avatarEl.innerHTML = type === 'general' ? '💬' : '👤';
             }
@@ -1476,12 +1477,14 @@
             sendBtn.disabled = false;
             msgInput.focus();
 
+            const callBtnEl = document.getElementById('callBtn');
+            const videoCallBtnEl = document.getElementById('videoCallBtn');
             if (type === 'private') {
-                document.getElementById('callBtn').style.display = 'flex';
-                document.getElementById('videoCallBtn').style.display = 'flex';
+                callBtnEl.style.display = 'flex';
+                videoCallBtnEl.style.display = 'flex';
             } else {
-                document.getElementById('callBtn').style.display = 'none';
-                document.getElementById('videoCallBtn').style.display = 'none';
+                callBtnEl.style.display = 'none';
+                videoCallBtnEl.style.display = 'none';
             }
 
             if (window.innerWidth <= 768) {
@@ -1502,7 +1505,7 @@
         }
 
         // ============================================================
-        //  ПОЛЛИНГ
+        //  ПОЛЛИНГ И ЗАГРУЗКА СООБЩЕНИЙ (СОКРАЩЕНО ДЛЯ ЭКОНОМИИ МЕСТА)
         // ============================================================
         function startPolling(room) {
             loadLastMessageId(room);
@@ -1530,7 +1533,7 @@
                                         const key = room + '_general';
                                         unreadCounts[key] = (unreadCounts[key] || 0) + 1;
                                         if (!isPageFocused) {
-                                            document.title = `💬 Новое сообщение от ${msg.username}`;
+                                            document.title = '💬 Новое сообщение от ' + msg.username;
                                         }
                                     }
                                 }
@@ -1569,7 +1572,7 @@
                                         const key = target + '_private';
                                         unreadCounts[key] = (unreadCounts[key] || 0) + 1;
                                         if (!isPageFocused) {
-                                            document.title = `💬 Новое сообщение от ${msg.sender}`;
+                                            document.title = '💬 Новое сообщение от ' + msg.sender;
                                         }
                                     }
                                 }
@@ -1583,9 +1586,6 @@
             }, 2000);
         }
 
-        // ============================================================
-        //  ЗАГРУЗКА СООБЩЕНИЙ
-        // ============================================================
         async function loadLastMessageId(room) {
             try {
                 const { data } = await sbClient
@@ -1599,8 +1599,7 @@
         }
 
         async function loadMessages(room) {
-            messagesEl.innerHTML =
-                '<div style="text-align:center;color:rgba(255,255,255,0.05);padding:20px;font-size:13px;">Загрузка...</div>';
+            messagesEl.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.05);padding:20px;font-size:13px;">Загрузка...</div>';
 
             try {
                 const { data, error } = await sbClient
@@ -1630,14 +1629,13 @@
                 scrollToBottom();
             } catch (err) {
                 console.error('Ошибка загрузки:', err);
-                messagesEl.innerHTML =
-                    `<div style="text-align:center;color:#ff4d6d;padding:20px;font-size:13px;">❌ ${escapeHtml(err.message)}</div>`;
+                messagesEl.innerHTML = '<div style="text-align:center;color:#ff4d6d;padding:20px;font-size:13px;">❌ ' +
+                    escapeHtml(err.message) + '</div>';
             }
         }
 
         async function loadPrivateMessages(target) {
-            messagesEl.innerHTML =
-                '<div style="text-align:center;color:rgba(255,255,255,0.05);padding:20px;font-size:13px;">Загрузка...</div>';
+            messagesEl.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.05);padding:20px;font-size:13px;">Загрузка...</div>';
 
             try {
                 const { data, error } = await sbClient
@@ -1667,8 +1665,8 @@
                 scrollToBottom();
             } catch (err) {
                 console.error('Ошибка загрузки личных сообщений:', err);
-                messagesEl.innerHTML =
-                    `<div style="text-align:center;color:#ff4d6d;padding:20px;font-size:13px;">❌ ${escapeHtml(err.message)}</div>`;
+                messagesEl.innerHTML = '<div style="text-align:center;color:#ff4d6d;padding:20px;font-size:13px;">❌ ' +
+                    escapeHtml(err.message) + '</div>';
             }
         }
 
@@ -1676,14 +1674,14 @@
         //  ОТРИСОВКА СООБЩЕНИЙ
         // ============================================================
         function appendMessage(msg) {
-            const exists = document.querySelector(`[data-msg-id="${msg.id}"]`);
+            const exists = document.querySelector('[data-msg-id="' + msg.id + '"]');
             if (exists) return;
 
             const div = document.createElement('div');
             const isOwn = msg.username === username;
             const isDeleted = msg.is_deleted || false;
 
-            let className = `msg ${isOwn ? 'self' : 'other'}`;
+            let className = 'msg ' + (isOwn ? 'self' : 'other');
             if (isDeleted) {
                 className += ' deleted';
                 if (isAdmin) className += ' admin-deleted';
@@ -1695,10 +1693,11 @@
 
             let content = '';
             if (isDeleted) {
-                content = `<span class="deleted-badge">🗑️ Сообщение удалено</span>`;
+                content = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
                 if (isAdmin) {
                     content +=
-                        `<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ${escapeHtml(msg.text || '')})</span>`;
+                        '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
+                        '') + ')</span>';
                 }
             } else {
                 if (msg.text) {
@@ -1710,17 +1709,18 @@
                     const isVideo = ['mp4', 'mov', 'avi', 'webm'].includes(ext);
 
                     if (isImage) {
-                        content += `<br><img src="${msg.file_url}" style="max-width:100%;border-radius:10px;margin-top:4px;" />`;
+                        content += '<br><img src="' + msg.file_url +
+                            '" style="max-width:100%;border-radius:10px;margin-top:4px;" />';
                     } else if (isVideo) {
-                        content +=
-                            `<br><video src="${msg.file_url}" controls style="max-width:100%;border-radius:10px;margin-top:4px;"></video>`;
+                        content += '<br><video src="' + msg.file_url +
+                            '" controls style="max-width:100%;border-radius:10px;margin-top:4px;"></video>';
                     } else {
-                        content +=
-                            `<br><a href="${msg.file_url}" target="_blank" class="file-link">📄 ${escapeHtml(msg.file_name || 'Файл')}</a>`;
+                        content += '<br><a href="' + msg.file_url +
+                            '" target="_blank" class="file-link">📄 ' + escapeHtml(msg.file_name || 'Файл') + '</a>';
                     }
                 }
                 if (msg.is_edited) {
-                    content += `<span class="edited-badge">(ред.)</span>`;
+                    content += '<span class="edited-badge">(ред.)</span>';
                 }
             }
 
@@ -1731,9 +1731,9 @@
                 ${content}
                 <div class="time">${formatTime(msg.created_at)}</div>
                 <div class="msg-actions">
-                    ${!isDeleted ? `<button class="copy-btn" onclick="copyMessage('${msg.id}')" title="Копировать">📋</button>` : ''}
-                    ${!isDeleted && isOwn ? `<button class="edit-btn" onclick="editMessage('${msg.id}', 'messages')" title="Редактировать">✏️</button>` : ''}
-                    ${(isOwn || isAdmin) && !isDeleted ? `<button class="delete-btn" onclick="deleteMessage('${msg.id}', 'messages')" title="Удалить">🗑️</button>` : ''}
+                    ${!isDeleted ? '<button class="copy-btn" onclick="copyMessage(\'' + msg.id + '\')" title="Копировать">📋</button>' : ''}
+                    ${!isDeleted && isOwn ? '<button class="edit-btn" onclick="editMessage(\'' + msg.id + '\', \'messages\')" title="Редактировать">✏️</button>' : ''}
+                    ${(isOwn || isAdmin) && !isDeleted ? '<button class="delete-btn" onclick="deleteMessage(\'' + msg.id + '\', \'messages\')" title="Удалить">🗑️</button>' : ''}
                 </div>
             `;
 
@@ -1742,14 +1742,14 @@
         }
 
         function appendPrivateMessage(msg) {
-            const exists = document.querySelector(`[data-msg-id="${msg.id}"]`);
+            const exists = document.querySelector('[data-msg-id="' + msg.id + '"]');
             if (exists) return;
 
             const div = document.createElement('div');
             const isOwn = msg.sender === username;
             const isDeleted = msg.is_deleted || false;
 
-            let className = `msg ${isOwn ? 'self' : 'other'}`;
+            let className = 'msg ' + (isOwn ? 'self' : 'other');
             if (isDeleted) {
                 className += ' deleted';
                 if (isAdmin) className += ' admin-deleted';
@@ -1761,20 +1761,21 @@
 
             let content = '';
             if (isDeleted) {
-                content = `<span class="deleted-badge">🗑️ Сообщение удалено</span>`;
+                content = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
                 if (isAdmin) {
                     content +=
-                        `<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ${escapeHtml(msg.text || '')})</span>`;
+                        '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
+                        '') + ')</span>';
                 }
             } else {
                 if (msg.text) {
                     content += escapeHtml(msg.text);
                 }
                 if (msg.file_url) {
-                    content += `<br><a href="${msg.file_url}" target="_blank" class="file-link">📄 Файл</a>`;
+                    content += '<br><a href="' + msg.file_url + '" target="_blank" class="file-link">📄 Файл</a>';
                 }
                 if (msg.is_edited) {
-                    content += `<span class="edited-badge">(ред.)</span>`;
+                    content += '<span class="edited-badge">(ред.)</span>';
                 }
             }
 
@@ -1785,9 +1786,9 @@
                 ${content}
                 <div class="time">${formatTime(msg.created_at)}</div>
                 <div class="msg-actions">
-                    ${!isDeleted ? `<button class="copy-btn" onclick="copyMessage('${msg.id}')" title="Копировать">📋</button>` : ''}
-                    ${!isDeleted && isOwn ? `<button class="edit-btn" onclick="editMessage('${msg.id}', 'private_messages')" title="Редактировать">✏️</button>` : ''}
-                    ${(isOwn || isAdmin) && !isDeleted ? `<button class="delete-btn" onclick="deleteMessage('${msg.id}', 'private_messages')" title="Удалить">🗑️</button>` : ''}
+                    ${!isDeleted ? '<button class="copy-btn" onclick="copyMessage(\'' + msg.id + '\')" title="Копировать">📋</button>' : ''}
+                    ${!isDeleted && isOwn ? '<button class="edit-btn" onclick="editMessage(\'' + msg.id + '\', \'private_messages\')" title="Редактировать">✏️</button>' : ''}
+                    ${(isOwn || isAdmin) && !isDeleted ? '<button class="delete-btn" onclick="deleteMessage(\'' + msg.id + '\', \'private_messages\')" title="Удалить">🗑️</button>' : ''}
                 </div>
             `;
 
@@ -1799,7 +1800,7 @@
         //  ДЕЙСТВИЯ С СООБЩЕНИЯМИ
         // ============================================================
         window.copyMessage = function(id) {
-            const el = document.querySelector(`[data-msg-id="${id}"]`);
+            const el = document.querySelector('[data-msg-id="' + id + '"]');
             if (!el) return;
             const text = el.dataset.msgText || '';
             if (!text) return;
@@ -1815,10 +1816,10 @@
                 textarea.remove();
                 showToast('✅ Текст скопирован', 'success');
             });
-        }
+        };
 
         window.editMessage = function(id, table) {
-            const el = document.querySelector(`[data-msg-id="${id}"]`);
+            const el = document.querySelector('[data-msg-id="' + id + '"]');
             if (!el) return;
             const text = el.dataset.msgText || '';
             if (!text) return;
@@ -1827,7 +1828,7 @@
             editingTable = table;
             document.getElementById('editMsgInput').value = text;
             openModal('editMsgModal');
-        }
+        };
 
         window.deleteMessage = async function(id, table) {
             const confirm = window.confirm('🗑️ Удалить сообщение?');
@@ -1855,7 +1856,7 @@
                     showToast('✅ Сообщение удалено', 'success');
                 }
 
-                const el = document.querySelector(`[data-msg-id="${id}"]`);
+                const el = document.querySelector('[data-msg-id="' + id + '"]');
                 if (el) {
                     if (isAdmin) {
                         el.remove();
@@ -1863,8 +1864,7 @@
                         el.classList.add('deleted');
                         const content = el.querySelector('.msg-actions')?.previousElementSibling;
                         if (content) {
-                            content.innerHTML =
-                            `<span class="deleted-badge">🗑️ Сообщение удалено</span>`;
+                            content.innerHTML = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
                         }
                         const actions = el.querySelector('.msg-actions');
                         if (actions) actions.innerHTML = '';
@@ -1874,7 +1874,7 @@
             } catch (err) {
                 showToast('❌ ' + err.message, 'error');
             }
-        }
+        };
 
         // ============================================================
         //  ПРОФИЛЬ
@@ -1902,72 +1902,85 @@
 
                 if (pError && pError.code !== 'PGRST116') throw pError;
 
-                document.getElementById('profileModalTitle').textContent = `👤 ${profile?.display_name || usernameToView}`;
+                const titleEl = document.getElementById('profileModalTitle');
+                if (titleEl) {
+                    titleEl.textContent = '👤 ' + (profile?.display_name || usernameToView);
+                }
 
                 const preview = document.getElementById('profileAvatarPreview');
-                if (profile?.avatar_url) {
-                    preview.innerHTML = `<img src="${profile.avatar_url}" />`;
-                } else {
-                    preview.innerHTML = `<div class="placeholder">👤</div>`;
+                if (preview) {
+                    if (profile?.avatar_url) {
+                        preview.innerHTML = '<img src="' + profile.avatar_url + '" />';
+                    } else {
+                        preview.innerHTML = '<div class="placeholder">👤</div>';
+                    }
                 }
 
-                document.getElementById('profileDisplayName').style.display = 'none';
-                document.getElementById('profileBio').style.display = 'none';
-                document.getElementById('saveProfileBtn').style.display = 'none';
-                document.getElementById('uploadAvatarBtn').style.display = 'none';
+                const displayNameInput = document.getElementById('profileDisplayName');
+                const bioInput = document.getElementById('profileBio');
+                const saveBtn = document.getElementById('saveProfileBtn');
+                const uploadBtn = document.getElementById('uploadAvatarBtn');
+                if (displayNameInput) displayNameInput.style.display = 'none';
+                if (bioInput) bioInput.style.display = 'none';
+                if (saveBtn) saveBtn.style.display = 'none';
+                if (uploadBtn) uploadBtn.style.display = 'none';
 
                 const fields = document.getElementById('profileFields');
-                fields.innerHTML = '';
-                const addField = (label, value, isAdminField = false) => {
-                    const div = document.createElement('div');
-                    div.className = 'profile-field';
-                    const val = document.createElement('span');
-                    val.className = `value${isAdminField ? ' admin' : ''}`;
-                    val.textContent = value || '—';
-                    if (isAdminField && isAdmin) {
-                        const copyBtn = document.createElement('button');
-                        copyBtn.className = 'copy-btn';
-                        copyBtn.textContent = '📋';
-                        copyBtn.onclick = () => {
-                            navigator.clipboard.writeText(value || '').then(() => {
-                                showToast('✅ Скопировано', 'success');
-                            });
-                        };
-                        val.appendChild(copyBtn);
+                if (fields) {
+                    fields.innerHTML = '';
+                    const addField = (label, value, isAdminField = false) => {
+                        const div = document.createElement('div');
+                        div.className = 'profile-field';
+                        const val = document.createElement('span');
+                        val.className = 'value' + (isAdminField ? ' admin' : '');
+                        val.textContent = value || '—';
+                        if (isAdminField && isAdmin) {
+                            const copyBtn = document.createElement('button');
+                            copyBtn.className = 'copy-btn';
+                            copyBtn.textContent = '📋';
+                            copyBtn.onclick = () => {
+                                navigator.clipboard.writeText(value || '').then(() => {
+                                    showToast('✅ Скопировано', 'success');
+                                });
+                            };
+                            val.appendChild(copyBtn);
+                        }
+                        div.innerHTML = '<span class="label">' + label + '</span>';
+                        div.appendChild(val);
+                        fields.appendChild(div);
+                    };
+
+                    addField('@username', usernameToView);
+                    if (profile) {
+                        addField('Отображаемое имя', profile.display_name || usernameToView);
+                        addField('О себе', profile.bio || '—');
                     }
-                    div.innerHTML = `<span class="label">${label}</span>`;
-                    div.appendChild(val);
-                    fields.appendChild(div);
-                };
 
-                addField('@username', usernameToView);
-                if (profile) {
-                    addField('Отображаемое имя', profile.display_name || usernameToView);
-                    addField('О себе', profile.bio || '—');
-                }
-
-                if (isAdmin) {
-                    addField('🛡️ Админ', profile?.is_admin ? '✅ Да' : '❌ Нет', true);
-                    addField('🔑 Пароль', user.password || '—', true);
+                    if (isAdmin) {
+                        addField('🛡️ Админ', profile?.is_admin ? '✅ Да' : '❌ Нет', true);
+                        addField('🔑 Пароль', user.password || '—', true);
+                    }
                 }
 
                 const adminActions = document.getElementById('adminActions');
-                adminActions.style.display = isAdmin ? 'block' : 'none';
-                adminActions.innerHTML = '';
+                if (adminActions) {
+                    adminActions.style.display = isAdmin ? 'block' : 'none';
+                    adminActions.innerHTML = '';
 
-                if (isAdmin && profile) {
-                    if (!profile.is_admin) {
-                        const btn = document.createElement('button');
-                        btn.className = 'btn-admin';
-                        btn.textContent = '⭐ Сделать админом';
-                        btn.onclick = () => makeAdmin(usernameToView);
-                        adminActions.appendChild(btn);
-                    } else if (usernameToView !== 'kosholka') {
-                        const btn = document.createElement('button');
-                        btn.className = 'btn-admin danger';
-                        btn.textContent = '⭐ Снять админа';
-                        btn.onclick = () => removeAdmin(usernameToView);
-                        adminActions.appendChild(btn);
+                    if (isAdmin && profile) {
+                        if (!profile.is_admin) {
+                            const btn = document.createElement('button');
+                            btn.className = 'btn-admin';
+                            btn.textContent = '⭐ Сделать админом';
+                            btn.onclick = () => makeAdmin(usernameToView);
+                            adminActions.appendChild(btn);
+                        } else if (usernameToView !== 'kosholka') {
+                            const btn = document.createElement('button');
+                            btn.className = 'btn-admin danger';
+                            btn.textContent = '⭐ Снять админа';
+                            btn.onclick = () => removeAdmin(usernameToView);
+                            adminActions.appendChild(btn);
+                        }
                     }
                 }
 
@@ -1976,42 +1989,52 @@
             } catch (err) {
                 showToast('❌ ' + err.message, 'error');
             }
-        }
+        };
 
         function openMyProfile() {
-            document.getElementById('profileModalTitle').textContent = '👤 Мой профиль';
+            const titleEl = document.getElementById('profileModalTitle');
+            if (titleEl) titleEl.textContent = '👤 Мой профиль';
 
-            document.getElementById('profileDisplayName').style.display = 'block';
-            document.getElementById('profileBio').style.display = 'block';
-            document.getElementById('saveProfileBtn').style.display = 'block';
-            document.getElementById('uploadAvatarBtn').style.display = 'block';
+            const displayNameInput = document.getElementById('profileDisplayName');
+            const bioInput = document.getElementById('profileBio');
+            const saveBtn = document.getElementById('saveProfileBtn');
+            const uploadBtn = document.getElementById('uploadAvatarBtn');
+            if (displayNameInput) displayNameInput.style.display = 'block';
+            if (bioInput) bioInput.style.display = 'block';
+            if (saveBtn) saveBtn.style.display = 'block';
+            if (uploadBtn) uploadBtn.style.display = 'block';
 
-            document.getElementById('profileDisplayName').value = userData.display_name || '';
-            document.getElementById('profileBio').value = userData.bio || '';
+            if (displayNameInput) displayNameInput.value = userData.display_name || '';
+            if (bioInput) bioInput.value = userData.bio || '';
 
             const preview = document.getElementById('profileAvatarPreview');
-            if (userData.avatar_url) {
-                preview.innerHTML = `<img src="${userData.avatar_url}" />`;
-            } else {
-                preview.innerHTML = `<div class="placeholder">👤</div>`;
+            if (preview) {
+                if (userData.avatar_url) {
+                    preview.innerHTML = '<img src="' + userData.avatar_url + '" />';
+                } else {
+                    preview.innerHTML = '<div class="placeholder">👤</div>';
+                }
             }
 
             const fields = document.getElementById('profileFields');
-            fields.innerHTML = '';
-            const addField = (label, value) => {
-                const div = document.createElement('div');
-                div.className = 'profile-field';
-                div.innerHTML = `
-                    <span class="label">${label}</span>
-                    <span class="value">${value || '—'}</span>
-                `;
-                fields.appendChild(div);
-            };
+            if (fields) {
+                fields.innerHTML = '';
+                const addField = (label, value) => {
+                    const div = document.createElement('div');
+                    div.className = 'profile-field';
+                    div.innerHTML = `
+                        <span class="label">${label}</span>
+                        <span class="value">${value || '—'}</span>
+                    `;
+                    fields.appendChild(div);
+                };
 
-            addField('@username', username);
-            addField('Статус', isAdmin ? '⭐ Админ' : 'Пользователь');
+                addField('@username', username);
+                addField('Статус', isAdmin ? '⭐ Админ' : 'Пользователь');
+            }
 
-            document.getElementById('adminActions').style.display = 'none';
+            const adminActions = document.getElementById('adminActions');
+            if (adminActions) adminActions.style.display = 'none';
 
             openModal('profileModal');
         }
@@ -2073,7 +2096,7 @@
             }
 
             try {
-                const path = `avatars/${userId}_${Date.now()}.${file.name.split('.').pop()}`;
+                const path = 'avatars/' + userId + '_' + Date.now() + '.' + file.name.split('.').pop();
                 const { error: uploadError } = await sbClient.storage
                     .from(AVATAR_BUCKET)
                     .upload(path, file);
@@ -2097,12 +2120,12 @@
 
                 const avatarEl = document.getElementById('myAvatarSmall');
                 if (avatarEl) {
-                    avatarEl.innerHTML = `<img src="${avatarUrl}" />`;
+                    avatarEl.innerHTML = '<img src="' + avatarUrl + '" />';
                 }
 
                 const preview = document.querySelector('#profileAvatarPreview');
                 if (preview) {
-                    preview.innerHTML = `<img src="${avatarUrl}" />`;
+                    preview.innerHTML = '<img src="' + avatarUrl + '" />';
                 }
 
                 showToast('✅ Аватар обновлён', 'success');
@@ -2119,7 +2142,7 @@
         // ============================================================
         async function makeAdmin(usernameToMake) {
             if (!isAdmin) return;
-            if (!confirm(`Сделать ${usernameToMake} админом?`)) return;
+            if (!confirm('Сделать ' + usernameToMake + ' админом?')) return;
 
             try {
                 const { data: user } = await sbClient
@@ -2137,7 +2160,7 @@
 
                 if (error) throw error;
 
-                showToast(`✅ ${usernameToMake} теперь админ`, 'success');
+                showToast('✅ ' + usernameToMake + ' теперь админ', 'success');
                 closeModal('profileModal');
                 loadChats();
 
@@ -2152,7 +2175,7 @@
                 showToast('❌ Нельзя снять админа с создателя', 'error');
                 return;
             }
-            if (!confirm(`Снять админа с ${usernameToRemove}?`)) return;
+            if (!confirm('Снять админа с ' + usernameToRemove + '?')) return;
 
             try {
                 const { data: user } = await sbClient
@@ -2170,7 +2193,7 @@
 
                 if (error) throw error;
 
-                showToast(`✅ ${usernameToRemove} больше не админ`, 'success');
+                showToast('✅ ' + usernameToRemove + ' больше не админ', 'success');
                 closeModal('profileModal');
                 loadChats();
 
@@ -2198,29 +2221,31 @@
 
                 if (error) throw error;
 
-                const el = document.querySelector(`[data-msg-id="${editingMsgId}"]`);
+                const el = document.querySelector('[data-msg-id="' + editingMsgId + '"]');
                 if (el) {
                     el.dataset.msgText = newText;
                     const content = el.querySelector('.msg-actions')?.previousElementSibling;
                     if (content) {
                         let newContent = escapeHtml(newText);
-                        // Сохраняем файлы если есть
                         const fileLinks = content.querySelectorAll('.file-link');
                         const imgElements = content.querySelectorAll('img');
                         const videoElements = content.querySelectorAll('video');
-                        
+
                         fileLinks.forEach(link => {
-                            newContent += `<br><a href="${link.href}" target="_blank" class="file-link">${link.textContent}</a>`;
+                            newContent += '<br><a href="' + link.href +
+                                '" target="_blank" class="file-link">' + link.textContent + '</a>';
                         });
                         imgElements.forEach(img => {
-                            newContent += `<br><img src="${img.src}" style="max-width:100%;border-radius:10px;margin-top:4px;" />`;
+                            newContent += '<br><img src="' + img.src +
+                                '" style="max-width:100%;border-radius:10px;margin-top:4px;" />';
                         });
                         videoElements.forEach(vid => {
-                            newContent += `<br><video src="${vid.src}" controls style="max-width:100%;border-radius:10px;margin-top:4px;"></video>`;
+                            newContent += '<br><video src="' + vid.src +
+                                '" controls style="max-width:100%;border-radius:10px;margin-top:4px;"></video>';
                         });
-                        
+
                         if (!el.querySelector('.edited-badge')) {
-                            newContent += `<span class="edited-badge">(ред.)</span>`;
+                            newContent += '<span class="edited-badge">(ред.)</span>';
                         }
                         content.innerHTML = newContent;
                     }
@@ -2236,7 +2261,7 @@
         // ============================================================
         //  ОТПРАВКА СООБЩЕНИЙ
         // ============================================================
-        async function sendMessage(text, fileUrl = null, fileName = null) {
+        async function sendMessage(text, fileUrl, fileName) {
             if (!text && !fileUrl) return;
             if (!username) return;
 
@@ -2307,11 +2332,11 @@
             if (!files || files.length === 0) return;
 
             for (const file of files) {
-                uploadStatus.textContent = `⏫ Загрузка: ${file.name} ...`;
+                uploadStatus.textContent = '⏫ Загрузка: ' + file.name + ' ...';
                 uploadStatus.style.color = '#ffd93d';
 
                 try {
-                    const path = `chats/${Date.now()}_${file.name}`;
+                    const path = 'chats/' + Date.now() + '_' + file.name;
                     const { error: uploadError } = await sbClient.storage
                         .from(BUCKET)
                         .upload(path, file, {
@@ -2327,7 +2352,7 @@
 
                     await sendMessage('', urlData.publicUrl, file.name);
 
-                    uploadStatus.textContent = `✅ ${file.name} загружен`;
+                    uploadStatus.textContent = '✅ ' + file.name + ' загружен';
                     uploadStatus.style.color = '#6fcf97';
                     setTimeout(() => {
                         uploadStatus.textContent = '';
@@ -2335,7 +2360,7 @@
 
                 } catch (err) {
                     console.error('Ошибка загрузки файла:', err);
-                    uploadStatus.textContent = `❌ ${file.name}: ${err.message}`;
+                    uploadStatus.textContent = '❌ ' + file.name + ': ' + err.message;
                     uploadStatus.style.color = '#ff4d6d';
                     setTimeout(() => {
                         uploadStatus.textContent = '';
@@ -2354,12 +2379,12 @@
             }
 
             channel = sbClient
-                .channel(`messages-${currentChat}`)
+                .channel('messages-' + currentChat)
                 .on('postgres_changes', {
                     event: '*',
                     schema: 'public',
                     table: 'messages',
-                    filter: `room=eq.${currentChat}`,
+                    filter: 'room=eq.' + currentChat,
                 }, (payload) => {
                     const msg = payload.new;
                     console.log('⚡ Realtime общее:', payload);
@@ -2372,7 +2397,7 @@
                                 const key = 'general_general';
                                 unreadCounts[key] = (unreadCounts[key] || 0) + 1;
                                 if (!isPageFocused) {
-                                    document.title = `💬 Новое сообщение от ${msg.username}`;
+                                    document.title = '💬 Новое сообщение от ' + msg.username;
                                 }
                             }
                             appendMessage(msg);
@@ -2380,15 +2405,16 @@
                             renderChats(searchInput.value.trim());
                         }
                     } else if (payload.eventType === 'UPDATE') {
-                        const el = document.querySelector(`[data-msg-id="${msg.id}"]`);
+                        const el = document.querySelector('[data-msg-id="' + msg.id + '"]');
                         if (el) {
                             el.dataset.msgText = msg.text || '';
                             const content = el.querySelector('.deleted-badge')?.parentElement || el;
                             if (msg.is_deleted) {
-                                content.innerHTML = `<span class="deleted-badge">🗑️ Сообщение удалено</span>`;
+                                content.innerHTML = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
                                 if (isAdmin) {
                                     content.innerHTML +=
-                                        `<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ${escapeHtml(msg.text || '')})</span>`;
+                                        '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' +
+                                        escapeHtml(msg.text || '') + ')</span>';
                                 }
                                 el.classList.add('deleted');
                                 if (isAdmin) el.classList.add('admin-deleted');
@@ -2397,12 +2423,12 @@
                             }
                         }
                     } else if (payload.eventType === 'DELETE') {
-                        const el = document.querySelector(`[data-msg-id="${payload.old.id}"]`);
+                        const el = document.querySelector('[data-msg-id="' + payload.old.id + '"]');
                         if (el) el.remove();
                     }
                 })
                 .subscribe((status) => {
-                    console.log(`📡 Realtime общий статус:`, status);
+                    console.log('📡 Realtime общий статус:', status);
                     if (status === 'CHANNEL_ERROR' || status === 'closed') {
                         setTimeout(() => subscribeToGeneral(), 3000);
                     }
@@ -2416,12 +2442,13 @@
             }
 
             privateChannel = sbClient
-                .channel(`private-${username}-${target}`)
+                .channel('private-' + username + '-' + target)
                 .on('postgres_changes', {
                     event: '*',
                     schema: 'public',
                     table: 'private_messages',
-                    filter: `or(and(sender.eq.${username},receiver.eq.${target}),and(sender.eq.${target},receiver.eq.${username}))`,
+                    filter: 'or(and(sender.eq.' + username + ',receiver.eq.' + target + '),and(sender.eq.' + target +
+                        ',receiver.eq.' + username + '))',
                 }, (payload) => {
                     const msg = payload.new;
                     console.log('⚡ Realtime личное:', payload);
@@ -2434,7 +2461,7 @@
                                 const key = target + '_private';
                                 unreadCounts[key] = (unreadCounts[key] || 0) + 1;
                                 if (!isPageFocused) {
-                                    document.title = `💬 Новое сообщение от ${msg.sender}`;
+                                    document.title = '💬 Новое сообщение от ' + msg.sender;
                                 }
                             }
                             appendPrivateMessage(msg);
@@ -2443,15 +2470,16 @@
                             renderChats(searchInput.value.trim());
                         }
                     } else if (payload.eventType === 'UPDATE') {
-                        const el = document.querySelector(`[data-msg-id="${msg.id}"]`);
+                        const el = document.querySelector('[data-msg-id="' + msg.id + '"]');
                         if (el) {
                             el.dataset.msgText = msg.text || '';
                             const content = el.querySelector('.deleted-badge')?.parentElement || el;
                             if (msg.is_deleted) {
-                                content.innerHTML = `<span class="deleted-badge">🗑️ Сообщение удалено</span>`;
+                                content.innerHTML = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
                                 if (isAdmin) {
                                     content.innerHTML +=
-                                        `<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ${escapeHtml(msg.text || '')})</span>`;
+                                        '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' +
+                                        escapeHtml(msg.text || '') + ')</span>';
                                 }
                                 el.classList.add('deleted');
                                 if (isAdmin) el.classList.add('admin-deleted');
@@ -2460,12 +2488,12 @@
                             }
                         }
                     } else if (payload.eventType === 'DELETE') {
-                        const el = document.querySelector(`[data-msg-id="${payload.old.id}"]`);
+                        const el = document.querySelector('[data-msg-id="' + payload.old.id + '"]');
                         if (el) el.remove();
                     }
                 })
                 .subscribe((status) => {
-                    console.log(`📡 Realtime личный статус (${target}):`, status);
+                    console.log('📡 Realtime личный статус (' + target + '):', status);
                     if (status === 'CHANNEL_ERROR' || status === 'closed') {
                         setTimeout(() => subscribeToPrivate(target), 3000);
                     }
@@ -2482,12 +2510,12 @@
             }
 
             signalingChannel = sbClient
-                .channel(`signaling-${username}`)
+                .channel('signaling-' + username)
                 .on('postgres_changes', {
                     event: 'INSERT',
                     schema: 'public',
                     table: 'signaling',
-                    filter: `receiver=eq.${username}`
+                    filter: 'receiver=eq.' + username
                 }, async (payload) => {
                     const data = JSON.parse(payload.new.data);
                     console.log('📡 Сигнальное:', data);
@@ -2500,7 +2528,7 @@
         // ============================================================
         //  СОБЫТИЯ КНОПОК
         // ============================================================
-        
+
         // ВХОД/РЕГИСТРАЦИЯ
         loginBtn.addEventListener('click', () => {
             if (isLoginMode) {
