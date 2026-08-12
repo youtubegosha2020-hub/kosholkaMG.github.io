@@ -7,9 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
-        /* ============================================================
-           БАЗА
-           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -22,9 +19,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* ============================================================
-           ТЕМЫ
-           ============================================================ */
         .theme-dark {
             --bg-primary: #0b0b0f;
             --bg-secondary: #11131e;
@@ -111,61 +105,18 @@
             --scrollbar: rgba(200, 100, 255, 0.06);
         }
 
-        /* ============================================================
-           ФОНЫ
-           ============================================================ */
-        .bg-none {
-            background-image: none !important;
-        }
-        .bg-abstract {
-            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.04'%3E%3Cpath d='M50 40v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V6h-2v4h-4v2h4v4h2v-4h4V6h-4zM10 40v-4H8v4H4v2h4v4h2v-4h4v-2h-4zM10 10V6H8v4H4v2h4v4h2v-4h4V6h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important;
-        }
-        .bg-space {
-            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 100, 255, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(100, 0, 255, 0.06) 0%, transparent 50%) !important;
-        }
-        .bg-mountains {
-            background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 150'%3E%3Cpath d='M0 120 L100 40 L200 100 L300 20 L400 90 L500 30 L600 100 L700 50 L800 120 L800 150 L0 150 Z' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E") !important;
-            background-size: 100% 100% !important;
-            background-position: bottom !important;
-        }
-        .bg-forest {
-            background-image: linear-gradient(180deg, transparent 50%, rgba(0, 80, 40, 0.05) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cpath d='M0 200 L40 120 L80 160 L120 100 L160 140 L200 80 L240 130 L280 70 L320 120 L360 60 L400 110 L440 50 L480 100 L520 40 L560 90 L600 30 L640 80 L680 20 L720 70 L760 10 L800 60 L800 200 L0 200 Z' fill='rgba(0,200,100,0.04)'/%3E%3C/svg%3E") !important;
-            background-size: 100% 100% !important;
-            background-position: bottom !important;
-        }
-        .bg-ocean {
-            background-image: linear-gradient(180deg, transparent 40%, rgba(0, 100, 200, 0.05) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 150'%3E%3Cpath d='M0 80 Q100 40 200 80 T400 80 T600 80 T800 80 L800 150 L0 150 Z' fill='rgba(0,150,255,0.04)'/%3E%3C/svg%3E") !important;
-            background-size: 100% 100% !important;
-            background-position: bottom !important;
-        }
+        .bg-none { background-image: none !important; }
+        .bg-abstract { background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.04'%3E%3Cpath d='M50 40v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V6h-2v4h-4v2h4v4h2v-4h4V6h-4zM10 40v-4H8v4H4v2h4v4h2v-4h4v-2h-4zM10 10V6H8v4H4v2h4v4h2v-4h4V6h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") !important; }
+        .bg-space { background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 100, 255, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(100, 0, 255, 0.06) 0%, transparent 50%) !important; }
+        .bg-mountains { background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 150'%3E%3Cpath d='M0 120 L100 40 L200 100 L300 20 L400 90 L500 30 L600 100 L700 50 L800 120 L800 150 L0 150 Z' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E") !important; background-size: 100% 100% !important; background-position: bottom !important; }
+        .bg-forest { background-image: linear-gradient(180deg, transparent 50%, rgba(0, 80, 40, 0.05) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cpath d='M0 200 L40 120 L80 160 L120 100 L160 140 L200 80 L240 130 L280 70 L320 120 L360 60 L400 110 L440 50 L480 100 L520 40 L560 90 L600 30 L640 80 L680 20 L720 70 L760 10 L800 60 L800 200 L0 200 Z' fill='rgba(0,200,100,0.04)'/%3E%3C/svg%3E") !important; background-size: 100% 100% !important; background-position: bottom !important; }
+        .bg-ocean { background-image: linear-gradient(180deg, transparent 40%, rgba(0, 100, 200, 0.05) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 150'%3E%3Cpath d='M0 80 Q100 40 200 80 T400 80 T600 80 T800 80 L800 150 L0 150 Z' fill='rgba(0,150,255,0.04)'/%3E%3C/svg%3E") !important; background-size: 100% 100% !important; background-position: bottom !important; }
 
-        /* ============================================================
-           СТИЛИ ЧАТОВ
-           ============================================================ */
-        .style-classic .msg {
-            border-radius: 16px;
-            padding: 10px 14px;
-        }
-        .style-compact .msg {
-            border-radius: 12px;
-            padding: 6px 10px;
-            font-size: 14px;
-            max-width: 85%;
-        }
-        .style-spacious .msg {
-            border-radius: 20px;
-            padding: 14px 20px;
-            font-size: 16px;
-            max-width: 80%;
-        }
-        .style-round .msg {
-            border-radius: 30px;
-            padding: 12px 18px;
-        }
+        .style-classic .msg { border-radius: 16px; padding: 10px 14px; }
+        .style-compact .msg { border-radius: 12px; padding: 6px 10px; font-size: 14px; max-width: 85%; }
+        .style-spacious .msg { border-radius: 20px; padding: 14px 20px; font-size: 16px; max-width: 80%; }
+        .style-round .msg { border-radius: 30px; padding: 12px 18px; }
 
-        /* ============================================================
-           ОБЩИЕ КОМПОНЕНТЫ
-           ============================================================ */
         #app {
             width: 100%;
             height: 100vh;
@@ -579,17 +530,10 @@
             color: #00d4ff;
         }
         @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Голосовые */
         .voice-msg {
             display: flex;
             align-items: center;
@@ -643,7 +587,6 @@
             color: #00d4ff;
         }
 
-        /* Кружочки */
         .circle-msg {
             width: 160px;
             height: 160px;
@@ -686,7 +629,6 @@
             color: rgba(255, 255, 255, 0.8);
         }
 
-        /* МЕНЮ СООБЩЕНИЯ (по клику) */
         .msg-menu {
             display: none;
             position: fixed;
@@ -753,7 +695,6 @@
             transform: scale(1.3);
         }
 
-        /* Инпут */
         #inputArea {
             display: flex;
             gap: 6px;
@@ -822,7 +763,6 @@
             background: rgba(255, 255, 255, 0.04);
         }
 
-        /* Новая кнопка для голосовых/кружочков с выбором режима */
         .voice-btn-wrapper {
             position: relative;
             flex-shrink: 0;
@@ -861,18 +801,11 @@
             animation: recordPulse 1s infinite;
         }
         @keyframes recordPulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.08);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
         }
 
-        /* Выпадающее меню выбора режима */
         .voice-mode-selector {
             display: none;
             position: absolute;
@@ -908,17 +841,11 @@
         .voice-mode-selector .mode-item:hover {
             background: rgba(255, 255, 255, 0.04);
         }
-        .voice-mode-selector .mode-item.active {
-            color: var(--text-primary);
-            background: rgba(0, 212, 255, 0.06);
-        }
         .voice-mode-selector .mode-item .icon {
             font-size: 18px;
         }
 
-        #fileInput {
-            display: none;
-        }
+        #fileInput { display: none; }
         #uploadStatus {
             font-size: 11px;
             color: var(--text-muted);
@@ -929,7 +856,6 @@
             transition: background 0.3s;
         }
 
-        /* Логин */
         #loginScreen {
             display: none;
             flex-direction: column;
@@ -990,7 +916,6 @@
             color: var(--text-secondary);
         }
 
-        /* Модалки */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -1051,9 +976,7 @@
             margin-bottom: 4px;
             margin-top: 12px;
         }
-        .modal input,
-        .modal textarea,
-        .modal select {
+        .modal input, .modal textarea, .modal select {
             width: 100%;
             padding: 12px 14px;
             border-radius: 12px;
@@ -1064,9 +987,7 @@
             outline: none;
             transition: border 0.2s;
         }
-        .modal input:focus,
-        .modal textarea:focus,
-        .modal select:focus {
+        .modal input:focus, .modal textarea:focus, .modal select:focus {
             border-color: rgba(0, 212, 255, 0.3);
         }
         .modal textarea {
@@ -1223,7 +1144,6 @@
             margin-bottom: 4px;
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -1240,21 +1160,11 @@
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow);
         }
-        .toast.success {
-            border-color: rgba(111, 207, 151, 0.2);
-        }
-        .toast.error {
-            border-color: rgba(255, 77, 109, 0.2);
-        }
+        .toast.success { border-color: rgba(111, 207, 151, 0.2); }
+        .toast.error { border-color: rgba(255, 77, 109, 0.2); }
         @keyframes toastIn {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         .logout-btn {
@@ -1278,7 +1188,6 @@
             font-size: 13px;
         }
 
-        /* Звонок */
         #callOverlay {
             display: none;
             position: fixed;
@@ -1405,7 +1314,6 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
-        /* Адаптив */
         @media (max-width: 768px) {
             #sidebar {
                 width: 100%;
@@ -1547,14 +1455,13 @@
                 <div id="inputArea">
                     <button class="btn-file" id="fileBtn">📎</button>
 
-                    <!-- Новая кнопка для голосовых/кружочков с выбором режима -->
                     <div class="voice-btn-wrapper">
                         <button class="btn-voice-toggle" id="voiceMainBtn">
                             🎤
                             <span class="mode-label" id="voiceModeLabel">голос</span>
                         </button>
                         <div class="voice-mode-selector" id="voiceModeSelector">
-                            <button class="mode-item active" data-mode="voice">
+                            <button class="mode-item" data-mode="voice">
                                 <span class="icon">🎤</span> Голосовое
                             </button>
                             <button class="mode-item" data-mode="circle">
@@ -1749,7 +1656,6 @@
         const groupInfoBtn = document.getElementById('groupInfoBtn');
         const msgMenu = document.getElementById('msgMenu');
 
-        // Новая кнопка голоса
         const voiceMainBtn = document.getElementById('voiceMainBtn');
         const voiceModeLabel = document.getElementById('voiceModeLabel');
         const voiceModeSelector = document.getElementById('voiceModeSelector');
@@ -1797,7 +1703,7 @@
         let recordingTimer = null;
         let recordingSeconds = 0;
         let currentAudio = null;
-        let voiceMode = 'voice'; // 'voice' | 'circle'
+        let voiceMode = 'voice';
 
         // Меню сообщения
         let selectedMsgId = null;
@@ -1906,12 +1812,11 @@
         window.addEventListener('blur', () => { isPageFocused = false; });
 
         // ============================================================
-        //  ФУНКЦИЯ openChatProfile (исправлена)
+        //  ФУНКЦИЯ openChatProfile
         // ============================================================
         window.openChatProfile = function() {
             const chatProfileBtn = document.getElementById('chatProfileBtn');
             if (!chatProfileBtn) {
-                // Создаём, если нет
                 const chatLeft = document.querySelector('.chat-left');
                 if (chatLeft) {
                     const newBtn = document.createElement('div');
@@ -1929,7 +1834,7 @@
         };
 
         // ============================================================
-        //  НАСТРОЙКИ ТЕМЫ, ФОНА, СТИЛЯ (СОХРАНЕНИЕ В БД И localstorage)
+        //  НАСТРОЙКИ ТЕМЫ, ФОНА, СТИЛЯ
         // ============================================================
         async function applyTheme(theme) {
             document.body.className = 'theme-' + theme;
@@ -1937,7 +1842,6 @@
             document.querySelectorAll('#themeGrid .option').forEach(el => {
                 el.classList.toggle('active', el.dataset.theme === theme);
             });
-            // Сохраняем в БД, если пользователь авторизован
             if (userId) {
                 try {
                     await sbClient
@@ -2243,7 +2147,6 @@
                 isAdmin = data.is_admin || false;
                 showAdminBadge = data.show_admin_badge !== undefined ? data.show_admin_badge : true;
 
-                // Загружаем настройки из профиля
                 if (data.theme) {
                     localStorage.setItem('chat_theme', data.theme);
                 }
@@ -2652,9 +2555,7 @@
                         });
                         renderChats(searchInput.value.trim());
                     }
-                } catch (err) {
-                    // Игнорируем сетевые ошибки
-                }
+                } catch (err) {}
             }, 3000);
         }
 
@@ -2694,9 +2595,7 @@
                         });
                         renderChats(searchInput.value.trim());
                     }
-                } catch (err) {
-                    // Игнорируем сетевые ошибки
-                }
+                } catch (err) {}
             }, 3000);
         }
 
@@ -2737,9 +2636,7 @@
                         });
                         renderChats(searchInput.value.trim());
                     }
-                } catch (err) {
-                    // Игнорируем сетевые ошибки
-                }
+                } catch (err) {}
             }, 3000);
         }
 
@@ -2879,7 +2776,7 @@
         }
 
         // ============================================================
-        //  ОТРИСОВКА СООБЩЕНИЙ (с меню по клику)
+        //  ОТРИСОВКА СООБЩЕНИЙ
         // ============================================================
         function createMsgElement(msg, isOwn, isDeleted, senderName, content, msgId, type, table) {
             const div = document.createElement('div');
@@ -2905,7 +2802,6 @@
                 </div>
             `;
 
-            // Клик по сообщению - открываем меню
             div.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const rect = div.getBoundingClientRect();
@@ -3061,17 +2957,15 @@
         }
 
         // ============================================================
-        //  МЕНЮ СООБЩЕНИЯ (по клику)
+        //  МЕНЮ СООБЩЕНИЯ
         // ============================================================
         function showMsgMenu(msgId, isOwn, table, x, y) {
             selectedMsgId = msgId;
             selectedMsgIsOwn = isOwn;
             selectedMsgTable = table;
 
-            // Скрываем старые меню
             msgMenu.classList.remove('active');
 
-            // Показываем/скрываем пункты
             const editItem = msgMenu.querySelector('[data-action="edit"]');
             const deleteItem = msgMenu.querySelector('[data-action="delete"]');
 
@@ -3082,12 +2976,10 @@
                 deleteItem.style.display = (isOwn || isAdmin) ? 'flex' : 'none';
             }
 
-            // Позиционируем
             msgMenu.style.left = Math.min(x - 90, window.innerWidth - 200) + 'px';
             msgMenu.style.top = Math.min(y, window.innerHeight - 300) + 'px';
             msgMenu.classList.add('active');
 
-            // Закрываем при клике вне
             setTimeout(() => {
                 document.addEventListener('click', closeMsgMenu, { once: true });
             }, 10);
@@ -3098,7 +2990,6 @@
             msgMenu.classList.remove('active');
         }
 
-        // Обработчики меню
         msgMenu.querySelectorAll('.item').forEach(item => {
             item.addEventListener('click', () => {
                 const action = item.dataset.action;
@@ -3109,7 +3000,6 @@
             });
         });
 
-        // Реакции в меню
         msgMenu.querySelectorAll('.reaction').forEach(el => {
             el.addEventListener('click', async () => {
                 const reaction = el.dataset.reaction;
@@ -3272,20 +3162,16 @@
 
             try {
                 if (isAdmin) {
-                    // Админ может полностью удалить или просто пометить как удалённое
-                    // Для сохранения текста для админа - помечаем как удалённое, но не удаляем полностью
                     const { error } = await sbClient
                         .from(table)
                         .update({
                             is_deleted: true
-                            // текст не очищаем, чтобы админ мог его видеть
                         })
                         .eq('id', id);
 
                     if (error) throw error;
                     showToast('✅ Сообщение помечено как удалённое (админ видит текст)', 'success');
 
-                    // Обновляем отображение
                     const el = document.querySelector('[data-msg-id="' + id + '"]');
                     if (el) {
                         el.classList.add('deleted-admin');
@@ -3299,7 +3185,6 @@
                         }
                     }
                 } else {
-                    // Обычный пользователь - помечаем как удалённое и скрываем
                     const { error } = await sbClient
                         .from(table)
                         .update({
@@ -3477,88 +3362,60 @@
         };
 
         // ============================================================
-        //  ЗАПИСЬ ГОЛОСОВЫХ/КРУЖОЧКОВ
+        //  ЗАПИСЬ ГОЛОСОВЫХ/КРУЖОЧКОВ (ПРАВИЛЬНАЯ ЛОГИКА)
         // ============================================================
-        // Выбор режима через выпадающее меню
+        let isVoiceMenuOpen = false;
+
+        // Клик по кнопке - открываем меню выбора
         voiceMainBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            // Если идет запись - останавливаем
             if (isRecording) {
                 stopVoiceRecording();
                 return;
             }
-            // Показываем/скрываем меню выбора режима
+            // Открываем меню выбора
             voiceModeSelector.classList.toggle('active');
+            isVoiceMenuOpen = voiceModeSelector.classList.contains('active');
         });
 
-        // Выбор режима
+        // Выбор режима - сразу начинаем запись
         document.querySelectorAll('.mode-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const mode = item.dataset.mode;
                 voiceMode = mode;
-                voiceModeLabel.textContent = mode === 'voice' ? 'голос' : 'кружок';
-                voiceMainBtn.innerHTML = mode === 'voice' ? '🎤 <span class="mode-label">голос</span>' :
-                    '🔄 <span class="mode-label">кружок</span>';
-                document.querySelectorAll('.mode-item').forEach(el => el.classList.remove('active'));
-                item.classList.add('active');
+                
+                // Обновляем надпись на кнопке
+                const label = mode === 'voice' ? 'голос' : 'кружок';
+                voiceModeLabel.textContent = label;
+                voiceMainBtn.innerHTML = `🎤 <span class="mode-label">${label}</span>`;
+                
+                // Закрываем меню
                 voiceModeSelector.classList.remove('active');
-                showToast('Режим: ' + (mode === 'voice' ? '🎤 Голосовое' : '🔄 Кружок'), 'success');
+                isVoiceMenuOpen = false;
+                
+                // Сразу начинаем запись
+                startVoiceRecording();
             });
         });
 
         // Закрываем селектор при клике вне
         document.addEventListener('click', () => {
             voiceModeSelector.classList.remove('active');
+            isVoiceMenuOpen = false;
         });
 
-        // Запись по зажатию (для телефона и ПК)
-        let isPressed = false;
-
-        voiceMainBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (isRecording) return;
-            isPressed = true;
-            startVoiceRecording();
-        });
-
-        voiceMainBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            isPressed = false;
-            if (isRecording) {
-                stopVoiceRecording();
-            }
-        });
-
-        voiceMainBtn.addEventListener('touchcancel', () => {
-            isPressed = false;
-            if (isRecording) {
-                stopVoiceRecording();
-            }
-        });
-
-        voiceMainBtn.addEventListener('mousedown', () => {
-            if (isRecording) return;
-            isPressed = true;
-            startVoiceRecording();
-        });
-
-        voiceMainBtn.addEventListener('mouseup', () => {
-            isPressed = false;
-            if (isRecording) {
-                stopVoiceRecording();
-            }
-        });
-
-        voiceMainBtn.addEventListener('mouseleave', () => {
-            if (isPressed && isRecording) {
-                stopVoiceRecording();
-                isPressed = false;
-            }
-        });
+        // Запись по зажатию (для телефона и ПК) - НЕ ИСПОЛЬЗУЕТСЯ
+        // Вся запись идет через клик по пункту меню
 
         async function startVoiceRecording() {
             if (!currentChat) {
                 showToast('❌ Выберите чат', 'error');
+                return;
+            }
+
+            if (isRecording) {
                 return;
             }
 
@@ -3578,9 +3435,6 @@
                         voiceMode = 'voice';
                         voiceModeLabel.textContent = 'голос';
                         voiceMainBtn.innerHTML = '🎤 <span class="mode-label">голос</span>';
-                        document.querySelectorAll('.mode-item').forEach(el => el.classList.remove('active'));
-                        document.querySelector('[data-mode="voice"]').classList.add('active');
-                        // Пробуем только аудио
                         stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     } else {
                         throw e;
@@ -3589,15 +3443,11 @@
 
                 const mimeType = voiceMode === 'circle' ? 'video/mp4' : 'audio/webm';
 
-                // Проверяем поддержку mimeType
                 if (!MediaRecorder.isTypeSupported(mimeType)) {
                     showToast('❌ Формат не поддерживается, используем голосовое', 'error');
                     voiceMode = 'voice';
                     voiceModeLabel.textContent = 'голос';
                     voiceMainBtn.innerHTML = '🎤 <span class="mode-label">голос</span>';
-                    document.querySelectorAll('.mode-item').forEach(el => el.classList.remove('active'));
-                    document.querySelector('[data-mode="voice"]').classList.add('active');
-                    // Пробуем с аудио
                     if (stream.getVideoTracks().length > 0) {
                         stream.getVideoTracks().forEach(t => t.stop());
                     }
@@ -3660,12 +3510,17 @@
 
                     voiceMainBtn.classList.remove('recording');
                     uploadStatus.textContent = '';
+                    
+                    // Возвращаем кнопку в нейтральное состояние
+                    const label = voiceMode === 'voice' ? 'голос' : 'кружок';
+                    voiceMainBtn.innerHTML = `🎤 <span class="mode-label">${label}</span>`;
                 };
 
                 mediaRecorder.start(1000);
                 isRecording = true;
 
                 voiceMainBtn.classList.add('recording');
+                voiceMainBtn.innerHTML = `⏺ <span class="mode-label">запись</span>`;
 
                 recordingSeconds = 0;
                 clearInterval(recordingTimer);
@@ -3683,6 +3538,9 @@
                 if (err.message.includes('video')) {
                     showToast('💡 Попробуйте использовать голосовое (выберите в меню)', '');
                 }
+                // Возвращаем кнопку в нейтральное состояние
+                const label = voiceMode === 'voice' ? 'голос' : 'кружок';
+                voiceMainBtn.innerHTML = `🎤 <span class="mode-label">${label}</span>`;
             }
         }
 
@@ -4896,23 +4754,23 @@
             mainUI.style.display = 'none';
         }
 
-        // Загружаем настройки из localStorage
         loadSettings();
 
-        console.log('💬 Братанский мессенджер v5.1');
+        console.log('💬 Братанский мессенджер v6.0');
         console.log('🎨 5 тем оформления');
         console.log('🖼️ 6 фоновых рисунков');
         console.log('📐 4 стиля чатов');
         console.log('👥 Групповые чаты');
-        console.log('🎤 Голосовые сообщения (зажатие)');
-        console.log('🔄 Кружочки (зажатие, выбор в меню)');
+        console.log('🎤 Голосовые сообщения (клик по кнопке → выбор режима → сразу запись)');
+        console.log('🔄 Кружочки (клик по кнопке → выбор режима → сразу запись)');
         console.log('📞 Аудио/видео звонки');
         console.log('😊 Реакции в меню сообщения');
         console.log('👑 Админ-панель');
         console.log('📱 Адаптив под телефон и компьютер');
         console.log('💡 Клик по сообщению → меню: копировать, редактировать, удалить, реакции');
-        console.log('🔒 Настройки сохраняются в БД и не слетают после перезагрузки');
+        console.log('🔒 Настройки сохраняются в БД');
         console.log('👁️ Админ видит текст удалённых сообщений');
+        console.log('🎯 Логика кнопки: клик → выбор режима → сразу запись → повторный клик остановка');
     </script>
 </body>
 </html>
