@@ -284,23 +284,10 @@ let peerConnection=null,localStream=null,isCallActive=0,isMuted=0,isVideoOff=0,c
 let mediaRecorder=null,audioChunks=[],isRecording=0,recordingTimer=null,recordingSeconds=0,currentAudio=null,voiceMode='voice';
 let selectedMsgId=null,selectedMsgIsOwn=0,selectedMsgTable=null,replyToMsgId=null,replyToMsgText='',replyToMsgSender='';
 
-// ============================================================
-//  ЗАЩИТА ОТ ОШИБОК - СОЗДАЁМ КНОПКУ ЕСЛИ НЕТ
-// ============================================================
-if (!MOD_BTN) {
-    const footer = document.querySelector('#sidebar > div:last-child');
-    if (footer) {
-        const btn = document.createElement('button');
-        btn.className = 'logout-btn';
-        btn.id = 'moderationBtn';
-        btn.style.cssText = 'display:none;background:rgba(255,215,0,0.05);color:#ffd700;margin-bottom:8px;';
-        btn.textContent = '🛡️ Модерация';
-        footer.insertBefore(btn, footer.firstChild);
-    }
-}
-// Обновляем ссылку
-const MOD_BTN2 = document.getElementById('moderationBtn');
-if (MOD_BTN2) window.MOD_BTN = MOD_BTN2;
+if(!MOD_BTN){
+const footer=document.querySelector('#sidebar > div:last-child');
+if(footer){const btn=document.createElement('button');btn.className='logout-btn';btn.id='moderationBtn';btn.style.cssText='display:none;background:rgba(255,215,0,0.05);color:#ffd700;margin-bottom:8px;';btn.textContent='🛡️ Модерация';footer.insertBefore(btn,footer.firstChild)}}
+const MOD_BTN2=document.getElementById('moderationBtn');if(MOD_BTN2)window.MOD_BTN=MOD_BTN2;
 
 function showToast(m,t){const e=document.querySelector('.toast');if(e)e.remove();const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3e3)}
 function openModal(i){const e=document.getElementById(i);if(e)e.classList.add('active')}
@@ -439,21 +426,91 @@ groups=gD||[];renderChats();
 
 async function loadChats(){
 try{
-const{data:users,error:uE}=await sbClient.from('users').select('username,last_seen_at,last_seen,is_ghost,is_approved');
+const{data:users,error:uE}=await sbClient.from('users').select('username,last_seen_at,last_seen,is_ghost,is_approved').neq('username',username);
 if(uE)throw uE;
 const{data:profiles}=await sbClient.from('profiles').select('username,display_name,avatar_url,is_admin,show_admin_badge,ghost_mode,ghost_since');
 const pMap={};if(profiles){profiles.forEach(p=>{pMap[p.username]=p})}
 const cData=[];
 cData.push({id:'favorites',name:'⭐ Избранное',type:'favorites',lastMsg:'Ваши сохранённые сообщения',time:null,online:1,avatar:'⭐'});
-for(const u of users){
-if(!u.is_approved)continue;
-const{data:msgs}=await sbClient.from('private_messages').select('text,created_at,sender,id').or('and(sender.eq.'+username+',receiver.eq.'+u.username+'),and(sender.eq.'+u.username+',receiver.eq.'+username+')').order('created_at',{ascending:false}).limit(1);
-const p=pMap[u.username]||{};
-if(msgs&&msgs.length>0){const last=msgs[0];cData.push({id:u.username,name:p.display_name||u.username,username:u.username,type:'private',lastMsg:last.sender===username?'Вы: '+(last.text||'Файл'):last.text||'Файл',time:last.created_at,online:Date.now()-new Date(u.last_seen_at||u.last_seen).getTime()<6e4,avatar:p.avatar_url||null,isAdmin:p.is_admin||0,showAdminBadge:p.show_admin_badge!==0,isGhost:p.ghost_mode||0,ghostSince:p.ghost_since})}
+
+// ============================================================
+//  АДМИН ВИДИТ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
+//  ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ - ТОЛЬКО ТЕХ, КОМУ ПИСАЛ
+// ============================================================
+let filteredUsers = [];
+if (isAdmin) {
+    filteredUsers = users.filter(u => u.is_approved);
+} else {
+    const { data: existingChats } = await sbClient
+        .from('private_messages')
+        .select('sender, receiver')
+        .or(`sender.eq.${username},receiver.eq.${username}`);
+    const chatUsers = new Set();
+    if (existingChats) {
+        existingChats.forEach(msg => {
+            if (msg.sender === username) chatUsers.add(msg.receiver);
+            if (msg.receiver === username) chatUsers.add(msg.sender);
+        });
+    }
+    filteredUsers = users.filter(u => u.is_approved && chatUsers.has(u.username));
 }
-for(const g of groups){const{data:msgs}=await sbClient.from('group_messages').select('text,created_at,sender').eq('group_id',g.id).order('created_at',{ascending:false}).limit(1);cData.push({id:'group_'+g.id,groupId:g.id,name:g.name||'Группа',type:'group',lastMsg:msgs&&msgs.length>0?msgs[0].text||'Файл':'Группа создана',time:msgs&&msgs.length>0?msgs[0].created_at:g.created_at,avatar:g.avatar_url||null,isGroup:1})}
-cData.sort((a,b)=>{if(!a.time)return 1;if(!b.time)return-1;return new Date(b.time)-new Date(a.time)});
-chats=cData;renderChats();
+
+for (const u of filteredUsers) {
+    const p = pMap[u.username] || {};
+    const { data: msgs } = await sbClient
+        .from('private_messages')
+        .select('text, created_at, sender, id')
+        .or(`and(sender.eq.${username},receiver.eq.${u.username}),and(sender.eq.${u.username},receiver.eq.${username})`)
+        .order('created_at', { ascending: false })
+        .limit(1);
+    let lastMsg = 'Начать чат';
+    let lastTime = null;
+    if (msgs && msgs.length > 0) {
+        const last = msgs[0];
+        lastMsg = last.sender === username ? 'Вы: ' + (last.text || 'Файл') : (last.text || 'Файл');
+        lastTime = last.created_at;
+    }
+    const isOnline = Date.now() - new Date(u.last_seen_at || u.last_seen).getTime() < 60000;
+    cData.push({
+        id: u.username,
+        name: p.display_name || u.username,
+        username: u.username,
+        type: 'private',
+        lastMsg: lastMsg,
+        time: lastTime,
+        online: isOnline,
+        avatar: p.avatar_url || null,
+        isAdmin: p.is_admin || 0,
+        showAdminBadge: p.show_admin_badge !== false,
+        isGhost: p.ghost_mode || 0,
+        ghostSince: p.ghost_since
+    });
+}
+for (const g of groups) {
+    const { data: msgs } = await sbClient
+        .from('group_messages')
+        .select('text, created_at, sender')
+        .eq('group_id', g.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+    cData.push({
+        id: 'group_' + g.id,
+        groupId: g.id,
+        name: g.name || 'Группа',
+        type: 'group',
+        lastMsg: msgs && msgs.length > 0 ? (msgs[0].text || 'Файл') : 'Группа создана',
+        time: msgs && msgs.length > 0 ? msgs[0].created_at : g.created_at,
+        avatar: g.avatar_url || null,
+        isGroup: 1
+    });
+}
+cData.sort((a, b) => {
+    if (!a.time) return 1;
+    if (!b.time) return -1;
+    return new Date(b.time) - new Date(a.time);
+});
+chats = cData;
+renderChats();
 }catch(err){console.error('Ошибка загрузки чатов:',err);CL.innerHTML='<div class="empty-state">❌ '+escapeHtml(err.message)+'</div>'}}
 
 function renderChats(filter=''){CL.innerHTML='';let items=[...chats];if(filter){const f=filter.toLowerCase();items=items.filter(c=>c.name.toLowerCase().includes(f)||(c.username&&c.username.toLowerCase().includes(f)))}if(items.length===0){CL.innerHTML='<div class="empty-state">👀 Ничего не найдено</div>';return}items.forEach(chat=>{const div=document.createElement('div');const isActive=currentChat===chat.id&&currentChatType===chat.type;div.className='chat-item'+(isActive?' active':'');const isOnline=chat.online!==undefined?chat.online:1;const unread=unreadCounts[chat.id+'_'+chat.type]||0;let avatar=chat.type==='favorites'?'⭐':(chat.type==='general'?'💬':'👤');if(chat.isGroup)avatar='👥';if(chat.avatar){avatar='<img src="'+chat.avatar+'" />'}const show=chat.isAdmin&&chat.showAdminBadge!==0;const badge=show?'<span class="admin-badge">⭐</span>':'';const gb=chat.isGroup?'<span class="group-badge">👥</span>':'';let statusText='';if(chat.type==='private'&&chat.username){statusText=chat.isGhost?'👻 призрак':(isOnline?'🟢 в сети':'⚫ офлайн')}div.innerHTML='<div class="avatar '+(chat.isGroup?'group-avatar':'')+'">'+avatar+'</div><div class="info"><div class="name">'+chat.name+' '+badge+' '+gb+'</div><div class="last-msg">'+(chat.lastMsg||'')+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">'+(chat.time?'<span class="time">'+formatTime(chat.time)+'</span>':'')+'<div style="display:flex;align-items:center;gap:6px;">'+statusText+(unread>0?'<span class="unread-badge">'+unread+'</span>':'')+'</div></div>';div.addEventListener('click',()=>{unreadCounts[chat.id+'_'+chat.type]=0;if(chat.type==='favorites'){openFavorites()}else if(chat.type==='group'){openGroupChat(chat.groupId,chat.name)}else{openChat(chat.id,chat.type,chat.name,chat.username||chat.id)}});CL.appendChild(div)})}
@@ -561,9 +618,6 @@ MI.value='';MI.focus();scrollToBottom();cancelReply();
 clearTimeout(typingTimeout);if(userId){sbClient.from('users').update({is_typing:0}).eq('id',userId).catch(()=>{})}
 }catch(err){console.error('Ошибка отправки:',err);US.textContent='❌ '+err.message;US.style.color='#ff4d6d';setTimeout(()=>{US.textContent=''},3e3)}}
 
-// ============================================================
-//  СТАТУС "ПЕЧАТАЕТ" И "ПРОЧИТАНО"
-// ============================================================
 async function sendTypingStatus(receiver){if(!userId)return;try{await sbClient.from('users').update({is_typing:1,typing_at:new Date().toISOString()}).eq('id',userId);clearTimeout(typingTimeout);typingTimeout=setTimeout(()=>{sbClient.from('users').update({is_typing:0}).eq('id',userId).catch(()=>{})},3000)}catch(e){}}
 function subscribeToTyping(){if(typingChannel){typingChannel.unsubscribe();typingChannel=null}if(!userId)return;typingChannel=sbClient.channel('typing-'+username).on('postgres_changes',{event:'UPDATE',schema:'public',table:'users',filter:'id=neq.'+userId},(payload)=>{const user=payload.new;if(user.id===userId)return;const typingEl=document.getElementById('typingStatus');if(!typingEl)return;if(user.is_typing){const chat=chats.find(c=>c.username===user.username||c.id===user.username);const name=chat?.name||user.username||'Собеседник';typingEl.textContent='✍️ '+name+' печатает...';typingEl.style.display='block'}else{typingEl.style.display='none'}}).subscribe((s)=>console.log('📡 Typing:',s));}
 async function markMessagesAsRead(chatId,type){if(!userId)return;try{let table='messages',filter='room=eq.'+chatId,senderField='username';if(type==='private'){table='private_messages';filter='and(sender.eq.'+chatId+',receiver.eq.'+username+')';senderField='sender'}else if(type==='group'){table='group_messages';filter='group_id=eq.'+chatId;senderField='sender'}const{error}=await sbClient.from(table).update({is_read:1,read_at:new Date().toISOString()}).filter(filter).neq(senderField,username).eq('is_read',0);if(error)throw error;document.querySelectorAll('.msg.self').forEach(el=>{const rs=el.querySelector('.read-status');if(rs)rs.textContent='✓✓'})}catch(e){console.error('Ошибка прочтения:',e)}}
@@ -571,9 +625,6 @@ MI.addEventListener('input',function(){if(!currentChat||currentChatType!=='priva
 MI.addEventListener('focus',function(){if(currentChat&&currentChatType==='private')sendTypingStatus(currentChat)});
 MI.addEventListener('blur',function(){if(!userId)return;clearTimeout(typingTimeout);sbClient.from('users').update({is_typing:0}).eq('id',userId).catch(()=>{})});
 
-// ============================================================
-//  ЗАГРУЗКА ФАЙЛОВ И ГРУПП
-// ============================================================
 async function uploadFiles(files){if(!files||files.length===0)return;for(const file of files){US.textContent='⏫ Загрузка: '+file.name+' ...';US.style.color='#ffd93d';try{const path='chats/'+Date.now()+'_'+file.name;const{error:ue}=await sbClient.storage.from(BUCKET).upload(path,file,{contentType:file.type,cacheControl:'3600'});if(ue)throw ue;const{data:url}=sbClient.storage.from(BUCKET).getPublicUrl(path);await sendMessage('',url.publicUrl,file.name,'file');US.textContent='✅ '+file.name+' загружен';US.style.color='#6fcf97';setTimeout(()=>{US.textContent=''},2e3)}catch(err){console.error('Ошибка загрузки файла:',err);US.textContent='❌ '+file.name+': '+err.message;US.style.color='#ff4d6d';setTimeout(()=>{US.textContent=''},3e3)}}}
 NGB.addEventListener('click',()=>openModal('groupModal'));
 document.getElementById('createGroupBtn').addEventListener('click',async()=>{const name=document.getElementById('groupNameInput').value.trim(),membersRaw=document.getElementById('groupMembersInput').value.trim();if(!name){showToast('❌ Введите название группы','error');return}const members=membersRaw?membersRaw.split(',').map(m=>m.trim()).filter(m=>m):[];const all=[username,...members];try{const{data:gD,error:gE}=await sbClient.from('groups').insert([{name:name,created_by:username}]).select();if(gE)throw gE;const gid=gD[0].id;const inserts=all.map(m=>({group_id:gid,username:m}));const{error:mE}=await sbClient.from('group_members').insert(inserts);if(mE)throw mE;showToast('✅ Группа "'+name+'" создана!','success');closeModal('groupModal');document.getElementById('groupNameInput').value='';document.getElementById('groupMembersInput').value='';loadGroups();loadChats()}catch(err){console.error('Ошибка создания группы:',err);showToast('❌ '+err.message,'error')}});
@@ -618,7 +669,7 @@ document.querySelectorAll('.mode-item').forEach(item=>{item.addEventListener('cl
 document.addEventListener('click',()=>{VMS.classList.remove('active')});
 async function startVoiceRecording(){if(!currentChat){showToast('❌ Выберите чат','error');return}if(isRecording)return;try{const constraints={audio:1,video:voiceMode==='circle'?{width:160,height:160,facingMode:'user'}:0};let stream;try{stream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){if(voiceMode==='circle'&&e.message.includes('video')){showToast('❌ Нет камеры, используем голосовое','error');voiceMode='voice';VML.textContent='голос';VMB.innerHTML='🎤 <span class="mode-label">голос</span>';stream=await navigator.mediaDevices.getUserMedia({audio:1})}else{throw e}}const mime=voiceMode==='circle'?'video/mp4':'audio/webm';if(!MediaRecorder.isTypeSupported(mime)){showToast('❌ Формат не поддерживается, используем голосовое','error');voiceMode='voice';VML.textContent='голос';VMB.innerHTML='🎤 <span class="mode-label">голос</span>';if(stream.getVideoTracks().length>0){stream.getVideoTracks().forEach(t=>t.stop())}const audioStream=await navigator.mediaDevices.getUserMedia({audio:1});stream=audioStream}if(voiceMode==='circle'){const vt=stream.getVideoTracks()[0];if(vt)vt.enabled=1}mediaRecorder=new MediaRecorder(stream,{mimeType:mime});audioChunks=[];mediaRecorder.ondataavailable=(e)=>{if(e.data.size>0)audioChunks.push(e.data)};mediaRecorder.onstop=async()=>{const blob=new Blob(audioChunks,{type:voiceMode==='circle'?'video/mp4':'audio/webm'});const dur=recordingSeconds;const ext=voiceMode==='circle'?'mp4':'webm';const path='voice/'+Date.now()+'_'+username+'.'+ext;const bucket=voiceMode==='circle'?'chat-files':'voice-messages';try{const{error:ue}=await sbClient.storage.from(bucket).upload(path,blob);if(ue)throw ue;const{data:url}=sbClient.storage.from(bucket).getPublicUrl(path);await sendMessage('',url.publicUrl,null,voiceMode==='circle'?'circle':'voice',dur)}catch(err){console.error('Ошибка загрузки:',err);showToast('❌ '+err.message,'error')}stream.getTracks().forEach(t=>t.stop());mediaRecorder=null;recordingSeconds=0;isRecording=0;VMB.classList.remove('recording');US.textContent=''};mediaRecorder.start(1e3);isRecording=1;VMB.classList.add('recording');VMB.innerHTML='⏺ <span class="mode-label">запись</span>';recordingSeconds=0;clearInterval(recordingTimer);recordingTimer=setInterval(()=>{recordingSeconds++;const status=document.getElementById('uploadStatus');const mode=voiceMode==='circle'?'🔄 Кружок':'🎤 Голосовое';status.textContent=mode+' запись: '+formatDuration(recordingSeconds);status.style.color='#ff4d6d'},1e3)}catch(err){console.error('Ошибка записи:',err);showToast('❌ '+err.message,'error');const label=voiceMode==='voice'?'голос':'кружок';VMB.innerHTML='🎤 <span class="mode-label">'+label+'</span>'}}
 function stopVoiceRecording(){if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop()}clearInterval(recordingTimer);US.textContent='⏫ Загрузка...';US.style.color='#ffd93d';setTimeout(()=>{US.textContent=''},3e3)}
-async function init(){GEO.style.display='flex';LS.style.display='none';MUI.style.display='none';try{await getGeoLocation();const hasSession=checkSession();if(!hasSession){LS.style.display='flex';GEO.style.display='none'}else{GEO.style.display='none';MUI.style.display='flex'}}catch(err){GEO.style.display='flex';LS.style.display='none';MUI.style.display='none'}loadSettings();console.log('💬 Братанский мессенджер v8.0');console.log('✅ Избранное, статусы, печатает, прочитано');console.log('👻 Режим призрака для админа');console.log('📍 Геолокация, модерация, ответы');}
+async function init(){GEO.style.display='flex';LS.style.display='none';MUI.style.display='none';try{await getGeoLocation();const hasSession=checkSession();if(!hasSession){LS.style.display='flex';GEO.style.display='none'}else{GEO.style.display='none';MUI.style.display='flex'}}catch(err){GEO.style.display='flex';LS.style.display='none';MUI.style.display='none'}loadSettings();console.log('💬 Братанский мессенджер v8.0');console.log('✅ Избранное, статусы, печатает, прочитано');console.log('👻 Режим призрака для админа');console.log('📍 Геолокация, модерация, ответы');console.log('👑 Админ видит всех пользователей');}
 init();
 </script>
 </body>
