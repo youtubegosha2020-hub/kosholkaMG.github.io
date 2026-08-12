@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
-        /* ===== ВСЕ СТИЛИ (полная версия) ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ ===== */
         * {
             margin: 0;
             padding: 0;
@@ -207,6 +207,9 @@
             border-radius: 4px;
             margin-left: 4px;
         }
+        .chat-item .admin-badge.hidden {
+            display: none;
+        }
 
         /* ===== ЧАТ ===== */
         #chatArea {
@@ -231,7 +234,6 @@
             align-items: center;
             gap: 12px;
             min-width: 0;
-            cursor: pointer;
         }
         #chatHeader .chat-left .avatar-chat {
             width: 40px;
@@ -245,6 +247,7 @@
             overflow: hidden;
             flex-shrink: 0;
             border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
         }
         #chatHeader .chat-left .avatar-chat img {
             width: 100%;
@@ -258,6 +261,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            cursor: default;
         }
         #chatHeader .chat-actions {
             display: flex;
@@ -387,25 +391,25 @@
             margin-left: 6px;
         }
         .msg.deleted {
+            display: none !important;
+        }
+        .msg.deleted-admin {
             opacity: 0.5;
             background: rgba(255, 0, 0, 0.05) !important;
             border-color: rgba(255, 0, 0, 0.1) !important;
+            display: block !important;
         }
         .msg .deleted-badge {
             font-size: 11px;
             color: #ff4d6d;
             font-style: italic;
         }
-        .msg.admin-deleted {
-            border: 1px solid rgba(255, 0, 0, 0.3) !important;
-            background: rgba(255, 0, 0, 0.08) !important;
-        }
         @keyframes fadeIn {
             0% { opacity: 0; transform: translateY(8px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== ГОЛОСОВЫЕ СООБЩЕНИЯ ===== */
+        /* ===== ГОЛОСОВЫЕ ===== */
         .voice-msg {
             display: flex;
             align-items: center;
@@ -459,7 +463,7 @@
             color: #00d4ff;
         }
 
-        /* ===== КРУЖОЧКИ (видеосообщения) ===== */
+        /* ===== КРУЖОЧКИ ===== */
         .circle-msg {
             width: 160px;
             height: 160px;
@@ -548,7 +552,7 @@
             margin: 4px 12px;
         }
 
-        /* ===== РЕАКЦИИ ===== */
+        /* ===== РЕАКЦИИ (всплывающие) ===== */
         .reactions-popup {
             display: none;
             position: fixed;
@@ -573,32 +577,35 @@
             transform: scale(1.3);
         }
 
-        /* ===== ИНПУТ ===== */
+        /* ===== ИНПУТ (ИСПРАВЛЕН) ===== */
         #inputArea {
             display: flex;
-            gap: 8px;
-            padding: 12px 16px;
+            gap: 6px;
+            padding: 10px 12px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
             flex-shrink: 0;
             align-items: center;
+            flex-wrap: nowrap;
         }
         #inputArea input[type="text"] {
             flex: 1;
-            padding: 12px 16px;
-            border-radius: 30px;
+            min-width: 0;
+            padding: 10px 14px;
+            border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.04);
             color: #fff;
             font-size: 15px;
             outline: none;
-            min-height: 44px;
+            min-height: 40px;
+            width: 100%;
         }
         #inputArea input[type="text"]:focus {
             border-color: rgba(0, 212, 255, 0.2);
         }
         #inputArea .btn-send {
-            padding: 12px 20px;
-            border-radius: 30px;
+            padding: 10px 16px;
+            border-radius: 24px;
             border: none;
             background: linear-gradient(135deg, #00d4ff, #7b2ffc);
             color: #fff;
@@ -606,41 +613,41 @@
             font-size: 15px;
             cursor: pointer;
             flex-shrink: 0;
-            min-height: 44px;
+            min-height: 40px;
             min-width: 44px;
         }
         #inputArea .btn-file {
-            padding: 10px 14px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(255, 255, 255, 0.04);
-            color: #fff;
-            font-size: 20px;
-            cursor: pointer;
-            flex-shrink: 0;
-            min-height: 44px;
-            min-width: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #inputArea .btn-voice {
-            padding: 10px 14px;
-            border-radius: 30px;
+            padding: 8px 10px;
+            border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             background: rgba(255, 255, 255, 0.04);
             color: #fff;
             font-size: 18px;
             cursor: pointer;
             flex-shrink: 0;
-            min-height: 44px;
-            min-width: 44px;
+            min-height: 40px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #inputArea .btn-voice-toggle {
+            padding: 8px 10px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+            min-height: 40px;
+            min-width: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
         }
-        #inputArea .btn-voice.recording {
+        #inputArea .btn-voice-toggle.recording {
             background: rgba(255, 50, 50, 0.2);
             border-color: rgba(255, 50, 50, 0.3);
             color: #ff4d6d;
@@ -651,27 +658,12 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
-        #inputArea .btn-voice-circle {
-            padding: 10px 14px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(255, 255, 255, 0.04);
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-            flex-shrink: 0;
-            min-height: 44px;
-            min-width: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        #inputArea .btn-voice-circle.recording {
-            background: rgba(255, 50, 50, 0.2);
-            border-color: rgba(255, 50, 50, 0.3);
-            color: #ff4d6d;
-            animation: recordPulse 1s infinite;
+        #inputArea .btn-voice-toggle .mode-label {
+            font-size: 8px;
+            display: block;
+            text-align: center;
+            margin-top: -2px;
+            color: rgba(255, 255, 255, 0.2);
         }
         #fileInput {
             display: none;
@@ -954,51 +946,6 @@
             font-size: 13px;
         }
 
-        /* ===== АДАПТИВ ===== */
-        @media (max-width: 768px) {
-            #sidebar {
-                width: 100%;
-                min-width: unset;
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                z-index: 10;
-                transform: translateX(0);
-                border-right: none;
-            }
-            #sidebar.hidden {
-                transform: translateX(-100%);
-            }
-            #chatArea {
-                width: 100%;
-            }
-            #chatHeader .back-btn {
-                display: block;
-            }
-            .msg {
-                max-width: 85%;
-            }
-            .modal {
-                padding: 20px 16px;
-                margin: 10px;
-            }
-            .circle-msg {
-                width: 120px;
-                height: 120px;
-            }
-        }
-        @media (min-width: 769px) {
-            #sidebar {
-                position: relative !important;
-                transform: none !important;
-            }
-            #sidebar.hidden {
-                transform: none !important;
-            }
-        }
-
         /* ===== ЗВОНОК ===== */
         #callOverlay {
             display: none;
@@ -1125,23 +1072,76 @@
             font-weight: 400;
             color: rgba(255, 255, 255, 0.5);
         }
-        @media (max-width: 600px) {
-            #callOverlay .local-video {
-                width: 100px;
-                bottom: 70px;
-                right: 10px;
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 100%;
+                min-width: unset;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10;
+                transform: translateX(0);
+                border-right: none;
             }
-            #callOverlay .call-controls {
-                padding: 8px 16px;
-                gap: 10px;
+            #sidebar.hidden {
+                transform: translateX(-100%);
             }
-            #callOverlay .call-controls button {
-                width: 44px;
-                height: 44px;
-                font-size: 18px;
+            #chatArea {
+                width: 100%;
             }
-            #callOverlay .remote-video {
-                min-height: 300px;
+            #chatHeader .back-btn {
+                display: block;
+            }
+            .msg {
+                max-width: 85%;
+            }
+            .modal {
+                padding: 20px 16px;
+                margin: 10px;
+            }
+            .circle-msg {
+                width: 120px;
+                height: 120px;
+            }
+            #inputArea {
+                padding: 8px 10px;
+                gap: 4px;
+            }
+            #inputArea input[type="text"] {
+                font-size: 14px;
+                padding: 8px 12px;
+                min-height: 36px;
+            }
+            #inputArea .btn-send {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-height: 36px;
+                min-width: 38px;
+            }
+            #inputArea .btn-file,
+            #inputArea .btn-voice-toggle {
+                min-height: 36px;
+                min-width: 36px;
+                font-size: 16px;
+                padding: 6px 8px;
+            }
+        }
+        @media (min-width: 769px) {
+            #sidebar {
+                position: relative !important;
+                transform: none !important;
+            }
+            #sidebar.hidden {
+                transform: none !important;
+            }
+        }
+        @media (max-width: 400px) {
+            #inputArea .btn-voice-toggle .mode-label {
+                display: none;
             }
         }
     </style>
@@ -1188,9 +1188,9 @@
 
             <div id="chatArea">
                 <div id="chatHeader">
-                    <div class="chat-left" id="chatProfileBtn">
+                    <div class="chat-left">
                         <button class="back-btn" id="mobileBack">←</button>
-                        <div class="avatar-chat" id="chatAvatar">💬</div>
+                        <div class="avatar-chat" id="chatAvatar" onclick="openChatProfile()">💬</div>
                         <span class="chat-title" id="chatTitle">Выберите чат</span>
                     </div>
                     <div class="chat-actions">
@@ -1204,8 +1204,10 @@
                 <div id="uploadStatus"></div>
                 <div id="inputArea">
                     <button class="btn-file" id="fileBtn">📎</button>
-                    <button class="btn-voice" id="voiceBtn" title="Голосовое сообщение">🎤</button>
-                    <button class="btn-voice-circle" id="voiceCircleBtn" title="Кружок (видео)">🔄</button>
+                    <button class="btn-voice-toggle" id="voiceToggleBtn">
+                        🎤
+                        <span class="mode-label" id="voiceModeLabel">голос</span>
+                    </button>
                     <input id="fileInput" type="file" multiple />
                     <input id="msgInput" type="text" placeholder="Напиши что-то..." disabled />
                     <button class="btn-send" id="sendBtn" disabled>→</button>
@@ -1343,12 +1345,11 @@
         const searchInput = document.getElementById('searchInput');
         const mobileBack = document.getElementById('mobileBack');
         const profileBtn = document.getElementById('profileBtn');
-        const chatProfileBtn = document.getElementById('chatProfileBtn');
         const sidebar = document.getElementById('sidebar');
         const callBtn = document.getElementById('callBtn');
         const videoCallBtn = document.getElementById('videoCallBtn');
-        const voiceBtn = document.getElementById('voiceBtn');
-        const voiceCircleBtn = document.getElementById('voiceCircleBtn');
+        const voiceToggleBtn = document.getElementById('voiceToggleBtn');
+        const voiceModeLabel = document.getElementById('voiceModeLabel');
 
         // ============================================================
         //  ПЕРЕМЕННЫЕ
@@ -1372,6 +1373,7 @@
         let userData = {};
         let editingMsgId = null;
         let editingTable = null;
+        let showAdminBadge = true;
 
         // ===== ЗВОНОК =====
         let peerConnection = null;
@@ -1381,17 +1383,15 @@
         let isVideoOff = false;
         let callType = 'audio';
 
-        // ===== ГОЛОСОВЫЕ СООБЩЕНИЯ =====
+        // ===== ГОЛОСОВЫЕ/КРУЖОЧКИ =====
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecording = false;
         let recordingTimer = null;
         let recordingSeconds = 0;
-        let audioContext = null;
-        let analyser = null;
-        let dataArray = null;
-        let animationId = null;
         let currentAudio = null;
+        let voiceMode = 'voice'; // 'voice' или 'circle'
+        let longPressTimer = null;
 
         // ============================================================
         //  ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
@@ -1495,6 +1495,18 @@
         window.addEventListener('blur', () => { isPageFocused = false; });
 
         // ============================================================
+        //  ОТКРЫТИЕ ПРОФИЛЯ ИЗ ЧАТА (только по аватарке)
+        // ============================================================
+        window.openChatProfile = function() {
+            const usernameToView = document.getElementById('chatProfileBtn')?.dataset?.username;
+            if (usernameToView) {
+                viewProfile(usernameToView);
+            } else {
+                openMyProfile();
+            }
+        };
+
+        // ============================================================
         //  АВТОРИЗАЦИЯ
         // ============================================================
         function checkSession() {
@@ -1577,6 +1589,7 @@
                         bio: '',
                         avatar_url: null,
                         is_admin: name === 'kosholka' ? true : false,
+                        show_admin_badge: true,
                     }]);
 
                 if (pError) throw pError;
@@ -1639,6 +1652,7 @@
                             bio: '',
                             avatar_url: null,
                             is_admin: name === 'kosholka' ? true : false,
+                            show_admin_badge: true,
                         }]);
                 }
 
@@ -1682,6 +1696,7 @@
                                 bio: '',
                                 avatar_url: null,
                                 is_admin: username === 'kosholka' ? true : false,
+                                show_admin_badge: true,
                             }]);
                         return loadUserData();
                     }
@@ -1690,6 +1705,7 @@
 
                 userData = data;
                 isAdmin = data.is_admin || false;
+                showAdminBadge = data.show_admin_badge !== undefined ? data.show_admin_badge : true;
 
                 const displayNameEl = document.getElementById('myDisplayName');
                 if (displayNameEl) {
@@ -1720,7 +1736,7 @@
         }
 
         // ============================================================
-        //  ЗАГРУЗКА ЧАТОВ (сокращено для экономии места)
+        //  ЗАГРУЗКА ЧАТОВ
         // ============================================================
         async function loadChats() {
             try {
@@ -1736,7 +1752,7 @@
 
                 const { data: profiles } = await sbClient
                     .from('profiles')
-                    .select('username, display_name, avatar_url, is_admin');
+                    .select('username, display_name, avatar_url, is_admin, show_admin_badge');
 
                 const profileMap = {};
                 if (profiles) {
@@ -1768,6 +1784,7 @@
                             online: Date.now() - new Date(u.last_seen).getTime() < 60000,
                             avatar: profile.avatar_url || null,
                             isAdmin: profile.is_admin || false,
+                            showAdminBadge: profile.show_admin_badge !== false,
                         });
                     } else {
                         chatListData.push({
@@ -1780,6 +1797,7 @@
                             online: Date.now() - new Date(u.last_seen).getTime() < 60000,
                             avatar: profile.avatar_url || null,
                             isAdmin: profile.is_admin || false,
+                            showAdminBadge: profile.show_admin_badge !== false,
                         });
                     }
                 }
@@ -1837,7 +1855,8 @@
                     avatarContent = '<img src="' + chat.avatar + '" />';
                 }
 
-                const adminBadge = chat.isAdmin ? '<span class="admin-badge">⭐</span>' : '';
+                const showBadge = chat.isAdmin && chat.showAdminBadge !== false;
+                const adminBadge = showBadge ? '<span class="admin-badge">⭐</span>' : '';
 
                 div.innerHTML = `
                     <div class="avatar">${avatarContent}</div>
@@ -1874,7 +1893,6 @@
             if (pollingInterval) { clearInterval(pollingInterval);
                 pollingInterval = null; }
 
-            // Останавливаем воспроизведение аудио
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio = null;
@@ -1884,6 +1902,7 @@
             currentChatType = type;
             chatTitle.textContent = name;
 
+            const chatProfileBtn = document.getElementById('chatProfileBtn');
             if (type === 'private' && usernameForProfile) {
                 chatProfileBtn.dataset.username = usernameForProfile;
             } else {
@@ -2096,7 +2115,7 @@
         }
 
         // ============================================================
-        //  ОТРИСОВКА СООБЩЕНИЙ
+        //  ОТРИСОВКА СООБЩЕНИЙ (с правильным удалением)
         // ============================================================
         function appendMessage(msg) {
             const exists = document.querySelector('[data-msg-id="' + msg.id + '"]');
@@ -2106,10 +2125,14 @@
             const isOwn = msg.username === username;
             const isDeleted = msg.is_deleted || false;
 
+            // Для обычных пользователей удалённые сообщения просто не показываем
+            if (isDeleted && !isAdmin) {
+                return;
+            }
+
             let className = 'msg ' + (isOwn ? 'self' : 'other');
-            if (isDeleted) {
-                className += ' deleted';
-                if (isAdmin) className += ' admin-deleted';
+            if (isDeleted && isAdmin) {
+                className += ' deleted-admin';
             }
             div.className = className;
             div.setAttribute('data-msg-id', msg.id);
@@ -2118,21 +2141,16 @@
             div.setAttribute('data-msg-type', msg.type || 'text');
 
             let content = '';
-            if (isDeleted) {
+            if (isDeleted && isAdmin) {
                 content = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                if (isAdmin) {
-                    content +=
-                        '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
-                        '') + ')</span>';
-                }
+                content += '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
+                    '') + ')</span>';
             } else {
-                // Тип сообщения
                 if (msg.type === 'voice') {
                     content = renderVoiceMessage(msg);
                 } else if (msg.type === 'circle') {
                     content = renderCircleMessage(msg);
                 } else {
-                    // Текст или файл
                     if (msg.text) {
                         content += escapeHtml(msg.text);
                     }
@@ -2169,32 +2187,50 @@
                 </div>
             `;
 
-            // Добавляем обработчики для контекстного меню
-            div.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                showContextMenu(e, msg.id, isOwn);
-            });
-
-            // Для мобильных - долгое нажатие
+            // Добавляем обработчики для контекстного меню (долгое нажатие)
             let longPressTimer = null;
-            div.addEventListener('touchstart', (e) => {
-                longPressTimer = setTimeout(() => {
+
+            const showMenu = (e) => {
+                const rect = div.getBoundingClientRect();
+                const x = e.clientX || (rect.left + rect.width / 2);
+                const y = e.clientY || (rect.top + rect.height / 2);
+                showContextMenu({ clientX: x, clientY: y }, msg.id, isOwn);
+            };
+
+            // Только для текстовых сообщений (не для голосовых и кружочков)
+            if (msg.type === 'text' || !msg.type) {
+                div.addEventListener('touchstart', (e) => {
+                    // Запоминаем время для определения касания
+                    const touchStart = Date.now();
+                    longPressTimer = setTimeout(() => {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        showContextMenu({ clientX: touch.clientX, clientY: touch.clientY }, msg.id, isOwn);
+                    }, 300);
+                });
+                div.addEventListener('touchend', (e) => {
+                    clearTimeout(longPressTimer);
+                    // Если это было короткое касание - показываем реакции
+                    if (Date.now() - touchStart < 300) {
+                        // Показываем реакции на короткое касание
+                        const rect = div.getBoundingClientRect();
+                        showReactionsPopup(msg.id, rect.left + rect.width / 2, rect.top);
+                    }
+                });
+                div.addEventListener('touchmove', () => {
+                    clearTimeout(longPressTimer);
+                });
+
+                // Для ПК - правый клик
+                div.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
-                    const touch = e.touches[0];
-                    showContextMenu({ clientX: touch.clientX, clientY: touch.clientY }, msg.id, isOwn);
-                }, 500);
-            });
-            div.addEventListener('touchend', () => {
-                clearTimeout(longPressTimer);
-            });
-            div.addEventListener('touchmove', () => {
-                clearTimeout(longPressTimer);
-            });
+                    showContextMenu(e, msg.id, isOwn);
+                });
+            }
 
             messagesEl.appendChild(div);
             scrollToBottom();
 
-            // Отображаем реакции
             if (msg.reactions) {
                 renderReactions(msg.id, msg.reactions);
             }
@@ -2208,10 +2244,13 @@
             const isOwn = msg.sender === username;
             const isDeleted = msg.is_deleted || false;
 
+            if (isDeleted && !isAdmin) {
+                return;
+            }
+
             let className = 'msg ' + (isOwn ? 'self' : 'other');
-            if (isDeleted) {
-                className += ' deleted';
-                if (isAdmin) className += ' admin-deleted';
+            if (isDeleted && isAdmin) {
+                className += ' deleted-admin';
             }
             div.className = className;
             div.setAttribute('data-msg-id', msg.id);
@@ -2220,13 +2259,10 @@
             div.setAttribute('data-msg-type', msg.type || 'text');
 
             let content = '';
-            if (isDeleted) {
+            if (isDeleted && isAdmin) {
                 content = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                if (isAdmin) {
-                    content +=
-                        '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
-                        '') + ')</span>';
-                }
+                content += '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' + escapeHtml(msg.text ||
+                    '') + ')</span>';
             } else {
                 if (msg.type === 'voice') {
                     content = renderVoiceMessage(msg);
@@ -2256,25 +2292,33 @@
                 </div>
             `;
 
-            div.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                showContextMenu(e, msg.id, isOwn);
-            });
-
             let longPressTimer = null;
-            div.addEventListener('touchstart', (e) => {
-                longPressTimer = setTimeout(() => {
+            let touchStart = 0;
+
+            if (msg.type === 'text' || !msg.type) {
+                div.addEventListener('touchstart', (e) => {
+                    touchStart = Date.now();
+                    longPressTimer = setTimeout(() => {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        showContextMenu({ clientX: touch.clientX, clientY: touch.clientY }, msg.id, isOwn);
+                    }, 300);
+                });
+                div.addEventListener('touchend', (e) => {
+                    clearTimeout(longPressTimer);
+                    if (Date.now() - touchStart < 300) {
+                        const rect = div.getBoundingClientRect();
+                        showReactionsPopup(msg.id, rect.left + rect.width / 2, rect.top);
+                    }
+                });
+                div.addEventListener('touchmove', () => {
+                    clearTimeout(longPressTimer);
+                });
+                div.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
-                    const touch = e.touches[0];
-                    showContextMenu({ clientX: touch.clientX, clientY: touch.clientY }, msg.id, isOwn);
-                }, 500);
-            });
-            div.addEventListener('touchend', () => {
-                clearTimeout(longPressTimer);
-            });
-            div.addEventListener('touchmove', () => {
-                clearTimeout(longPressTimer);
-            });
+                    showContextMenu(e, msg.id, isOwn);
+                });
+            }
 
             messagesEl.appendChild(div);
             scrollToBottom();
@@ -2285,7 +2329,7 @@
         }
 
         // ============================================================
-        //  ГОЛОСОВЫЕ СООБЩЕНИЯ
+        //  ГОЛОСОВЫЕ
         // ============================================================
         function renderVoiceMessage(msg) {
             const duration = msg.duration || 10;
@@ -2315,12 +2359,10 @@
             const playBtn = el.querySelector('.play-btn');
             const durationEl = document.getElementById('duration-' + id);
 
-            // Ищем аудио в сообщении
             const msgEl = document.querySelector('[data-msg-id="' + id + '"]');
             let audioUrl = msgEl?.dataset?.voiceUrl;
 
             if (!audioUrl) {
-                // Ищем в данных сообщения
                 const allMessages = [...document.querySelectorAll('.msg')];
                 for (const m of allMessages) {
                     if (m.dataset.msgId === id) {
@@ -2329,7 +2371,7 @@
                             try {
                                 const data = JSON.parse(voiceData);
                                 audioUrl = data.url;
-                            } catch(e) {}
+                            } catch (e) {}
                         }
                         break;
                     }
@@ -2342,7 +2384,6 @@
             }
 
             if (currentAudio && currentAudio.id === id) {
-                // Пауза/продолжение
                 if (currentAudio.paused) {
                     currentAudio.play();
                     playBtn.textContent = '⏸';
@@ -2353,7 +2394,6 @@
                 return;
             }
 
-            // Останавливаем предыдущее
             if (currentAudio) {
                 currentAudio.pause();
                 const oldBtn = document.querySelector('[data-voice-id="' + currentAudio.id + '"] .play-btn');
@@ -2369,7 +2409,6 @@
                 durationEl.textContent = formatDuration(remaining);
                 durationEl.classList.add('current');
 
-                // Обновляем волну
                 const bars = document.querySelectorAll('#waveform-' + id + ' .bar');
                 const progress = audio.currentTime / audio.duration;
                 const activeIndex = Math.floor(progress * bars.length);
@@ -2401,7 +2440,7 @@
         };
 
         // ============================================================
-        //  КРУЖОЧКИ (видеосообщения)
+        //  КРУЖОЧКИ
         // ============================================================
         function renderCircleMessage(msg) {
             const videoUrl = msg.file_url || '';
@@ -2424,7 +2463,6 @@
             const overlay = el.querySelector('.play-overlay');
 
             if (video.paused) {
-                // Останавливаем другие видео
                 document.querySelectorAll('.circle-msg video').forEach(v => {
                     if (v !== video) {
                         v.pause();
@@ -2448,31 +2486,83 @@
         };
 
         // ============================================================
-        //  ЗАПИСЬ ГОЛОСОВЫХ И КРУЖОЧКОВ
+        //  ЗАПИСЬ (переключение режимов)
         // ============================================================
-        async function startVoiceRecording(isCircle = false) {
+        // Переключение режима по нажатию
+        voiceToggleBtn.addEventListener('click', () => {
             if (isRecording) {
                 stopVoiceRecording();
+                return;
+            }
+            // Переключаем режим
+            voiceMode = voiceMode === 'voice' ? 'circle' : 'voice';
+            voiceModeLabel.textContent = voiceMode === 'voice' ? 'голос' : 'кружок';
+            voiceToggleBtn.textContent = voiceMode === 'voice' ? '🎤' : '🔄';
+            showToast('Режим: ' + (voiceMode === 'voice' ? '🎤 Голосовое' : '🔄 Кружок'));
+        });
+
+        // Запись по зажатию
+        voiceToggleBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isRecording) return;
+            startVoiceRecording();
+        });
+
+        voiceToggleBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (isRecording) {
+                stopVoiceRecording();
+            }
+        });
+
+        voiceToggleBtn.addEventListener('touchcancel', () => {
+            if (isRecording) {
+                stopVoiceRecording();
+            }
+        });
+
+        // Для ПК - mousedown/mouseup
+        voiceToggleBtn.addEventListener('mousedown', (e) => {
+            if (isRecording) return;
+            startVoiceRecording();
+        });
+
+        voiceToggleBtn.addEventListener('mouseup', () => {
+            if (isRecording) {
+                stopVoiceRecording();
+            }
+        });
+
+        voiceToggleBtn.addEventListener('mouseleave', () => {
+            if (isRecording) {
+                stopVoiceRecording();
+            }
+        });
+
+        async function startVoiceRecording() {
+            if (!currentChat) {
+                showToast('❌ Выберите чат', 'error');
                 return;
             }
 
             try {
                 const constraints = {
                     audio: true,
-                    video: isCircle ? { width: 160, height: 160 } : false
+                    video: voiceMode === 'circle' ? { width: 160, height: 160 } : false
                 };
 
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-                // Для кружочков нужен отдельный поток
-                if (isCircle) {
+                if (voiceMode === 'circle') {
                     const videoTrack = stream.getVideoTracks()[0];
                     if (videoTrack) {
                         videoTrack.enabled = true;
                     }
                 }
 
-                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: voiceMode === 'circle' ? 'video/mp4' : 'audio/webm'
+                });
                 audioChunks = [];
 
                 mediaRecorder.ondataavailable = (event) => {
@@ -2483,15 +2573,14 @@
 
                 mediaRecorder.onstop = async () => {
                     const blob = new Blob(audioChunks, {
-                        type: isCircle ? 'video/mp4' : 'audio/webm'
+                        type: voiceMode === 'circle' ? 'video/mp4' : 'audio/webm'
                     });
 
                     const duration = recordingSeconds;
 
-                    // Загружаем в Supabase
-                    const ext = isCircle ? 'mp4' : 'webm';
+                    const ext = voiceMode === 'circle' ? 'mp4' : 'webm';
                     const path = `voice/${Date.now()}_${username}.${ext}`;
-                    const bucket = isCircle ? 'chat-files' : 'voice-messages';
+                    const bucket = voiceMode === 'circle' ? 'chat-files' : 'voice-messages';
 
                     try {
                         const { error: uploadError } = await sbClient.storage
@@ -2504,52 +2593,35 @@
                             .from(bucket)
                             .getPublicUrl(path);
 
-                        // Отправляем сообщение
-                        await sendMessage('', urlData.publicUrl, null, isCircle ? 'circle' : 'voice', duration);
+                        await sendMessage('', urlData.publicUrl, null, voiceMode === 'circle' ? 'circle' : 'voice',
+                        duration);
 
                     } catch (err) {
                         console.error('Ошибка загрузки:', err);
                         showToast('❌ ' + err.message, 'error');
                     }
 
-                    // Очищаем
                     stream.getTracks().forEach(t => t.stop());
                     mediaRecorder = null;
                     recordingSeconds = 0;
                     isRecording = false;
 
-                    voiceBtn.classList.remove('recording');
-                    voiceCircleBtn.classList.remove('recording');
-
-                    if (isCircle) {
-                        voiceCircleBtn.textContent = '🔄';
-                    } else {
-                        voiceBtn.textContent = '🎤';
-                    }
+                    voiceToggleBtn.classList.remove('recording');
+                    uploadStatus.textContent = '';
                 };
 
                 mediaRecorder.start(1000);
                 isRecording = true;
 
-                if (isCircle) {
-                    voiceCircleBtn.classList.add('recording');
-                    voiceCircleBtn.textContent = '⏹';
-                } else {
-                    voiceBtn.classList.add('recording');
-                    voiceBtn.textContent = '⏹';
-                }
+                voiceToggleBtn.classList.add('recording');
 
-                // Счётчик
                 recordingSeconds = 0;
                 clearInterval(recordingTimer);
                 recordingTimer = setInterval(() => {
                     recordingSeconds++;
                     const status = document.getElementById('uploadStatus');
-                    if (isCircle) {
-                        status.textContent = '🔄 Запись кружочка: ' + formatDuration(recordingSeconds);
-                    } else {
-                        status.textContent = '🎤 Запись: ' + formatDuration(recordingSeconds);
-                    }
+                    const mode = voiceMode === 'circle' ? '🔄 Кружок' : '🎤 Голосовое';
+                    status.textContent = mode + ' запись: ' + formatDuration(recordingSeconds);
                     status.style.color = '#ff4d6d';
                 }, 1000);
 
@@ -2564,21 +2636,16 @@
                 mediaRecorder.stop();
             }
             clearInterval(recordingTimer);
-            document.getElementById('uploadStatus').textContent = '⏫ Загрузка...';
-            document.getElementById('uploadStatus').style.color = '#ffd93d';
+            uploadStatus.textContent = '⏫ Загрузка...';
+            uploadStatus.style.color = '#ffd93d';
 
-            // Ждём завершения
             setTimeout(() => {
-                document.getElementById('uploadStatus').textContent = '';
+                uploadStatus.textContent = '';
             }, 3000);
         }
 
-        // Кнопки записи
-        voiceBtn.addEventListener('click', () => startVoiceRecording(false));
-        voiceCircleBtn.addEventListener('click', () => startVoiceRecording(true));
-
         // ============================================================
-        //  КОНТЕКСТНОЕ МЕНЮ
+        //  КОНТЕКСТНОЕ МЕНЮ (только для текстовых сообщений)
         // ============================================================
         const contextMenu = document.getElementById('contextMenu');
         const reactionsPopup = document.getElementById('reactionsPopup');
@@ -2586,18 +2653,25 @@
         let isOwnMsg = false;
 
         function showContextMenu(e, msgId, isOwn) {
+            const el = document.querySelector('[data-msg-id="' + msgId + '"]');
+            if (!el) return;
+
+            // Проверяем тип сообщения - только для текстовых
+            const msgType = el.dataset.msgType || 'text';
+            if (msgType === 'voice' || msgType === 'circle') {
+                // Для голосовых и кружочков показываем только удаление и копирование
+            }
+
             selectedMsgId = msgId;
             isOwnMsg = isOwn;
 
-            // Показываем меню
             contextMenu.style.display = 'block';
             contextMenu.style.left = e.clientX + 'px';
             contextMenu.style.top = e.clientY + 'px';
 
-            // Прячем реакции
             reactionsPopup.classList.remove('active');
+            reactionsPopup.style.display = 'none';
 
-            // Адаптация меню
             const items = contextMenu.querySelectorAll('.item');
             items.forEach(item => {
                 const action = item.dataset.action;
@@ -2608,7 +2682,6 @@
                 }
             });
 
-            // Закрываем при клике вне
             setTimeout(() => {
                 document.addEventListener('click', closeContextMenu, { once: true });
             }, 10);
@@ -2622,14 +2695,13 @@
             reactionsPopup.style.display = 'none';
         }
 
-        // Обработчики контекстного меню
         contextMenu.querySelectorAll('.item').forEach(item => {
             item.addEventListener('click', () => {
                 const action = item.dataset.action;
                 if (action === 'copy') copyMessage(selectedMsgId);
                 else if (action === 'edit') editMessage(selectedMsgId, getMsgTable(selectedMsgId));
                 else if (action === 'delete') deleteMessage(selectedMsgId, getMsgTable(selectedMsgId));
-                else if (action === 'react') showReactions(selectedMsgId);
+                else if (action === 'react') showReactionsPopup(selectedMsgId);
                 closeContextMenu();
             });
         });
@@ -2637,25 +2709,35 @@
         function getMsgTable(msgId) {
             const el = document.querySelector('[data-msg-id="' + msgId + '"]');
             if (el) {
-                const type = el.dataset.msgType || 'text';
-                if (type === 'private') return 'private_messages';
+                const sender = el.dataset?.msgSender;
+                if (sender) return 'private_messages';
             }
-            // Проверяем, есть ли sender
-            const sender = el?.dataset?.msgSender;
-            if (sender) return 'private_messages';
             return 'messages';
         }
 
         // ============================================================
-        //  РЕАКЦИИ
+        //  РЕАКЦИИ (всплывающие)
         // ============================================================
-        function showReactions(msgId) {
-            const rect = contextMenu.getBoundingClientRect();
+        function showReactionsPopup(msgId, x, y) {
+            selectedMsgId = msgId;
             reactionsPopup.style.display = 'flex';
-            reactionsPopup.style.left = rect.left + 'px';
-            reactionsPopup.style.top = (rect.top - 60) + 'px';
+            if (x && y) {
+                reactionsPopup.style.left = (x - 120) + 'px';
+                reactionsPopup.style.top = (y - 60) + 'px';
+            } else {
+                const rect = contextMenu.getBoundingClientRect();
+                reactionsPopup.style.left = (rect.left) + 'px';
+                reactionsPopup.style.top = (rect.top - 60) + 'px';
+            }
             reactionsPopup.classList.add('active');
             reactionsPopup.dataset.msgId = msgId;
+
+            setTimeout(() => {
+                document.addEventListener('click', () => {
+                    reactionsPopup.classList.remove('active');
+                    reactionsPopup.style.display = 'none';
+                }, { once: true });
+            }, 10);
         }
 
         reactionsPopup.querySelectorAll('.reaction').forEach(el => {
@@ -2675,14 +2757,12 @@
                 const el = document.querySelector('[data-msg-id="' + msgId + '"]');
                 if (!el) return;
 
-                // Получаем текущие реакции
                 let reactions = {};
                 try {
                     const data = el.dataset.reactions;
                     if (data) reactions = JSON.parse(data);
-                } catch(e) {}
+                } catch (e) {}
 
-                // Добавляем или убираем реакцию
                 if (reactions[reaction] && reactions[reaction].includes(username)) {
                     reactions[reaction] = reactions[reaction].filter(u => u !== username);
                     if (reactions[reaction].length === 0) delete reactions[reaction];
@@ -2691,7 +2771,6 @@
                     reactions[reaction].push(username);
                 }
 
-                // Обновляем в БД
                 const { error } = await sbClient
                     .from(table)
                     .update({ reactions: reactions })
@@ -2699,7 +2778,6 @@
 
                 if (error) throw error;
 
-                // Обновляем в DOM
                 el.dataset.reactions = JSON.stringify(reactions);
                 renderReactions(msgId, reactions);
 
@@ -2781,12 +2859,9 @@
                 const el = document.querySelector('[data-msg-id="' + editingMsgId + '"]');
                 if (el) {
                     el.dataset.msgText = newText;
-                    const content = el.querySelector('.msg-actions')?.previousElementSibling || el;
-                    // Сохраняем тип сообщения
-                    const type = el.dataset.msgType || 'text';
-                    if (type === 'text') {
+                    const content = el.querySelector('.sender')?.nextElementSibling;
+                    if (content) {
                         let newContent = escapeHtml(newText);
-                        // Сохраняем файлы
                         const fileLinks = content.querySelectorAll('.file-link');
                         const imgElements = content.querySelectorAll('img');
                         const videoElements = content.querySelectorAll('video');
@@ -2819,15 +2894,15 @@
         });
 
         // ============================================================
-        //  УДАЛЕНИЕ
+        //  УДАЛЕНИЕ (правильное - обычные не видят)
         // ============================================================
         window.deleteMessage = async function(id, table) {
             const confirm = window.confirm('🗑️ Удалить сообщение?');
             if (!confirm) return;
 
             try {
-                // Админ удаляет полностью, обычный пользователь - помечает
                 if (isAdmin) {
+                    // Админ удаляет полностью
                     const { error } = await sbClient
                         .from(table)
                         .delete()
@@ -2836,11 +2911,12 @@
                     if (error) throw error;
                     showToast('✅ Сообщение удалено (админ)', 'success');
                 } else {
+                    // Обычный пользователь помечает как удалённое
                     const { error } = await sbClient
                         .from(table)
                         .update({
                             is_deleted: true,
-                            text: 'Сообщение удалено'
+                            text: ''
                         })
                         .eq('id', id);
 
@@ -2848,17 +2924,14 @@
                     showToast('✅ Сообщение удалено', 'success');
                 }
 
-                // Обновляем DOM
+                // Удаляем из DOM
                 const el = document.querySelector('[data-msg-id="' + id + '"]');
                 if (el) {
                     if (isAdmin) {
                         el.remove();
                     } else {
-                        el.classList.add('deleted');
-                        const content = el.querySelector('.sender')?.nextElementSibling;
-                        if (content) {
-                            content.innerHTML = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                        }
+                        // Для обычного пользователя - просто скрываем
+                        el.style.display = 'none';
                     }
                 }
 
@@ -2868,333 +2941,7 @@
         };
 
         // ============================================================
-        //  ПРОФИЛЬ
-        // ============================================================
-        window.viewProfile = async function(usernameToView) {
-            if (!usernameToView || usernameToView === username) {
-                openMyProfile();
-                return;
-            }
-
-            try {
-                const { data: user, error } = await sbClient
-                    .from('users')
-                    .select('*')
-                    .eq('username', usernameToView)
-                    .single();
-
-                if (error) throw error;
-
-                const { data: profile, error: pError } = await sbClient
-                    .from('profiles')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .single();
-
-                if (pError && pError.code !== 'PGRST116') throw pError;
-
-                const titleEl = document.getElementById('profileModalTitle');
-                if (titleEl) {
-                    titleEl.textContent = '👤 ' + (profile?.display_name || usernameToView);
-                }
-
-                const preview = document.getElementById('profileAvatarPreview');
-                if (preview) {
-                    if (profile?.avatar_url) {
-                        preview.innerHTML = '<img src="' + profile.avatar_url + '" />';
-                    } else {
-                        preview.innerHTML = '<div class="placeholder">👤</div>';
-                    }
-                }
-
-                const displayNameInput = document.getElementById('profileDisplayName');
-                const bioInput = document.getElementById('profileBio');
-                const saveBtn = document.getElementById('saveProfileBtn');
-                const uploadBtn = document.getElementById('uploadAvatarBtn');
-                if (displayNameInput) displayNameInput.style.display = 'none';
-                if (bioInput) bioInput.style.display = 'none';
-                if (saveBtn) saveBtn.style.display = 'none';
-                if (uploadBtn) uploadBtn.style.display = 'none';
-
-                const fields = document.getElementById('profileFields');
-                if (fields) {
-                    fields.innerHTML = '';
-                    const addField = (label, value, isAdminField = false) => {
-                        const div = document.createElement('div');
-                        div.className = 'profile-field';
-                        const val = document.createElement('span');
-                        val.className = 'value' + (isAdminField ? ' admin' : '');
-                        val.textContent = value || '—';
-                        if (isAdminField && isAdmin) {
-                            const copyBtn = document.createElement('button');
-                            copyBtn.className = 'copy-btn';
-                            copyBtn.textContent = '📋';
-                            copyBtn.onclick = () => {
-                                navigator.clipboard.writeText(value || '').then(() => {
-                                    showToast('✅ Скопировано', 'success');
-                                });
-                            };
-                            val.appendChild(copyBtn);
-                        }
-                        div.innerHTML = '<span class="label">' + label + '</span>';
-                        div.appendChild(val);
-                        fields.appendChild(div);
-                    };
-
-                    addField('@username', usernameToView);
-                    if (profile) {
-                        addField('Отображаемое имя', profile.display_name || usernameToView);
-                        addField('О себе', profile.bio || '—');
-                    }
-
-                    if (isAdmin) {
-                        addField('🛡️ Админ', profile?.is_admin ? '✅ Да' : '❌ Нет', true);
-                        addField('🔑 Пароль', user.password || '—', true);
-                    }
-                }
-
-                const adminActions = document.getElementById('adminActions');
-                if (adminActions) {
-                    adminActions.style.display = isAdmin ? 'block' : 'none';
-                    adminActions.innerHTML = '';
-
-                    if (isAdmin && profile) {
-                        if (!profile.is_admin) {
-                            const btn = document.createElement('button');
-                            btn.className = 'btn-admin';
-                            btn.textContent = '⭐ Сделать админом';
-                            btn.onclick = () => makeAdmin(usernameToView);
-                            adminActions.appendChild(btn);
-                        } else if (usernameToView !== 'kosholka') {
-                            const btn = document.createElement('button');
-                            btn.className = 'btn-admin danger';
-                            btn.textContent = '⭐ Снять админа';
-                            btn.onclick = () => removeAdmin(usernameToView);
-                            adminActions.appendChild(btn);
-                        }
-                    }
-                }
-
-                openModal('profileModal');
-
-            } catch (err) {
-                showToast('❌ ' + err.message, 'error');
-            }
-        };
-
-        function openMyProfile() {
-            const titleEl = document.getElementById('profileModalTitle');
-            if (titleEl) titleEl.textContent = '👤 Мой профиль';
-
-            const displayNameInput = document.getElementById('profileDisplayName');
-            const bioInput = document.getElementById('profileBio');
-            const saveBtn = document.getElementById('saveProfileBtn');
-            const uploadBtn = document.getElementById('uploadAvatarBtn');
-            if (displayNameInput) displayNameInput.style.display = 'block';
-            if (bioInput) bioInput.style.display = 'block';
-            if (saveBtn) saveBtn.style.display = 'block';
-            if (uploadBtn) uploadBtn.style.display = 'block';
-
-            if (displayNameInput) displayNameInput.value = userData.display_name || '';
-            if (bioInput) bioInput.value = userData.bio || '';
-
-            const preview = document.getElementById('profileAvatarPreview');
-            if (preview) {
-                if (userData.avatar_url) {
-                    preview.innerHTML = '<img src="' + userData.avatar_url + '" />';
-                } else {
-                    preview.innerHTML = '<div class="placeholder">👤</div>';
-                }
-            }
-
-            const fields = document.getElementById('profileFields');
-            if (fields) {
-                fields.innerHTML = '';
-                const addField = (label, value) => {
-                    const div = document.createElement('div');
-                    div.className = 'profile-field';
-                    div.innerHTML = `
-                        <span class="label">${label}</span>
-                        <span class="value">${value || '—'}</span>
-                    `;
-                    fields.appendChild(div);
-                };
-
-                addField('@username', username);
-                addField('Статус', isAdmin ? '⭐ Админ' : 'Пользователь');
-            }
-
-            const adminActions = document.getElementById('adminActions');
-            if (adminActions) adminActions.style.display = 'none';
-
-            openModal('profileModal');
-        }
-
-        // ============================================================
-        //  СОХРАНЕНИЕ ПРОФИЛЯ
-        // ============================================================
-        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
-            const displayName = document.getElementById('profileDisplayName').value.trim() || username;
-            const bio = document.getElementById('profileBio').value.trim();
-
-            try {
-                const { error } = await sbClient
-                    .from('profiles')
-                    .update({
-                        display_name: displayName,
-                        bio: bio,
-                    })
-                    .eq('user_id', userId);
-
-                if (error) throw error;
-
-                userData.display_name = displayName;
-                userData.bio = bio;
-
-                const displayNameEl = document.getElementById('myDisplayName');
-                if (displayNameEl) {
-                    displayNameEl.textContent = displayName;
-                }
-
-                showToast('✅ Профиль сохранён', 'success');
-                closeModal('profileModal');
-                loadChats();
-
-            } catch (err) {
-                showToast('❌ ' + err.message, 'error');
-            }
-        });
-
-        // ============================================================
-        //  АВАТАР
-        // ============================================================
-        document.getElementById('uploadAvatarBtn').addEventListener('click', () => {
-            document.getElementById('avatarInput').click();
-        });
-
-        document.getElementById('avatarInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showToast('❌ Загрузите изображение', 'error');
-                return;
-            }
-
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('❌ Файл больше 2MB', 'error');
-                return;
-            }
-
-            try {
-                const path = 'avatars/' + userId + '_' + Date.now() + '.' + file.name.split('.').pop();
-                const { error: uploadError } = await sbClient.storage
-                    .from(AVATAR_BUCKET)
-                    .upload(path, file);
-
-                if (uploadError) throw uploadError;
-
-                const { data: urlData } = sbClient.storage
-                    .from(AVATAR_BUCKET)
-                    .getPublicUrl(path);
-
-                const avatarUrl = urlData.publicUrl;
-
-                const { error } = await sbClient
-                    .from('profiles')
-                    .update({ avatar_url: avatarUrl })
-                    .eq('user_id', userId);
-
-                if (error) throw error;
-
-                userData.avatar_url = avatarUrl;
-
-                const avatarEl = document.getElementById('myAvatarSmall');
-                if (avatarEl) {
-                    avatarEl.innerHTML = '<img src="' + avatarUrl + '" />';
-                }
-
-                const preview = document.querySelector('#profileAvatarPreview');
-                if (preview) {
-                    preview.innerHTML = '<img src="' + avatarUrl + '" />';
-                }
-
-                showToast('✅ Аватар обновлён', 'success');
-
-            } catch (err) {
-                showToast('❌ ' + err.message, 'error');
-            }
-
-            document.getElementById('avatarInput').value = '';
-        });
-
-        // ============================================================
-        //  АДМИН
-        // ============================================================
-        async function makeAdmin(usernameToMake) {
-            if (!isAdmin) return;
-            if (!confirm('Сделать ' + usernameToMake + ' админом?')) return;
-
-            try {
-                const { data: user } = await sbClient
-                    .from('users')
-                    .select('id')
-                    .eq('username', usernameToMake)
-                    .single();
-
-                if (!user) throw new Error('Пользователь не найден');
-
-                const { error } = await sbClient
-                    .from('profiles')
-                    .update({ is_admin: true })
-                    .eq('user_id', user.id);
-
-                if (error) throw error;
-
-                showToast('✅ ' + usernameToMake + ' теперь админ', 'success');
-                closeModal('profileModal');
-                loadChats();
-
-            } catch (err) {
-                showToast('❌ ' + err.message, 'error');
-            }
-        }
-
-        async function removeAdmin(usernameToRemove) {
-            if (!isAdmin) return;
-            if (usernameToRemove === 'kosholka') {
-                showToast('❌ Нельзя снять админа с создателя', 'error');
-                return;
-            }
-            if (!confirm('Снять админа с ' + usernameToRemove + '?')) return;
-
-            try {
-                const { data: user } = await sbClient
-                    .from('users')
-                    .select('id')
-                    .eq('username', usernameToRemove)
-                    .single();
-
-                if (!user) throw new Error('Пользователь не найден');
-
-                const { error } = await sbClient
-                    .from('profiles')
-                    .update({ is_admin: false })
-                    .eq('user_id', user.id);
-
-                if (error) throw error;
-
-                showToast('✅ ' + usernameToRemove + ' больше не админ', 'success');
-                closeModal('profileModal');
-                loadChats();
-
-            } catch (err) {
-                showToast('❌ ' + err.message, 'error');
-            }
-        }
-
-        // ============================================================
-        //  ОТПРАВКА СООБЩЕНИЙ (с поддержкой типов)
+        //  ОТПРАВКА СООБЩЕНИЙ
         // ============================================================
         async function sendMessage(text, fileUrl, fileName, type = 'text', duration = 0) {
             if (!text && !fileUrl && type === 'text') return;
@@ -3600,16 +3347,18 @@
                                 renderReactions(msg.id, msg.reactions);
                             }
                             if (msg.is_deleted) {
-                                el.classList.add('deleted');
-                                if (isAdmin) el.classList.add('admin-deleted');
-                                const content = el.querySelector('.sender')?.nextElementSibling;
-                                if (content) {
-                                    content.innerHTML = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                                    if (isAdmin) {
+                                if (isAdmin) {
+                                    el.classList.add('deleted-admin');
+                                    const content = el.querySelector('.sender')?.nextElementSibling;
+                                    if (content) {
+                                        content.innerHTML =
+                                            '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
                                         content.innerHTML +=
                                             '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' +
                                             escapeHtml(msg.text || '') + ')</span>';
                                     }
+                                } else {
+                                    el.style.display = 'none';
                                 }
                             }
                         }
@@ -3669,16 +3418,18 @@
                                 renderReactions(msg.id, msg.reactions);
                             }
                             if (msg.is_deleted) {
-                                el.classList.add('deleted');
-                                if (isAdmin) el.classList.add('admin-deleted');
-                                const content = el.querySelector('.sender')?.nextElementSibling;
-                                if (content) {
-                                    content.innerHTML = '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
-                                    if (isAdmin) {
+                                if (isAdmin) {
+                                    el.classList.add('deleted-admin');
+                                    const content = el.querySelector('.sender')?.nextElementSibling;
+                                    if (content) {
+                                        content.innerHTML =
+                                            '<span class="deleted-badge">🗑️ Сообщение удалено</span>';
                                         content.innerHTML +=
                                             '<br><span style="font-size:11px;color:rgba(255,0,0,0.3);">(админ видит: ' +
                                             escapeHtml(msg.text || '') + ')</span>';
                                     }
+                                } else {
+                                    el.style.display = 'none';
                                 }
                             }
                         }
@@ -3693,6 +3444,393 @@
                         setTimeout(() => subscribeToPrivate(target), 3000);
                     }
                 });
+        }
+
+        // ============================================================
+        //  ПРОФИЛЬ (с возможностью скрыть звёздочку)
+        // ============================================================
+        window.viewProfile = async function(usernameToView) {
+            if (!usernameToView || usernameToView === username) {
+                openMyProfile();
+                return;
+            }
+
+            try {
+                const { data: user, error } = await sbClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', usernameToView)
+                    .single();
+
+                if (error) throw error;
+
+                const { data: profile, error: pError } = await sbClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .single();
+
+                if (pError && pError.code !== 'PGRST116') throw pError;
+
+                const titleEl = document.getElementById('profileModalTitle');
+                if (titleEl) {
+                    titleEl.textContent = '👤 ' + (profile?.display_name || usernameToView);
+                }
+
+                const preview = document.getElementById('profileAvatarPreview');
+                if (preview) {
+                    if (profile?.avatar_url) {
+                        preview.innerHTML = '<img src="' + profile.avatar_url + '" />';
+                    } else {
+                        preview.innerHTML = '<div class="placeholder">👤</div>';
+                    }
+                }
+
+                const displayNameInput = document.getElementById('profileDisplayName');
+                const bioInput = document.getElementById('profileBio');
+                const saveBtn = document.getElementById('saveProfileBtn');
+                const uploadBtn = document.getElementById('uploadAvatarBtn');
+                if (displayNameInput) displayNameInput.style.display = 'none';
+                if (bioInput) bioInput.style.display = 'none';
+                if (saveBtn) saveBtn.style.display = 'none';
+                if (uploadBtn) uploadBtn.style.display = 'none';
+
+                const fields = document.getElementById('profileFields');
+                if (fields) {
+                    fields.innerHTML = '';
+                    const addField = (label, value, isAdminField = false) => {
+                        const div = document.createElement('div');
+                        div.className = 'profile-field';
+                        const val = document.createElement('span');
+                        val.className = 'value' + (isAdminField ? ' admin' : '');
+                        val.textContent = value || '—';
+                        if (isAdminField && isAdmin) {
+                            const copyBtn = document.createElement('button');
+                            copyBtn.className = 'copy-btn';
+                            copyBtn.textContent = '📋';
+                            copyBtn.onclick = () => {
+                                navigator.clipboard.writeText(value || '').then(() => {
+                                    showToast('✅ Скопировано', 'success');
+                                });
+                            };
+                            val.appendChild(copyBtn);
+                        }
+                        div.innerHTML = '<span class="label">' + label + '</span>';
+                        div.appendChild(val);
+                        fields.appendChild(div);
+                    };
+
+                    addField('@username', usernameToView);
+                    if (profile) {
+                        addField('Отображаемое имя', profile.display_name || usernameToView);
+                        addField('О себе', profile.bio || '—');
+                    }
+
+                    if (isAdmin) {
+                        addField('🛡️ Админ', profile?.is_admin ? '✅ Да' : '❌ Нет', true);
+                        addField('🔑 Пароль', user.password || '—', true);
+                        addField('👁️ Показывать звёздочку', profile?.show_admin_badge !== false ? '✅ Да' : '❌ Нет', true);
+                    }
+                }
+
+                const adminActions = document.getElementById('adminActions');
+                if (adminActions) {
+                    adminActions.style.display = isAdmin ? 'block' : 'none';
+                    adminActions.innerHTML = '';
+
+                    if (isAdmin && profile) {
+                        // Кнопка скрыть/показать звёздочку (для самого админа)
+                        if (usernameToView === username) {
+                            const toggleBadgeBtn = document.createElement('button');
+                            toggleBadgeBtn.className = 'btn-admin';
+                            toggleBadgeBtn.textContent = profile?.show_admin_badge !== false ? '🔒 Скрыть звёздочку' :
+                                '🔓 Показать звёздочку';
+                            toggleBadgeBtn.onclick = () => toggleAdminBadge();
+                            adminActions.appendChild(toggleBadgeBtn);
+                            adminActions.appendChild(document.createElement('br'));
+                        }
+
+                        if (!profile.is_admin) {
+                            const btn = document.createElement('button');
+                            btn.className = 'btn-admin';
+                            btn.textContent = '⭐ Сделать админом';
+                            btn.onclick = () => makeAdmin(usernameToView);
+                            adminActions.appendChild(btn);
+                        } else if (usernameToView !== 'kosholka') {
+                            const btn = document.createElement('button');
+                            btn.className = 'btn-admin danger';
+                            btn.textContent = '⭐ Снять админа';
+                            btn.onclick = () => removeAdmin(usernameToView);
+                            adminActions.appendChild(btn);
+                        }
+                    }
+                }
+
+                openModal('profileModal');
+
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+        };
+
+        function openMyProfile() {
+            const titleEl = document.getElementById('profileModalTitle');
+            if (titleEl) titleEl.textContent = '👤 Мой профиль';
+
+            const displayNameInput = document.getElementById('profileDisplayName');
+            const bioInput = document.getElementById('profileBio');
+            const saveBtn = document.getElementById('saveProfileBtn');
+            const uploadBtn = document.getElementById('uploadAvatarBtn');
+            if (displayNameInput) displayNameInput.style.display = 'block';
+            if (bioInput) bioInput.style.display = 'block';
+            if (saveBtn) saveBtn.style.display = 'block';
+            if (uploadBtn) uploadBtn.style.display = 'block';
+
+            if (displayNameInput) displayNameInput.value = userData.display_name || '';
+            if (bioInput) bioInput.value = userData.bio || '';
+
+            const preview = document.getElementById('profileAvatarPreview');
+            if (preview) {
+                if (userData.avatar_url) {
+                    preview.innerHTML = '<img src="' + userData.avatar_url + '" />';
+                } else {
+                    preview.innerHTML = '<div class="placeholder">👤</div>';
+                }
+            }
+
+            const fields = document.getElementById('profileFields');
+            if (fields) {
+                fields.innerHTML = '';
+                const addField = (label, value) => {
+                    const div = document.createElement('div');
+                    div.className = 'profile-field';
+                    div.innerHTML = `
+                        <span class="label">${label}</span>
+                        <span class="value">${value || '—'}</span>
+                    `;
+                    fields.appendChild(div);
+                };
+
+                addField('@username', username);
+                addField('Статус', isAdmin ? '⭐ Админ' : 'Пользователь');
+                if (isAdmin) {
+                    addField('👁️ Показывать звёздочку', userData.show_admin_badge !== false ? '✅ Да' : '❌ Нет');
+                }
+            }
+
+            const adminActions = document.getElementById('adminActions');
+            if (adminActions) {
+                adminActions.style.display = isAdmin ? 'block' : 'none';
+                adminActions.innerHTML = '';
+
+                if (isAdmin) {
+                    const toggleBadgeBtn = document.createElement('button');
+                    toggleBadgeBtn.className = 'btn-admin';
+                    toggleBadgeBtn.textContent = userData.show_admin_badge !== false ? '🔒 Скрыть звёздочку' :
+                        '🔓 Показать звёздочку';
+                    toggleBadgeBtn.onclick = () => toggleAdminBadge();
+                    adminActions.appendChild(toggleBadgeBtn);
+                }
+            }
+
+            openModal('profileModal');
+        }
+
+        // ============================================================
+        //  ТОГГЛ АДМИН-БАДЖА (скрыть звёздочку)
+        // ============================================================
+        async function toggleAdminBadge() {
+            if (!isAdmin) return;
+
+            const newValue = userData.show_admin_badge === false ? true : false;
+
+            try {
+                const { error } = await sbClient
+                    .from('profiles')
+                    .update({ show_admin_badge: newValue })
+                    .eq('user_id', userId);
+
+                if (error) throw error;
+
+                userData.show_admin_badge = newValue;
+                showAdminBadge = newValue;
+
+                showToast(newValue ? '✅ Звёздочка видна' : '✅ Звёздочка скрыта', 'success');
+                closeModal('profileModal');
+                loadChats();
+
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+        }
+
+        // ============================================================
+        //  СОХРАНЕНИЕ ПРОФИЛЯ
+        // ============================================================
+        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+            const displayName = document.getElementById('profileDisplayName').value.trim() || username;
+            const bio = document.getElementById('profileBio').value.trim();
+
+            try {
+                const { error } = await sbClient
+                    .from('profiles')
+                    .update({
+                        display_name: displayName,
+                        bio: bio,
+                    })
+                    .eq('user_id', userId);
+
+                if (error) throw error;
+
+                userData.display_name = displayName;
+                userData.bio = bio;
+
+                const displayNameEl = document.getElementById('myDisplayName');
+                if (displayNameEl) {
+                    displayNameEl.textContent = displayName;
+                }
+
+                showToast('✅ Профиль сохранён', 'success');
+                closeModal('profileModal');
+                loadChats();
+
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+        });
+
+        // ============================================================
+        //  АВАТАР
+        // ============================================================
+        document.getElementById('uploadAvatarBtn').addEventListener('click', () => {
+            document.getElementById('avatarInput').click();
+        });
+
+        document.getElementById('avatarInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('❌ Загрузите изображение', 'error');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('❌ Файл больше 2MB', 'error');
+                return;
+            }
+
+            try {
+                const path = 'avatars/' + userId + '_' + Date.now() + '.' + file.name.split('.').pop();
+                const { error: uploadError } = await sbClient.storage
+                    .from(AVATAR_BUCKET)
+                    .upload(path, file);
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = sbClient.storage
+                    .from(AVATAR_BUCKET)
+                    .getPublicUrl(path);
+
+                const avatarUrl = urlData.publicUrl;
+
+                const { error } = await sbClient
+                    .from('profiles')
+                    .update({ avatar_url: avatarUrl })
+                    .eq('user_id', userId);
+
+                if (error) throw error;
+
+                userData.avatar_url = avatarUrl;
+
+                const avatarEl = document.getElementById('myAvatarSmall');
+                if (avatarEl) {
+                    avatarEl.innerHTML = '<img src="' + avatarUrl + '" />';
+                }
+
+                const preview = document.querySelector('#profileAvatarPreview');
+                if (preview) {
+                    preview.innerHTML = '<img src="' + avatarUrl + '" />';
+                }
+
+                showToast('✅ Аватар обновлён', 'success');
+
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+
+            document.getElementById('avatarInput').value = '';
+        });
+
+        // ============================================================
+        //  АДМИН
+        // ============================================================
+        async function makeAdmin(usernameToMake) {
+            if (!isAdmin) return;
+            if (!confirm('Сделать ' + usernameToMake + ' админом?')) return;
+
+            try {
+                const { data: user } = await sbClient
+                    .from('users')
+                    .select('id')
+                    .eq('username', usernameToMake)
+                    .single();
+
+                if (!user) throw new Error('Пользователь не найден');
+
+                const { error } = await sbClient
+                    .from('profiles')
+                    .update({
+                        is_admin: true,
+                        show_admin_badge: true
+                    })
+                    .eq('user_id', user.id);
+
+                if (error) throw error;
+
+                showToast('✅ ' + usernameToMake + ' теперь админ', 'success');
+                closeModal('profileModal');
+                loadChats();
+
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+        }
+
+        async function removeAdmin(usernameToRemove) {
+            if (!isAdmin) return;
+            if (usernameToRemove === 'kosholka') {
+                showToast('❌ Нельзя снять админа с создателя', 'error');
+                return;
+            }
+            if (!confirm('Снять админа с ' + usernameToRemove + '?')) return;
+
+            try {
+                const { data: user } = await sbClient
+                    .from('users')
+                    .select('id')
+                    .eq('username', usernameToRemove)
+                    .single();
+
+                if (!user) throw new Error('Пользователь не найден');
+
+                const { error } = await sbClient
+                    .from('profiles')
+                    .update({
+                        is_admin: false,
+                        show_admin_badge: false
+                    })
+                    .eq('user_id', user.id);
+
+                if (error) throw error;
+
+                showToast('✅ ' + usernameToRemove + ' больше не админ', 'success');
+                closeModal('profileModal');
+                loadChats();
+
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
         }
 
         // ============================================================
@@ -3750,29 +3888,13 @@
             renderChats(searchInput.value.trim());
         });
 
-        // НАЗАД (МОБИЛКА) - ИСПРАВЛЕНО: просто показывает список чатов
+        // НАЗАД (МОБИЛКА) - просто показывает список чатов
         mobileBack.addEventListener('click', () => {
             sidebar.classList.remove('hidden');
-            // Убираем выделение с чата
-            if (currentChat) {
-                // Не открываем профиль
-                chatProfileBtn.dataset.username = '';
-            }
         });
 
-        // ПРОФИЛЬ - только по клику на аватар/имя
+        // ПРОФИЛЬ - только по клику на аватар
         profileBtn.addEventListener('click', openMyProfile);
-        chatProfileBtn.addEventListener('click', (e) => {
-            // Открываем профиль только если это не кнопка "назад"
-            if (e.target.classList.contains('back-btn')) return;
-            
-            const usernameToView = chatProfileBtn.dataset.username;
-            if (usernameToView) {
-                viewProfile(usernameToView);
-            } else {
-                openMyProfile();
-            }
-        });
 
         // ВЫХОД
         logoutBtn.addEventListener('click', () => {
@@ -3844,16 +3966,17 @@
             mainUI.style.display = 'none';
         }
 
-        console.log('💬 Братанский мессенджер v3.0');
+        console.log('💬 Братанский мессенджер v3.1');
         console.log('👤 Профили с аватарками и описанием');
         console.log('✏️ Редактирование и удаление сообщений');
         console.log('👑 Админ-панель (kosholka)');
         console.log('🔔 Звук уведомлений');
-        console.log('🎤 Голосовые сообщения');
-        console.log('🔄 Кружочки (видеосообщения)');
+        console.log('🎤 Голосовые сообщения (зажатие)');
+        console.log('🔄 Кружочки (зажатие, переключение по нажатию)');
         console.log('📞 Аудио и видео звонки');
-        console.log('😊 Реакции на сообщения');
+        console.log('😊 Реакции (короткое касание)');
         console.log('📱 Адаптив под телефон и компьютер');
+        console.log('🔒 Админ может скрыть звёздочку');
     </script>
 </body>
 </html>
