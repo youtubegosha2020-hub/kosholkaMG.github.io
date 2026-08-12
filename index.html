@@ -112,7 +112,7 @@
         }
 
         /* ============================================================
-           ФОНЫ (исправлены)
+           ФОНЫ
            ============================================================ */
         .bg-none {
             background-image: none !important;
@@ -814,7 +814,13 @@
         #inputArea .btn-file:hover {
             background: rgba(255, 255, 255, 0.04);
         }
-        #inputArea .btn-voice-toggle {
+
+        /* Новая кнопка для голосовых/кружочков с выбором режима */
+        .voice-btn-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .voice-btn-wrapper .btn-voice-toggle {
             padding: 8px 10px;
             border-radius: 24px;
             border: 1px solid var(--border-color);
@@ -822,7 +828,6 @@
             color: var(--text-secondary);
             font-size: 18px;
             cursor: pointer;
-            flex-shrink: 0;
             min-height: 40px;
             min-width: 40px;
             display: flex;
@@ -832,16 +837,17 @@
             transition: all 0.2s;
             line-height: 1;
             position: relative;
+            user-select: none;
         }
-        #inputArea .btn-voice-toggle:hover {
+        .voice-btn-wrapper .btn-voice-toggle:hover {
             background: rgba(255, 255, 255, 0.04);
         }
-        #inputArea .btn-voice-toggle .mode-label {
+        .voice-btn-wrapper .btn-voice-toggle .mode-label {
             font-size: 7px;
             color: var(--text-muted);
             margin-top: 0px;
         }
-        #inputArea .btn-voice-toggle.recording {
+        .voice-btn-wrapper .btn-voice-toggle.recording {
             background: rgba(255, 50, 50, 0.2);
             border-color: rgba(255, 50, 50, 0.3);
             color: #ff4d6d;
@@ -858,6 +864,51 @@
                 transform: scale(1);
             }
         }
+
+        /* Выпадающее меню выбора режима */
+        .voice-mode-selector {
+            display: none;
+            position: absolute;
+            bottom: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--modal-bg);
+            border-radius: 16px;
+            padding: 6px 0;
+            min-width: 140px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        .voice-mode-selector.active {
+            display: block;
+        }
+        .voice-mode-selector .mode-item {
+            padding: 10px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: background 0.15s;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        .voice-mode-selector .mode-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .voice-mode-selector .mode-item.active {
+            color: var(--text-primary);
+            background: rgba(0, 212, 255, 0.06);
+        }
+        .voice-mode-selector .mode-item .icon {
+            font-size: 18px;
+        }
+
         #fileInput {
             display: none;
         }
@@ -1397,7 +1448,7 @@
                 min-width: 38px;
             }
             #inputArea .btn-file,
-            #inputArea .btn-voice-toggle {
+            .voice-btn-wrapper .btn-voice-toggle {
                 min-height: 36px;
                 min-width: 36px;
                 font-size: 16px;
@@ -1417,7 +1468,7 @@
             }
         }
         @media (max-width: 400px) {
-            #inputArea .btn-voice-toggle .mode-label {
+            .voice-btn-wrapper .btn-voice-toggle .mode-label {
                 display: none;
             }
             .settings-grid {
@@ -1488,10 +1539,23 @@
                 <div id="uploadStatus"></div>
                 <div id="inputArea">
                     <button class="btn-file" id="fileBtn">📎</button>
-                    <button class="btn-voice-toggle" id="voiceToggleBtn">
-                        🎤
-                        <span class="mode-label" id="voiceModeLabel">голос</span>
-                    </button>
+
+                    <!-- Новая кнопка для голосовых/кружочков с выбором режима -->
+                    <div class="voice-btn-wrapper">
+                        <button class="btn-voice-toggle" id="voiceMainBtn">
+                            🎤
+                            <span class="mode-label" id="voiceModeLabel">голос</span>
+                        </button>
+                        <div class="voice-mode-selector" id="voiceModeSelector">
+                            <button class="mode-item active" data-mode="voice">
+                                <span class="icon">🎤</span> Голосовое
+                            </button>
+                            <button class="mode-item" data-mode="circle">
+                                <span class="icon">🔄</span> Кружок
+                            </button>
+                        </div>
+                    </div>
+
                     <input id="fileInput" type="file" multiple />
                     <input id="msgInput" type="text" placeholder="Напиши что-то..." disabled />
                     <button class="btn-send" id="sendBtn" disabled>→</button>
@@ -1673,12 +1737,15 @@
         const sidebar = document.getElementById('sidebar');
         const callBtn = document.getElementById('callBtn');
         const videoCallBtn = document.getElementById('videoCallBtn');
-        const voiceToggleBtn = document.getElementById('voiceToggleBtn');
-        const voiceModeLabel = document.getElementById('voiceModeLabel');
         const settingsBtn = document.getElementById('settingsBtn');
         const newGroupBtn = document.getElementById('newGroupBtn');
         const groupInfoBtn = document.getElementById('groupInfoBtn');
         const msgMenu = document.getElementById('msgMenu');
+
+        // Новая кнопка голоса
+        const voiceMainBtn = document.getElementById('voiceMainBtn');
+        const voiceModeLabel = document.getElementById('voiceModeLabel');
+        const voiceModeSelector = document.getElementById('voiceModeSelector');
 
         // ============================================================
         //  ПЕРЕМЕННЫЕ
@@ -1723,7 +1790,7 @@
         let recordingTimer = null;
         let recordingSeconds = 0;
         let currentAudio = null;
-        let voiceMode = 'voice';
+        let voiceMode = 'voice'; // 'voice' | 'circle'
 
         // Меню сообщения
         let selectedMsgId = null;
@@ -1855,17 +1922,26 @@
         };
 
         // ============================================================
-        //  НАСТРОЙКИ ТЕМЫ, ФОНА, СТИЛЯ
+        //  НАСТРОЙКИ ТЕМЫ, ФОНА, СТИЛЯ (СОХРАНЕНИЕ В БД И localstorage)
         // ============================================================
-        function applyTheme(theme) {
+        async function applyTheme(theme) {
             document.body.className = 'theme-' + theme;
             localStorage.setItem('chat_theme', theme);
             document.querySelectorAll('#themeGrid .option').forEach(el => {
                 el.classList.toggle('active', el.dataset.theme === theme);
             });
+            // Сохраняем в БД, если пользователь авторизован
+            if (userId) {
+                try {
+                    await sbClient
+                        .from('profiles')
+                        .update({ theme: theme })
+                        .eq('user_id', userId);
+                } catch (e) {}
+            }
         }
 
-        function applyBackground(bg) {
+        async function applyBackground(bg) {
             const chatArea = document.getElementById('chatArea');
             chatArea.className = chatArea.className.split(' ').filter(c => !c.startsWith('bg-')).join(' ');
             chatArea.classList.add('bg-' + bg);
@@ -1873,9 +1949,17 @@
             document.querySelectorAll('#bgGrid .option').forEach(el => {
                 el.classList.toggle('active', el.dataset.bg === bg);
             });
+            if (userId) {
+                try {
+                    await sbClient
+                        .from('profiles')
+                        .update({ background: bg })
+                        .eq('user_id', userId);
+                } catch (e) {}
+            }
         }
 
-        function applyChatStyle(style) {
+        async function applyChatStyle(style) {
             const messages = document.getElementById('messages');
             messages.className = messages.className.split(' ').filter(c => !c.startsWith('style-')).join(' ');
             messages.classList.add('style-' + style);
@@ -1883,6 +1967,14 @@
             document.querySelectorAll('#styleGrid .option').forEach(el => {
                 el.classList.toggle('active', el.dataset.style === style);
             });
+            if (userId) {
+                try {
+                    await sbClient
+                        .from('profiles')
+                        .update({ chat_style: style })
+                        .eq('user_id', userId);
+                } catch (e) {}
+            }
         }
 
         function loadSettings() {
@@ -2144,9 +2236,17 @@
                 isAdmin = data.is_admin || false;
                 showAdminBadge = data.show_admin_badge !== undefined ? data.show_admin_badge : true;
 
-                if (data.theme) applyTheme(data.theme);
-                if (data.background) applyBackground(data.background);
-                if (data.chat_style) applyChatStyle(data.chat_style);
+                // Загружаем настройки из профиля
+                if (data.theme) {
+                    localStorage.setItem('chat_theme', data.theme);
+                }
+                if (data.background) {
+                    localStorage.setItem('chat_bg', data.background);
+                }
+                if (data.chat_style) {
+                    localStorage.setItem('chat_style', data.chat_style);
+                }
+                loadSettings();
 
                 const displayNameEl = document.getElementById('myDisplayName');
                 if (displayNameEl) {
@@ -3342,31 +3442,51 @@
         };
 
         // ============================================================
-        //  ЗАПИСЬ ГОЛОСОВЫХ/КРУЖОЧКОВ (ИСПРАВЛЕНО)
+        //  ЗАПИСЬ ГОЛОСОВЫХ/КРУЖОЧКОВ (НОВАЯ ЛОГИКА)
         // ============================================================
-        // Переключение режима по клику
-        voiceToggleBtn.addEventListener('click', () => {
+        // Выбор режима через выпадающее меню
+        voiceMainBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (isRecording) {
                 stopVoiceRecording();
                 return;
             }
-            voiceMode = voiceMode === 'voice' ? 'circle' : 'voice';
-            voiceModeLabel.textContent = voiceMode === 'voice' ? 'голос' : 'кружок';
-            voiceToggleBtn.textContent = voiceMode === 'voice' ? '🎤' : '🔄';
-            showToast('Режим: ' + (voiceMode === 'voice' ? '🎤 Голосовое' : '🔄 Кружок'));
+            // Показываем/скрываем меню выбора режима
+            voiceModeSelector.classList.toggle('active');
+        });
+
+        // Выбор режима
+        document.querySelectorAll('.mode-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const mode = item.dataset.mode;
+                voiceMode = mode;
+                voiceModeLabel.textContent = mode === 'voice' ? 'голос' : 'кружок';
+                voiceMainBtn.innerHTML = mode === 'voice' ? '🎤 <span class="mode-label">голос</span>' :
+                    '🔄 <span class="mode-label">кружок</span>';
+                document.querySelectorAll('.mode-item').forEach(el => el.classList.remove('active'));
+                item.classList.add('active');
+                voiceModeSelector.classList.remove('active');
+                showToast('Режим: ' + (mode === 'voice' ? '🎤 Голосовое' : '🔄 Кружок'), 'success');
+            });
+        });
+
+        // Закрываем селектор при клике вне
+        document.addEventListener('click', () => {
+            voiceModeSelector.classList.remove('active');
         });
 
         // Запись по зажатию (для телефона и ПК)
         let isPressed = false;
 
-        voiceToggleBtn.addEventListener('touchstart', (e) => {
+        voiceMainBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             if (isRecording) return;
             isPressed = true;
             startVoiceRecording();
         });
 
-        voiceToggleBtn.addEventListener('touchend', (e) => {
+        voiceMainBtn.addEventListener('touchend', (e) => {
             e.preventDefault();
             isPressed = false;
             if (isRecording) {
@@ -3374,27 +3494,27 @@
             }
         });
 
-        voiceToggleBtn.addEventListener('touchcancel', () => {
+        voiceMainBtn.addEventListener('touchcancel', () => {
             isPressed = false;
             if (isRecording) {
                 stopVoiceRecording();
             }
         });
 
-        voiceToggleBtn.addEventListener('mousedown', () => {
+        voiceMainBtn.addEventListener('mousedown', () => {
             if (isRecording) return;
             isPressed = true;
             startVoiceRecording();
         });
 
-        voiceToggleBtn.addEventListener('mouseup', () => {
+        voiceMainBtn.addEventListener('mouseup', () => {
             isPressed = false;
             if (isRecording) {
                 stopVoiceRecording();
             }
         });
 
-        voiceToggleBtn.addEventListener('mouseleave', () => {
+        voiceMainBtn.addEventListener('mouseleave', () => {
             if (isPressed && isRecording) {
                 stopVoiceRecording();
                 isPressed = false;
@@ -3422,7 +3542,9 @@
                         showToast('❌ Нет камеры, используем голосовое', 'error');
                         voiceMode = 'voice';
                         voiceModeLabel.textContent = 'голос';
-                        voiceToggleBtn.textContent = '🎤';
+                        voiceMainBtn.innerHTML = '🎤 <span class="mode-label">голос</span>';
+                        document.querySelectorAll('.mode-item').forEach(el => el.classList.remove('active'));
+                        document.querySelector('[data-mode="voice"]').classList.add('active');
                         // Пробуем только аудио
                         stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     } else {
@@ -3437,7 +3559,9 @@
                     showToast('❌ Формат не поддерживается, используем голосовое', 'error');
                     voiceMode = 'voice';
                     voiceModeLabel.textContent = 'голос';
-                    voiceToggleBtn.textContent = '🎤';
+                    voiceMainBtn.innerHTML = '🎤 <span class="mode-label">голос</span>';
+                    document.querySelectorAll('.mode-item').forEach(el => el.classList.remove('active'));
+                    document.querySelector('[data-mode="voice"]').classList.add('active');
                     // Пробуем с аудио
                     if (stream.getVideoTracks().length > 0) {
                         stream.getVideoTracks().forEach(t => t.stop());
@@ -3499,14 +3623,14 @@
                     recordingSeconds = 0;
                     isRecording = false;
 
-                    voiceToggleBtn.classList.remove('recording');
+                    voiceMainBtn.classList.remove('recording');
                     uploadStatus.textContent = '';
                 };
 
                 mediaRecorder.start(1000);
                 isRecording = true;
 
-                voiceToggleBtn.classList.add('recording');
+                voiceMainBtn.classList.add('recording');
 
                 recordingSeconds = 0;
                 clearInterval(recordingTimer);
@@ -3522,7 +3646,7 @@
                 console.error('Ошибка записи:', err);
                 showToast('❌ ' + err.message, 'error');
                 if (err.message.includes('video')) {
-                    showToast('💡 Попробуйте использовать голосовое (нажмите кнопку для переключения)', '');
+                    showToast('💡 Попробуйте использовать голосовое (выберите в меню)', '');
                 }
             }
         }
@@ -4734,20 +4858,22 @@
             mainUI.style.display = 'none';
         }
 
+        // Загружаем настройки из localStorage
         loadSettings();
 
-        console.log('💬 Братанский мессенджер v4.1');
+        console.log('💬 Братанский мессенджер v5.0');
         console.log('🎨 5 тем оформления');
         console.log('🖼️ 6 фоновых рисунков');
         console.log('📐 4 стиля чатов');
         console.log('👥 Групповые чаты');
         console.log('🎤 Голосовые сообщения (зажатие)');
-        console.log('🔄 Кружочки (зажатие, переключение по клику)');
+        console.log('🔄 Кружочки (зажатие, выбор в меню)');
         console.log('📞 Аудио/видео звонки');
         console.log('😊 Реакции в меню сообщения');
         console.log('👑 Админ-панель');
         console.log('📱 Адаптив под телефон и компьютер');
         console.log('💡 Клик по сообщению → меню: копировать, редактировать, удалить, реакции');
+        console.log('🔒 Настройки сохраняются в БД и не слетают после перезагрузки');
     </script>
 </body>
 </html>
