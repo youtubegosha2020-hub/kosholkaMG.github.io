@@ -215,9 +215,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 #callOverlay .call-controls .btn-toggle-video.video-off{background:#ff4d6d44;color:#ff4d6d}
 #callOverlay .call-info{position:absolute;top:20px;left:50%;transform:translateX(-50%);text-align:center;color:#fff;font-size:18px;font-weight:600;text-shadow:0 2px 10px rgba(0,0,0,0.5)}
 #callOverlay .call-info .call-status{font-size:14px;font-weight:400;color:rgba(255,255,255,0.5)}
-@media(max-width:768px){#sidebar{width:100%;min-width:unset;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;transform:translateX(0);border-right:none}#sidebar.hidden{transform:translateX(-100%)}#chatArea{width:100%}#chatHeader .back-btn{display:block}.msg{max-width:85%}.modal{padding:16px;margin:10px}.circle-msg{width:120px;height:120px}#inputArea{padding:6px 8px;gap:4px}#inputArea input[type=text]{font-size:14px;padding:8px 10px;min-height:34px}#inputArea .btn-send{padding:8px 12px;font-size:14px;min-height:34px;min-width:36px}#inputArea .btn-file,.voice-btn-wrapper .btn-voice-toggle{min-height:34px;min-width:34px;font-size:15px;padding:4px 6px}.settings-grid{grid-template-columns:1fr 1fr}}
-@media(min-width:769px){#sidebar{position:relative!important;transform:none!important}#sidebar.hidden{transform:none!important}}
-@media(max-width:400px){.voice-btn-wrapper .btn-voice-toggle .mode-label{display:none}.settings-grid{grid-template-columns:1fr}}
+@media(max-width:768px){#sidebar{width:100%;min-width:unset;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;transform:translateX(0);border-right:none;background:var(--bg-sidebar);transition:transform .3s cubic-bezier(0.4,0,0.2,1)}#sidebar.hidden{transform:translateX(-100%)}#sidebar .header{padding:12px 16px 10px}#sidebar .header .left .avatar-small{width:34px;height:34px;font-size:14px}#sidebar .header .left .user-info .display-name{font-size:14px}#sidebar .header .right button{width:30px;height:30px;font-size:14px}#chatArea{width:100%;border-radius:0}#chatHeader{padding:8px 12px;min-height:54px}#chatHeader .back-btn{display:block;font-size:20px;padding:2px 6px}#chatHeader .chat-left .avatar-chat{width:34px;height:34px;font-size:16px}#chatHeader .chat-title{font-size:15px}#chatHeader .chat-actions button{width:32px;height:32px;font-size:14px}.msg{max-width:90%;padding:8px 12px;font-size:14px;border-radius:14px}.msg .sender{font-size:10px}.msg .time{font-size:9px}#messages{padding:10px 12px}#inputArea{padding:6px 8px;gap:4px}#inputArea input[type=text]{font-size:14px;padding:8px 12px;min-height:34px}#inputArea .btn-send{padding:8px 12px;font-size:14px;min-height:34px;min-width:36px}#inputArea .btn-file,.voice-btn-wrapper .btn-voice-toggle{min-height:34px;min-width:34px;font-size:15px;padding:4px 6px}.voice-btn-wrapper .btn-voice-toggle .mode-label{font-size:6px}.voice-mode-selector{bottom:44px;min-width:110px}.voice-mode-selector .mode-item{padding:8px 12px;font-size:13px}.modal{padding:16px;margin:10px;max-width:100%}.modal h2{font-size:18px}.circle-msg{width:100px;height:100px}.voice-msg{min-width:130px}.voice-msg .waveform{height:24px}.voice-msg .duration{font-size:10px;min-width:30px}.settings-grid{grid-template-columns:1fr 1fr;gap:4px}.settings-grid .option{padding:8px;font-size:11px}.settings-grid .option .preview{font-size:22px}.toast{bottom:20px;padding:8px 16px;font-size:13px;max-width:90%}#callOverlay .local-video{width:80px;bottom:70px;right:10px}#callOverlay .call-controls{padding:8px 14px;gap:10px}#callOverlay .call-controls button{width:40px;height:40px;font-size:18px}#callOverlay .remote-video{min-height:250px}.search-overlay input{font-size:13px;padding:6px 12px}.file-preview.image-preview img,.file-preview.video-preview video{max-width:150px;max-height:150px}}
+@media(max-width:400px){#sidebar .header .left .user-info .username{display:none}.voice-btn-wrapper .btn-voice-toggle .mode-label{display:none}.settings-grid{grid-template-columns:1fr}.chat-item .info .name{font-size:14px}.chat-item .info .last-msg{font-size:12px}.chat-item .avatar{width:36px;height:36px;font-size:16px}#chatHeader .chat-title{font-size:13px}.msg{max-width:95%;font-size:13px;padding:6px 10px}}
 </style>
 </head>
 <body>
@@ -240,7 +239,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 <div id="chatArea" class="bg-none style-classic">
 <div id="chatHeader">
 <div class="chat-left"><button class="back-btn" id="mobileBack">←</button><div class="avatar-chat" id="chatAvatar" onclick="openChatProfile()">💬</div><span class="chat-title" id="chatTitle">Выберите чат</span></div>
-<div class="chat-actions"><button id="callBtn" style="display:none">📞</button><button id="videoCallBtn" style="display:none">📹</button><button id="groupInfoBtn" style="display:none" title="Информация о группе">👥</button></div>
+<div class="chat-actions"><button id="callBtn" style="display:none">📞</button><button id="videoCallBtn" style="display:none">📹</button><button id="groupInfoBtn" style="display:none" title="Информация о группе">👥</button><button id="searchBtn" title="Поиск в чате (Ctrl+F)">🔍</button></div>
 </div>
 <div id="typingStatus" style="display:none;padding:4px 16px;font-size:13px;color:var(--text-muted);min-height:22px;">В сети</div>
 <div id="messages"><div class="empty-state">👈 Выберите чат слева</div></div>
@@ -259,6 +258,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 <div class="item" data-action="reply"><span class="icon">↩️</span> Ответить</div>
 <div class="item" data-action="copy"><span class="icon">📋</span> Копировать</div>
 <div class="item" data-action="edit"><span class="icon">✏️</span> Редактировать</div>
+<div class="item" data-action="favorite"><span class="icon">⭐</span> В избранное</div>
 <div class="divider"></div>
 <div class="reactions-row" id="msgMenuReactions"><button class="reaction" data-reaction="👍">👍</button><button class="reaction" data-reaction="❤️">❤️</button><button class="reaction" data-reaction="😂">😂</button><button class="reaction" data-reaction="😮">😮</button><button class="reaction" data-reaction="😢">😢</button><button class="reaction" data-reaction="😡">😡</button></div>
 <div class="divider"></div>
@@ -266,27 +266,164 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 </div>
 <div id="callOverlay"><div class="call-container"><div class="call-info"><div id="callPartnerName">Собеседник</div><div class="call-status" id="callStatus">Подключение...</div></div><div class="remote-video"><video id="remoteVideo" autoplay playsinline></video><div class="no-video" id="noRemoteVideo">📹</div></div><div class="local-video"><video id="localVideo" autoplay playsinline muted></video></div><div class="call-controls"><button class="btn-toggle-mic" id="toggleMicBtn">🎤</button><button class="btn-toggle-video" id="toggleVideoBtn">📹</button><button class="btn-end-call" id="endCallBtn">📞</button></div></div></div>
 <div class="modal-overlay" id="profileModal"><div class="modal"><button class="close-modal" onclick="closeModal('profileModal')">✕</button><h2 id="profileModalTitle">👤 Профиль</h2><div class="avatar-upload"><div class="preview" id="profileAvatarPreview"><div class="placeholder">👤</div></div><div><button class="upload-btn" id="uploadAvatarBtn">📷 Сменить аватар</button><input type="file" id="avatarInput" accept="image/*" style="display:none"><div style="font-size:11px;color:var(--text-muted);margin-top:4px">PNG, JPG до 2MB</div></div></div><label>Отображаемое имя</label><input id="profileDisplayName" type="text" placeholder="Как вас называть"><label>Описание</label><textarea id="profileBio" placeholder="О себе..."></textarea><button class="btn-primary" id="saveProfileBtn">💾 Сохранить</button><div id="profileFields"></div><div class="admin-actions" id="adminActions" style="display:none"></div></div></div>
-<div class="modal-overlay" id="settingsModal"><div class="modal"><button class="close-modal" onclick="closeModal('settingsModal')">✕</button><h2>⚙️ Настройки</h2><label>🎨 Тема</label><div class="settings-grid" id="themeGrid"><div class="option active" data-theme="dark"><span class="preview">🌙</span>Тёмная</div><div class="option" data-theme="light"><span class="preview">☀️</span>Светлая</div><div class="option" data-theme="blue"><span class="preview">🔵</span>Синяя</div><div class="option" data-theme="green"><span class="preview">🟢</span>Зелёная</div><div class="option" data-theme="purple"><span class="preview">🟣</span>Фиолетовая</div></div><label>🖼️ Фон чата</label><div class="settings-grid" id="bgGrid"><div class="option active" data-bg="none"><span class="preview">⬜</span>Нет</div><div class="option" data-bg="abstract"><span class="preview">🌀</span>Абстракция</div><div class="option" data-bg="space"><span class="preview">🚀</span>Космос</div><div class="option" data-bg="mountains"><span class="preview">🏔️</span>Горы</div><div class="option" data-bg="forest"><span class="preview">🌲</span>Лес</div><div class="option" data-bg="ocean"><span class="preview">🌊</span>Океан</div></div><label>📐 Стиль чатов</label><div class="settings-grid" id="styleGrid"><div class="option active" data-style="classic"><span class="preview">📄</span>Классический</div><div class="option" data-style="compact"><span class="preview">📏</span>Компактный</div><div class="option" data-style="spacious"><span class="preview">📐</span>Просторный</div><div class="option" data-style="round"><span class="preview">⭕</span>Круглый</div></div><button class="btn-secondary" onclick="closeModal('settingsModal')">Закрыть</button></div></div>
+<div class="modal-overlay" id="settingsModal"><div class="modal"><button class="close-modal" onclick="closeModal('settingsModal')">✕</button><h2>⚙️ Настройки</h2><label>🎨 Тема</label><div class="settings-grid" id="themeGrid"><div class="option active" data-theme="dark"><span class="preview">🌙</span>Тёмная</div><div class="option" data-theme="light"><span class="preview">☀️</span>Светлая</div><div class="option" data-theme="blue"><span class="preview">🔵</span>Синяя</div><div class="option" data-theme="green"><span class="preview">🟢</span>Зелёная</div><div class="option" data-theme="purple"><span class="preview">🟣</span>Фиолетовая</div></div><label>🖼️ Фон чата</label><div class="settings-grid" id="bgGrid"><div class="option active" data-bg="none"><span class="preview">⬜</span>Нет</div><div class="option" data-bg="abstract"><span class="preview">🌀</span>Абстракция</div><div class="option" data-bg="space"><span class="preview">🚀</span>Космос</div><div class="option" data-bg="mountains"><span class="preview">🏔️</span>Горы</div><div class="option" data-bg="forest"><span class="preview">🌲</span>Лес</div><div class="option" data-bg="ocean"><span class="preview">🌊</span>Океан</div><div class="option" data-bg="ai"><span class="preview">🤖</span>AI фон</div></div><label>📐 Стиль чатов</label><div class="settings-grid" id="styleGrid"><div class="option active" data-style="classic"><span class="preview">📄</span>Классический</div><div class="option" data-style="compact"><span class="preview">📏</span>Компактный</div><div class="option" data-style="spacious"><span class="preview">📐</span>Просторный</div><div class="option" data-style="round"><span class="preview">⭕</span>Круглый</div></div><button class="btn-secondary" onclick="closeModal('settingsModal')">Закрыть</button></div></div>
 <div class="modal-overlay" id="groupModal"><div class="modal"><button class="close-modal" onclick="closeModal('groupModal')">✕</button><h2>👥 Создать группу</h2><label>Название группы</label><input id="groupNameInput" type="text" placeholder="Название группы..."><label>Участники (через запятую)</label><input id="groupMembersInput" type="text" placeholder="username1, username2, ..."><button class="btn-primary" id="createGroupBtn">🚀 Создать группу</button></div></div>
 <div class="modal-overlay" id="groupInfoModal"><div class="modal"><button class="close-modal" onclick="closeModal('groupInfoModal')">✕</button><h2>👥 Информация о группе</h2><div id="groupInfoContent"></div></div></div>
 <div class="modal-overlay" id="editMsgModal"><div class="modal"><button class="close-modal" onclick="closeModal('editMsgModal')">✕</button><h2>✏️ Редактировать сообщение</h2><textarea id="editMsgInput" style="min-height:80px"></textarea><button class="btn-primary" id="saveEditMsgBtn">💾 Сохранить</button></div></div>
 <div class="modal-overlay" id="moderationModal"><div class="modal" style="max-width:600px;"><button class="close-modal" onclick="closeModal('moderationModal')">✕</button><h2>🛡️ Модерация</h2><div id="moderationList"></div></div></div>
 <script>
+// ============================================================
+//  КОНФИГ
+// ============================================================
 const SUPABASE_URL='https://uxjoowanhrmbrnqtghyc.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_3Dzhz17WLtHl1jguQlGNTQ_gu2REAg6';
 const BUCKET='chat-files';
 const AVATAR_BUCKET='avatars';
 const VOICE_BUCKET='voice-messages';
 const sbClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{realtime:{params:{heartbeatIntervalMs:1e4,eventsPerSecond:5},reconnectAfterMs:function(a){return Math.min(2e3*Math.pow(1.5,a),3e4)}}});
-const LS=document.getElementById('loginScreen'),MUI=document.getElementById('mainUI'),LU=document.getElementById('loginUsername'),LP=document.getElementById('loginPassword'),LE=document.getElementById('loginError'),LB=document.getElementById('loginBtn'),SA=document.getElementById('switchAuth'),LT=document.getElementById('loginTitle'),LO=document.getElementById('logoutBtn'),CL=document.getElementById('chatList'),CT=document.getElementById('chatTitle'),ME=document.getElementById('messages'),MI=document.getElementById('msgInput'),SB=document.getElementById('sendBtn'),FB=document.getElementById('fileBtn'),FI=document.getElementById('fileInput'),US=document.getElementById('uploadStatus'),SI=document.getElementById('searchInput'),MB=document.getElementById('mobileBack'),PB=document.getElementById('profileBtn'),SD=document.getElementById('sidebar'),CB=document.getElementById('callBtn'),VCB=document.getElementById('videoCallBtn'),STB=document.getElementById('settingsBtn'),NGB=document.getElementById('newGroupBtn'),GIB=document.getElementById('groupInfoBtn'),MM=document.getElementById('msgMenu'),VMB=document.getElementById('voiceMainBtn'),VML=document.getElementById('voiceModeLabel'),VMS=document.getElementById('voiceModeSelector'),GEO=document.getElementById('geoLoading'),GEO_RETRY=document.getElementById('geoRetryBtn'),GEO_SKIP=document.getElementById('geoSkipBtn'),MOD=document.getElementById('moderationModal'),MOD_LIST=document.getElementById('moderationList'),MOD_BTN=document.getElementById('moderationBtn');
-let username='',userId=null,currentChat=null,currentChatType='general',currentGroupId=null,channel=null,privateChannel=null,groupChannel=null,signalingChannel=null,typingChannel=null,isLoginMode=1,allUsers=[],chats=[],groups=[],pollingInterval=null,lastMsgId=0,lastPrivateMsgId=0,lastGroupMsgId=0,unreadCounts={},isPageFocused=1,isAdmin=0,userData={},editingMsgId=null,editingTable=null,showAdminBadge=1,geoData=null,geoLoaded=0,typingTimeout=null,lastTypingUpdate=0;
-let peerConnection=null,localStream=null,isCallActive=0,isMuted=0,isVideoOff=0,callType='audio';
+
+// ============================================================
+//  ПОДКЛЮЧЕНИЕ ИКОНОК (ПОД ТВОИ НАЗВАНИЯ)
+// ============================================================
+const ICONS_PATH = 'icons/';
+
+const ICONS = {
+    settings: 'PNG settings.png',
+    add: 'PNG add.png',
+    call: 'PNG call.png',
+    'video-call': 'PNG video-call.png',
+    search: 'PNG search.png',
+    back: 'PNG back.png',
+    attach: 'PNG attach.png',
+    send: 'PNG send.png',
+    voice: 'PNG voice.png',
+    circle: 'PNG circle.png',
+    groups: 'PNG groups.png',
+    logout: 'PNG logout.png',
+    delete: 'PNG delete.png',
+    edit: 'PNG edit.png',
+    copy: 'PNG copy.png',
+    favorite: 'PNG star.png',
+    sticker: 'PNG smile-face.png',
+    online: 'PNG dot.png',
+    offline: 'PNG button.png',
+    read: 'PNG read.png',
+    sent: 'PNG check.png',
+    ghost: 'PNG ghost.png',
+    logo: 'PNG image (1).png',
+    image: 'PNG image.png',
+    video: 'PNG youtube.png',
+    audio: 'PNG speaker-filled-audio-tool.png',
+    folder: 'PNG open-folder.png',
+    menu: 'PNG menu.png'
+};
+
+const EMOJI_TO_ICON = {
+    '⚙️': 'settings',
+    '➕': 'add',
+    '📞': 'call',
+    '📹': 'video-call',
+    '🔍': 'search',
+    '←': 'back',
+    '📎': 'attach',
+    '→': 'send',
+    '🎤': 'voice',
+    '🔄': 'circle',
+    '👥': 'groups',
+    '🚪': 'logout',
+    '🗑️': 'delete',
+    '✏️': 'edit',
+    '📋': 'copy',
+    '↩️': 'reply',
+    '⭐': 'favorite',
+    '😊': 'sticker',
+    '🟢': 'online',
+    '⚫': 'offline',
+    '✓✓': 'read',
+    '✓': 'sent',
+    '👻': 'ghost',
+    '💬': 'logo',
+    '📄': 'file',
+    '🖼️': 'image',
+    '🎬': 'video',
+    '🎵': 'audio'
+};
+
+function getIcon(name, className = 'icon-img') {
+    const iconName = ICONS[name] || name + '.png';
+    return `<img src="${ICONS_PATH}${iconName}" class="${className}" alt="${name}" />`;
+}
+
+function replaceEmojisWithIcons() {
+    const elements = document.querySelectorAll(
+        '.item, button, .chat-item, .msg .sender, .avatar, .chat-title, .display-name, .logout-btn, .back-btn, .settings-grid .option'
+    );
+    elements.forEach(el => {
+        let text = el.textContent || '';
+        let hasEmoji = false;
+        let newHTML = '';
+        for (const [emoji, iconKey] of Object.entries(EMOJI_TO_ICON)) {
+            if (text.includes(emoji)) {
+                hasEmoji = true;
+                const iconName = ICONS[iconKey];
+                if (iconName) {
+                    const img = `<img src="${ICONS_PATH}${iconName}" class="icon-img" alt="${emoji}" />`;
+                    text = text.replace(emoji, '');
+                    newHTML = img + text;
+                }
+                break;
+            }
+        }
+        if (hasEmoji && newHTML) {
+            el.innerHTML = newHTML;
+        }
+    });
+    document.querySelectorAll('.settings-grid .option').forEach(el => {
+        const preview = el.querySelector('.preview');
+        if (preview) {
+            const emoji = preview.textContent.trim();
+            for (const [e, iconKey] of Object.entries(EMOJI_TO_ICON)) {
+                if (emoji === e) {
+                    const iconName = ICONS[iconKey];
+                    if (iconName) {
+                        preview.innerHTML = `<img src="${ICONS_PATH}${iconName}" class="icon-preview" alt="${e}" />`;
+                    }
+                    break;
+                }
+            }
+        }
+    });
+}
+
+function checkIcons() {
+    const iconNames = Object.values(ICONS);
+    let loaded = 0;
+    let total = iconNames.length;
+    console.log(`🔍 Проверка ${total} иконок...`);
+    iconNames.forEach(name => {
+        const img = new Image();
+        img.onload = () => { loaded++; if (loaded === total) console.log('✅ Все иконки загружены!'); };
+        img.onerror = () => { console.warn(`⚠️ Иконка не найдена: ${name}`); };
+        img.src = `${ICONS_PATH}${name}`;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => { replaceEmojisWithIcons(); checkIcons(); }, 100);
+});
+console.log('✅ Иконки подключены (твои названия)');
+
+// ============================================================
+//  ЭЛЕМЕНТЫ
+// ============================================================
+const LS=document.getElementById('loginScreen'),MUI=document.getElementById('mainUI'),LU=document.getElementById('loginUsername'),LP=document.getElementById('loginPassword'),LE=document.getElementById('loginError'),LB=document.getElementById('loginBtn'),SA=document.getElementById('switchAuth'),LT=document.getElementById('loginTitle'),LO=document.getElementById('logoutBtn'),CL=document.getElementById('chatList'),CT=document.getElementById('chatTitle'),ME=document.getElementById('messages'),MI=document.getElementById('msgInput'),SB=document.getElementById('sendBtn'),FB=document.getElementById('fileBtn'),FI=document.getElementById('fileInput'),US=document.getElementById('uploadStatus'),SI=document.getElementById('searchInput'),MB=document.getElementById('mobileBack'),PB=document.getElementById('profileBtn'),SD=document.getElementById('sidebar'),CB=document.getElementById('callBtn'),VCB=document.getElementById('videoCallBtn'),STB=document.getElementById('settingsBtn'),NGB=document.getElementById('newGroupBtn'),GIB=document.getElementById('groupInfoBtn'),MM=document.getElementById('msgMenu'),VMB=document.getElementById('voiceMainBtn'),VML=document.getElementById('voiceModeLabel'),VMS=document.getElementById('voiceModeSelector'),GEO=document.getElementById('geoLoading'),GEO_RETRY=document.getElementById('geoRetryBtn'),GEO_SKIP=document.getElementById('geoSkipBtn'),MOD=document.getElementById('moderationModal'),MOD_LIST=document.getElementById('moderationList'),MOD_BTN=document.getElementById('moderationBtn'),SEARCH_BTN=document.getElementById('searchBtn');
+
+let username='',userId=null,currentChat=null,currentChatType='general',currentGroupId=null,channel=null,privateChannel=null,groupChannel=null,signalingChannel=null,typingChannel=null,isLoginMode=1,allUsers=[],chats=[],groups=[],pollingInterval=null,lastMsgId=0,lastPrivateMsgId=0,lastGroupMsgId=0,unreadCounts={},isPageFocused=1,isAdmin=0,userData={},editingMsgId=null,editingTable=null,showAdminBadge=1,geoData=null,geoLoaded=0,typingTimeout=null,lastTypingUpdate=0,searchActive=0,searchResults=[],searchIndex=-1;
+let peerConnection=null,localStream=null,isCallActive=0,isMuted=0,isVideoOff=0,callType='audio',currentCallId=null,callTimer=null;
 let mediaRecorder=null,audioChunks=[],isRecording=0,recordingTimer=null,recordingSeconds=0,currentAudio=null,voiceMode='voice';
 let selectedMsgId=null,selectedMsgIsOwn=0,selectedMsgTable=null,replyToMsgId=null,replyToMsgText='',replyToMsgSender='';
 
-if(!MOD_BTN){
-const footer=document.querySelector('#sidebar > div:last-child');
-if(footer){const btn=document.createElement('button');btn.className='logout-btn';btn.id='moderationBtn';btn.style.cssText='display:none;background:rgba(255,215,0,0.05);color:#ffd700;margin-bottom:8px;';btn.textContent='🛡️ Модерация';footer.insertBefore(btn,footer.firstChild)}}
+if(!MOD_BTN){const footer=document.querySelector('#sidebar > div:last-child');if(footer){const btn=document.createElement('button');btn.className='logout-btn';btn.id='moderationBtn';btn.style.cssText='display:none;background:rgba(255,215,0,0.05);color:#ffd700;margin-bottom:8px;';btn.textContent='🛡️ Модерация';footer.insertBefore(btn,footer.firstChild)}}
 const MOD_BTN2=document.getElementById('moderationBtn');if(MOD_BTN2)window.MOD_BTN=MOD_BTN2;
 
 function showToast(m,t){const e=document.querySelector('.toast');if(e)e.remove();const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),3e3)}
@@ -505,13 +642,16 @@ loadFavorites();renderChats(SI.value.trim())}
 async function loadFavorites(){
 ME.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">Загрузка...</div>';
 try{
-const{data,error}=await sbClient.from('messages').select('*').eq('username',username).eq('is_favorite',true).order('created_at',{ascending:false}).limit(200);
-if(error&&error.code!=='42703'){throw error}
+const{data,error}=await sbClient.from('favorites').select('*, messages!favorites_message_id_fkey(*)').eq('user_id',userId).order('created_at',{ascending:false}).limit(50);
+if(error)throw error;
 ME.innerHTML='';
-const{data:all}=await sbClient.from('messages').select('*').eq('username',username).order('created_at',{ascending:false}).limit(50);
-const favorites=all?.filter(m=>m.is_favorite)||[];
-if(!favorites||favorites.length===0){ME.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:30px;font-size:13px;">⭐ Нет избранных сообщений</div>';return}
-favorites.forEach(msg=>appendMessage(msg));scrollToBottom()}catch(err){ME.innerHTML='<div style="text-align:center;color:#ff4d6d;padding:20px;font-size:13px;">❌ '+escapeHtml(err.message)+'</div>'}}
+if(!data||data.length===0){ME.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:30px;font-size:13px;">⭐ Нет избранных сообщений</div>';return}
+for(const fav of data){
+if(fav.message_table==='messages'&&fav.messages){
+appendMessage(fav.messages);
+}
+}
+scrollToBottom()}catch(err){ME.innerHTML='<div style="text-align:center;color:#ff4d6d;padding:20px;font-size:13px;">❌ '+escapeHtml(err.message)+'</div>'}}
 
 function openGroupChat(id,name){if(groupChannel){groupChannel.unsubscribe();groupChannel=null}if(pollingInterval){clearInterval(pollingInterval);pollingInterval=null}if(currentAudio){currentAudio.pause();currentAudio=null}currentChat='group_'+id;currentChatType='group';currentGroupId=id;CT.textContent='👥 '+name;const av=document.getElementById('chatAvatar');const g=groups.find(x=>x.id===id);if(g&&g.avatar_url){av.innerHTML='<img src="'+g.avatar_url+'" />'}else{av.innerHTML='👥'}av.className='avatar-chat group-avatar';MI.disabled=0;SB.disabled=0;MI.focus();CB.style.display='none';VCB.style.display='none';GIB.style.display='flex';if(window.innerWidth<=768){SD.classList.add('hidden')}loadGroupMessages(id);subscribeToGroup(id);startGroupPolling(id);renderChats(SI.value.trim())}
 
@@ -535,10 +675,28 @@ const pr=document.createElement('div');pr.className='reply-preview';
 pr.innerHTML='<div class="reply-sender">↩️ '+escapeHtml(sender)+'</div><div class="reply-text">'+escapeHtml(text.substring(0,100))+(text.length>100?'...':'')+'</div><button class="reply-cancel" onclick="cancelReply()">✕</button>';
 const ia=document.getElementById('inputArea');ia.parentNode.insertBefore(pr,ia);MI.focus();}
 function cancelReply(){const pr=document.querySelector('.reply-preview');if(pr)pr.remove();replyToMsgId=null;replyToMsgText='';replyToMsgSender='';}
-function showMsgMenu(id,own,table,x,y){selectedMsgId=id;selectedMsgIsOwn=own;selectedMsgTable=table;MM.classList.remove('active');const reply=MM.querySelector('[data-action="reply"]');const edit=MM.querySelector('[data-action="edit"]');const del=MM.querySelector('[data-action="delete"]');if(reply)reply.style.display='flex';if(edit)edit.style.display=own?'flex':'none';if(del)del.style.display=(own||isAdmin)?'flex':'none';MM.style.left=Math.min(x-90,window.innerWidth-200)+'px';MM.style.top=Math.min(y,window.innerHeight-300)+'px';MM.classList.add('active');setTimeout(()=>{document.addEventListener('click',closeMsgMenu,{once:1})},10)}
+function showMsgMenu(id,own,table,x,y){selectedMsgId=id;selectedMsgIsOwn=own;selectedMsgTable=table;MM.classList.remove('active');const reply=MM.querySelector('[data-action="reply"]');const copy=MM.querySelector('[data-action="copy"]');const edit=MM.querySelector('[data-action="edit"]');const fav=MM.querySelector('[data-action="favorite"]');const del=MM.querySelector('[data-action="delete"]');if(reply)reply.style.display='flex';if(copy)copy.style.display='flex';if(edit)edit.style.display=own?'flex':'none';if(fav)fav.style.display='flex';if(del)del.style.display=(own||isAdmin)?'flex':'none';MM.style.left=Math.min(x-90,window.innerWidth-200)+'px';MM.style.top=Math.min(y,window.innerHeight-300)+'px';MM.classList.add('active');setTimeout(()=>{document.addEventListener('click',closeMsgMenu,{once:1})},10)}
 function closeMsgMenu(e){if(e&&MM.contains(e.target))return;MM.classList.remove('active')}
-MM.querySelectorAll('.item').forEach(item=>{item.addEventListener('click',()=>{const a=item.dataset.action;if(a==='reply'){replyToMessage(selectedMsgId,selectedMsgTable)}else if(a==='copy')copyMessage(selectedMsgId);else if(a==='edit')editMessage(selectedMsgId,selectedMsgTable);else if(a==='delete')deleteMessage(selectedMsgId,selectedMsgTable);MM.classList.remove('active')})});
+MM.querySelectorAll('.item').forEach(item=>{item.addEventListener('click',()=>{const a=item.dataset.action;if(a==='reply'){replyToMessage(selectedMsgId,selectedMsgTable)}else if(a==='copy')copyMessage(selectedMsgId);else if(a==='edit')editMessage(selectedMsgId,selectedMsgTable);else if(a==='favorite')toggleFavorite(selectedMsgId,selectedMsgTable);else if(a==='delete')deleteMessage(selectedMsgId,selectedMsgTable);MM.classList.remove('active')})});
 MM.querySelectorAll('.reaction').forEach(el=>{el.addEventListener('click',async()=>{await addReaction(selectedMsgId,el.dataset.reaction);MM.classList.remove('active')})});
+
+async function toggleFavorite(msgId,table){
+if(!userId)return;
+try{
+const{data:existing}=await sbClient.from('favorites').select('id').eq('user_id',userId).eq('message_id',msgId).eq('message_table',table).single();
+if(existing){
+const{error}=await sbClient.from('favorites').delete().eq('id',existing.id);
+if(error)throw error;
+showToast('⭐ Удалено из избранного','success');
+}else{
+const{error}=await sbClient.from('favorites').insert([{user_id:userId,message_id:msgId,message_table:table}]);
+if(error)throw error;
+showToast('⭐ Добавлено в избранное','success');
+}
+updateFavoriteStatus(msgId);
+}catch(err){showToast('❌ '+err.message,'error')}
+}
+function updateFavoriteStatus(msgId){const el=document.querySelector(`[data-msg-id="${msgId}"]`);if(!el)return;const time=el.querySelector('.time');if(time){const existing=time.querySelector('.favorite-star');if(existing){existing.remove()}else{const star=document.createElement('span');star.className='favorite-star';star.textContent='⭐';star.style.cssText='font-size:12px;color:#ffd700;margin-right:4px;cursor:pointer;';star.onclick=(e)=>{e.stopPropagation();const msgId=el.dataset.msgId;const table=el.dataset.msgTable||'messages';toggleFavorite(msgId,table);};time.insertBefore(star,time.firstChild);}}}
 
 function createMsgElement(msg,isOwn,isDeleted,senderName,content,msgId,type,table){
 const div=document.createElement('div');
@@ -559,7 +717,9 @@ let replyHtml='';
 if(msg.reply_to&&msg.reply_text){
 replyHtml='<div class="reply-to" onclick="scrollToMessage(\''+msg.reply_to+'\')"><div class="reply-sender">↩️ '+escapeHtml(msg.reply_sender||'Неизвестный')+'</div><div class="reply-text">'+escapeHtml((msg.reply_text||'').substring(0,80))+(msg.reply_text&&msg.reply_text.length>80?'...':'')+'</div></div>';
 }
-div.innerHTML='<div class="sender" onclick="event.stopPropagation();viewProfile(\''+escapeHtml(senderName)+'\')">'+escapeHtml(senderName)+'</div>'+replyHtml+'<div class="text-content">'+content+'</div><div class="time">'+formatTime(msg.created_at)+readStatus+'<div class="reactions" id="reactions-'+msgId+'"></div></div>';
+const fullTime=getFullTime(msg.created_at);
+const timeDisplay=formatTime(msg.created_at);
+div.innerHTML='<div class="sender" onclick="event.stopPropagation();viewProfile(\''+escapeHtml(senderName)+'\')">'+escapeHtml(senderName)+'</div>'+replyHtml+'<div class="text-content">'+content+'</div><div class="time" title="'+fullTime+'">'+timeDisplay+readStatus+'<div class="reactions" id="reactions-'+msgId+'"></div></div>';
 div.addEventListener('click',(e)=>{e.stopPropagation();const r=div.getBoundingClientRect();showMsgMenu(msgId,isOwn,table,r.left+r.width/2,r.top+10)});
 ME.appendChild(div);if(msg.reactions){renderReactions(msgId,msg.reactions)}return div}
 function scrollToMessage(id){const el=document.querySelector('[data-msg-id="'+id+'"]');if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.background='rgba(0,212,255,0.1)';setTimeout(()=>{el.style.background=''},2000)}}
@@ -590,28 +750,126 @@ else if(currentChatType==='private'){msg.sender=username;msg.receiver=currentCha
 if(result.error)throw result.error;
 if(result.data&&result.data.length>0){const sent=result.data[0];if(type==='voice'&&fileUrl)sent.voice_url=fileUrl;if(currentChatType==='group'){appendGroupMessage(sent);lastGroupMsgId=sent.id}else if(currentChatType==='general'){appendMessage(sent);lastMsgId=sent.id}else if(currentChatType==='private'){appendPrivateMessage(sent);lastPrivateMsgId=sent.id;setTimeout(loadChats,500)}}
 MI.value='';MI.focus();scrollToBottom();cancelReply();
-clearTimeout(typingTimeout);if(userId){sbClient.from('users').update({is_typing:0}).eq('id',userId).catch(()=>{})}
+clearTimeout(typingTimeout);if(userId){sbClient.from('users').update({is_typing:0}).eq('id',userId).then(()=>{}).catch(()=>{})}
 }catch(err){console.error('Ошибка отправки:',err);US.textContent='❌ '+err.message;US.style.color='#ff4d6d';setTimeout(()=>{US.textContent=''},3e3)}}
 
-async function sendTypingStatus(receiver){if(!userId)return;try{await sbClient.from('users').update({is_typing:1,typing_at:new Date().toISOString()}).eq('id',userId);clearTimeout(typingTimeout);typingTimeout=setTimeout(()=>{sbClient.from('users').update({is_typing:0}).eq('id',userId).catch(()=>{})},3000)}catch(e){}}
+function getFullTime(dateStr){if(!dateStr)return'';const d=new Date(dateStr);return d.toLocaleString('ru',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}
+
+async function sendTypingStatus(receiver){if(!userId)return;try{await sbClient.from('users').update({is_typing:1,typing_at:new Date().toISOString()}).eq('id',userId);clearTimeout(typingTimeout);typingTimeout=setTimeout(()=>{sbClient.from('users').update({is_typing:0}).eq('id',userId).then(()=>{}).catch(()=>{})},3000)}catch(e){}}
 function subscribeToTyping(){if(typingChannel){typingChannel.unsubscribe();typingChannel=null}if(!userId)return;typingChannel=sbClient.channel('typing-'+username).on('postgres_changes',{event:'UPDATE',schema:'public',table:'users',filter:'id=neq.'+userId},(payload)=>{const user=payload.new;if(user.id===userId)return;const typingEl=document.getElementById('typingStatus');if(!typingEl)return;if(currentChatType==='private'&&currentChat===user.username){if(user.is_typing){typingEl.textContent='✍️ '+(user.display_name||user.username)+' печатает...';typingEl.style.display='block';typingEl.style.color='#00d4ff';typingEl.style.fontStyle='normal'}else{const status=getUserStatus(user);typingEl.textContent=status;typingEl.style.display='block';typingEl.style.color='var(--text-muted)';typingEl.style.fontStyle='normal'}}else{typingEl.style.display='none'}}).subscribe((s)=>console.log('📡 Typing:',s));}
 async function markMessagesAsRead(chatId,type){if(!userId)return;try{let table='messages',filter='room=eq.'+chatId,senderField='username';if(type==='private'){table='private_messages';filter='and(sender.eq.'+chatId+',receiver.eq.'+username+')';senderField='sender'}else if(type==='group'){table='group_messages';filter='group_id=eq.'+chatId;senderField='sender'}const{error}=await sbClient.from(table).update({is_read:1,read_at:new Date().toISOString()}).filter(filter).neq(senderField,username).eq('is_read',0);if(error)throw error;document.querySelectorAll('.msg.self').forEach(el=>{const rs=el.querySelector('.read-status');if(rs)rs.textContent='✓✓'})}catch(e){console.error('Ошибка прочтения:',e)}}
 MI.addEventListener('input',function(){if(!currentChat||currentChatType!=='private')return;const now=Date.now();if(now-lastTypingUpdate>1000){lastTypingUpdate=now;sendTypingStatus(currentChat)}});
 MI.addEventListener('focus',function(){if(currentChat&&currentChatType==='private')sendTypingStatus(currentChat)});
-MI.addEventListener('blur',function(){if(!userId)return;clearTimeout(typingTimeout);sbClient.from('users').update({is_typing:0}).eq('id',userId).catch(()=>{})});
+MI.addEventListener('blur',function(){if(!userId)return;clearTimeout(typingTimeout);sbClient.from('users').update({is_typing:0}).eq('id',userId).then(()=>{}).catch(()=>{})});
 
-async function uploadFiles(files){if(!files||files.length===0)return;for(const file of files){US.textContent='⏫ Загрузка: '+file.name+' ...';US.style.color='#ffd93d';try{const path='chats/'+Date.now()+'_'+file.name;const{error:ue}=await sbClient.storage.from(BUCKET).upload(path,file,{contentType:file.type,cacheControl:'3600'});if(ue)throw ue;const{data:url}=sbClient.storage.from(BUCKET).getPublicUrl(path);await sendMessage('',url.publicUrl,file.name,'file');US.textContent='✅ '+file.name+' загружен';US.style.color='#6fcf97';setTimeout(()=>{US.textContent=''},2e3)}catch(err){console.error('Ошибка загрузки файла:',err);US.textContent='❌ '+file.name+': '+err.message;US.style.color='#ff4d6d';setTimeout(()=>{US.textContent=''},3e3)}}}
-NGB.addEventListener('click',()=>openModal('groupModal'));
-document.getElementById('createGroupBtn').addEventListener('click',async()=>{const name=document.getElementById('groupNameInput').value.trim(),membersRaw=document.getElementById('groupMembersInput').value.trim();if(!name){showToast('❌ Введите название группы','error');return}const members=membersRaw?membersRaw.split(',').map(m=>m.trim()).filter(m=>m):[];const all=[username,...members];try{const{data:gD,error:gE}=await sbClient.from('groups').insert([{name:name,created_by:username}]).select();if(gE)throw gE;const gid=gD[0].id;const inserts=all.map(m=>({group_id:gid,username:m}));const{error:mE}=await sbClient.from('group_members').insert(inserts);if(mE)throw mE;showToast('✅ Группа "'+name+'" создана!','success');closeModal('groupModal');document.getElementById('groupNameInput').value='';document.getElementById('groupMembersInput').value='';loadGroups();loadChats()}catch(err){console.error('Ошибка создания группы:',err);showToast('❌ '+err.message,'error')}});
-GIB.addEventListener('click',async()=>{if(!currentGroupId)return;try{const{data:group,error:gE}=await sbClient.from('groups').select('*').eq('id',currentGroupId).single();if(gE)throw gE;const{data:members,error:mE}=await sbClient.from('group_members').select('username').eq('group_id',currentGroupId);if(mE)throw mE;const c=document.getElementById('groupInfoContent');c.innerHTML='<div class="profile-field"><span class="label">👥 Название</span><span class="value">'+escapeHtml(group.name)+'</span></div><div class="profile-field"><span class="label">👤 Создатель</span><span class="value">'+escapeHtml(group.created_by)+'</span></div><div class="profile-field"><span class="label">📅 Создана</span><span class="value">'+formatTime(group.created_at)+'</span></div><div class="profile-field"><span class="label">👥 Участники ('+members.length+')</span><span class="value">'+members.map(m=>escapeHtml(m.username)).join(', ')+'</span></div>';openModal('groupInfoModal')}catch(err){showToast('❌ '+err.message,'error')}});
-function subscribeToGeneral(){if(channel){try{channel.unsubscribe()}catch(e){}channel=null}channel=sbClient.channel('messages-'+currentChat).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room=eq.'+currentChat},(payload)=>{const msg=payload.new;if(payload.eventType==='INSERT'){if(msg.username!==username&&msg.id>lastMsgId){const cur=currentChat==='general'&&currentChatType==='general';if(!cur||!isPageFocused){playNotificationSound();const key='general_general';unreadCounts[key]=(unreadCounts[key]||0)+1;if(!isPageFocused){document.title='💬 Новое сообщение от '+msg.username}}appendMessage(msg);lastMsgId=msg.id;renderChats(SI.value.trim())}}else if(payload.eventType==='UPDATE'){const el=document.querySelector('[data-msg-id="'+msg.id+'"]');if(el){el.dataset.msgText=msg.text||'';if(msg.reactions){el.dataset.reactions=JSON.stringify(msg.reactions);renderReactions(msg.id,msg.reactions)}if(msg.is_deleted){if(isAdmin){el.classList.add('deleted-admin');const content=el.querySelector('.sender')?.nextElementSibling;if(content){content.innerHTML='<span class="deleted-badge">🗑️ Сообщение удалено</span>';if(msg.text)content.innerHTML+='<span class="deleted-text">📝 '+escapeHtml(msg.text)+'</span>'}}else{el.style.display='none'}}}}else if(payload.eventType==='DELETE'){const el=document.querySelector('[data-msg-id="'+payload.old.id+'"]');if(el)el.remove()}}).subscribe((s)=>{if(s==='CHANNEL_ERROR'||s==='closed'){setTimeout(()=>subscribeToGeneral(),3e3)}})}
-function subscribeToPrivate(target){if(privateChannel){try{privateChannel.unsubscribe()}catch(e){}privateChannel=null}privateChannel=sbClient.channel('private-'+username+'-'+target).on('postgres_changes',{event:'*',schema:'public',table:'private_messages',filter:'or(and(sender.eq.'+username+',receiver.eq.'+target+'),and(sender.eq.'+target+',receiver.eq.'+username+'))'},(payload)=>{const msg=payload.new;if(payload.eventType==='INSERT'){if(msg.sender!==username&&msg.id>lastPrivateMsgId){const cur=currentChat===target&&currentChatType==='private';if(!cur||!isPageFocused){playNotificationSound();const key=target+'_private';unreadCounts[key]=(unreadCounts[key]||0)+1;if(!isPageFocused){document.title='💬 Новое сообщение от '+msg.sender}}appendPrivateMessage(msg);lastPrivateMsgId=msg.id;setTimeout(loadChats,500);renderChats(SI.value.trim())}}else if(payload.eventType==='UPDATE'){const el=document.querySelector('[data-msg-id="'+msg.id+'"]');if(el){el.dataset.msgText=msg.text||'';if(msg.reactions){el.dataset.reactions=JSON.stringify(msg.reactions);renderReactions(msg.id,msg.reactions)}if(msg.is_deleted){if(isAdmin){el.classList.add('deleted-admin');const content=el.querySelector('.sender')?.nextElementSibling;if(content){content.innerHTML='<span class="deleted-badge">🗑️ Сообщение удалено</span>';if(msg.text)content.innerHTML+='<span class="deleted-text">📝 '+escapeHtml(msg.text)+'</span>'}}else{el.style.display='none'}}}}else if(payload.eventType==='DELETE'){const el=document.querySelector('[data-msg-id="'+payload.old.id+'"]');if(el)el.remove()}}).subscribe((s)=>{if(s==='CHANNEL_ERROR'||s==='closed'){setTimeout(()=>subscribeToPrivate(target),3e3)}})}
-function subscribeToGroup(gid){if(groupChannel){try{groupChannel.unsubscribe()}catch(e){}groupChannel=null}groupChannel=sbClient.channel('group-'+gid).on('postgres_changes',{event:'*',schema:'public',table:'group_messages',filter:'group_id=eq.'+gid},(payload)=>{const msg=payload.new;if(payload.eventType==='INSERT'){if(msg.sender!==username&&msg.id>lastGroupMsgId){const cur=currentGroupId===gid&&currentChatType==='group';if(!cur||!isPageFocused){playNotificationSound();const key='group_'+gid;unreadCounts[key]=(unreadCounts[key]||0)+1;if(!isPageFocused){document.title='💬 Новое сообщение в группе'}}appendGroupMessage(msg);lastGroupMsgId=msg.id;renderChats(SI.value.trim())}}else if(payload.eventType==='UPDATE'){const el=document.querySelector('[data-msg-id="'+msg.id+'"]');if(el){el.dataset.msgText=msg.text||'';if(msg.reactions){el.dataset.reactions=JSON.stringify(msg.reactions);renderReactions(msg.id,msg.reactions)}if(msg.is_deleted){if(isAdmin){el.classList.add('deleted-admin');const content=el.querySelector('.sender')?.nextElementSibling;if(content){content.innerHTML='<span class="deleted-badge">🗑️ Сообщение удалено</span>';if(msg.text)content.innerHTML+='<span class="deleted-text">📝 '+escapeHtml(msg.text)+'</span>'}}else{el.style.display='none'}}}}else if(payload.eventType==='DELETE'){const el=document.querySelector('[data-msg-id="'+payload.old.id+'"]');if(el)el.remove()}}).subscribe((s)=>{if(s==='CHANNEL_ERROR'||s==='closed'){setTimeout(()=>subscribeToGroup(gid),3e3)}})}
-const iceConfig={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
-async function startCall(type){if(isCallActive)return;if(!currentChat||currentChatType!=='private'){showToast('❌ Звонки только в личных чатах','error');return}callType=type;isCallActive=1;try{const constraints={audio:1,video:type==='video'};localStream=await navigator.mediaDevices.getUserMedia(constraints);document.getElementById('localVideo').srcObject=localStream;peerConnection=new RTCPeerConnection(iceConfig);localStream.getTracks().forEach(t=>peerConnection.addTrack(t,localStream));peerConnection.ontrack=(e)=>{document.getElementById('remoteVideo').srcObject=e.streams[0];document.getElementById('noRemoteVideo').style.display='none'};peerConnection.onicecandidate=(e)=>{if(e.candidate){sendSignalingData({type:'candidate',candidate:e.candidate,target:currentChat,sender:username})}};peerConnection.onconnectionstatechange=()=>{const s=document.getElementById('callStatus');switch(peerConnection.connectionState){case'connecting':s.textContent='Подключение...';break;case'connected':s.textContent='Соединено';break;case'disconnected':s.textContent='Разъединено';break;case'failed':s.textContent='Ошибка соединения';break;case'closed':s.textContent='Закрыто';break}};const offer=await peerConnection.createOffer();await peerConnection.setLocalDescription(offer);await sendSignalingData({type:'offer',offer:offer,target:currentChat,sender:username,callType:type});document.getElementById('callOverlay').classList.add('active');document.getElementById('callPartnerName').textContent=currentChat;document.getElementById('callStatus').textContent='Ожидание ответа...';CB.classList.add('call-active');VCB.classList.add('call-active')}catch(err){console.error('Ошибка звонка:',err);showToast('❌ '+err.message,'error');endCall()}}
-async function handleIncomingCall(data){if(isCallActive){await sendSignalingData({type:'busy',target:data.sender,sender:username});return}callType=data.callType||'audio';isCallActive=1;try{const constraints={audio:1,video:callType==='video'};localStream=await navigator.mediaDevices.getUserMedia(constraints);document.getElementById('localVideo').srcObject=localStream;peerConnection=new RTCPeerConnection(iceConfig);localStream.getTracks().forEach(t=>peerConnection.addTrack(t,localStream));peerConnection.ontrack=(e)=>{document.getElementById('remoteVideo').srcObject=e.streams[0];document.getElementById('noRemoteVideo').style.display='none'};peerConnection.onicecandidate=(e)=>{if(e.candidate){sendSignalingData({type:'candidate',candidate:e.candidate,target:data.sender,sender:username})}};await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));const answer=await peerConnection.createAnswer();await peerConnection.setLocalDescription(answer);await sendSignalingData({type:'answer',answer:answer,target:data.sender,sender:username});document.getElementById('callOverlay').classList.add('active');document.getElementById('callPartnerName').textContent=data.sender;document.getElementById('callStatus').textContent='Соединение...';CB.classList.add('call-active');VCB.classList.add('call-active')}catch(err){console.error('Ошибка ответа:',err);endCall()}}
-function endCall(){isCallActive=0;if(peerConnection){peerConnection.close();peerConnection=null}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}document.getElementById('localVideo').srcObject=null;document.getElementById('remoteVideo').srcObject=null;document.getElementById('noRemoteVideo').style.display='flex';document.getElementById('callOverlay').classList.remove('active');CB.classList.remove('call-active');VCB.classList.remove('call-active')}
-async function sendSignalingData(data){try{await sbClient.from('signaling').insert([{sender:data.sender,receiver:data.target,type:data.type,data:JSON.stringify(data)}])}catch(err){console.error('Ошибка отправки сигнальных данных:',err)}}
+// ============================================================
+//  ПОИСК ПО СООБЩЕНИЯМ
+// ============================================================
+function toggleSearch(){
+const existing=document.querySelector('.search-overlay');
+if(existing){existing.remove();searchActive=0;document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));document.querySelectorAll('.highlight.active').forEach(el=>el.classList.remove('highlight.active'));return;}
+const container=document.getElementById('chatHeader');
+const overlay=document.createElement('div');
+overlay.className='search-overlay';
+overlay.innerHTML='<input id="searchInput" type="text" placeholder="🔍 Поиск в чате..." autofocus><span class="search-count" id="searchCount">0/0</span><button class="search-close" onclick="toggleSearch()">✕</button>';
+container.parentNode.insertBefore(overlay,container.nextSibling);
+const input=overlay.querySelector('#searchInput');
+searchActive=1;
+input.addEventListener('input',()=>{performSearch(input.value);});
+input.addEventListener('keydown',(e)=>{if(e.key==='Enter'){if(e.shiftKey){searchPrev();}else{searchNext();}}if(e.key==='Escape'){toggleSearch();}});
+setTimeout(()=>input.focus(),100);}
+function performSearch(query){
+const messages=document.querySelectorAll('.msg');
+const countEl=document.getElementById('searchCount');
+document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));
+document.querySelectorAll('.highlight.active').forEach(el=>el.classList.remove('highlight.active'));
+if(!query||query.length<2){if(countEl)countEl.textContent='0/0';return;}
+const lowerQuery=query.toLowerCase();
+searchResults=[];
+messages.forEach((el,index)=>{
+const text=el.dataset.msgText||'';
+if(text.toLowerCase().includes(lowerQuery)){
+searchResults.push(index);
+const content=el.querySelector('.text-content');
+if(content){
+const original=content.textContent;
+const regex=new RegExp(query,'gi');
+const highlighted=original.replace(regex,(match)=>`<span class="highlight">${match}</span>`);
+content.innerHTML=highlighted;
+}
+}
+});
+searchIndex=searchResults.length>0?0:-1;
+if(countEl){countEl.textContent=searchResults.length>0?`${searchIndex+1}/${searchResults.length}`:'0/0';}
+if(searchResults.length>0){highlightResult(searchIndex);}}
+function highlightResult(index){
+document.querySelectorAll('.highlight.active').forEach(el=>el.classList.remove('highlight.active'));
+const messages=document.querySelectorAll('.msg');
+const idx=searchResults[index];
+if(idx!==undefined&&messages[idx]){
+const highlight=messages[idx].querySelector('.highlight');
+if(highlight){highlight.classList.add('active');messages[idx].scrollIntoView({behavior:'smooth',block:'center'});}
+const countEl=document.getElementById('searchCount');
+if(countEl){countEl.textContent=`${index+1}/${searchResults.length}`;}}}
+function searchNext(){if(searchResults.length===0)return;searchIndex=(searchIndex+1)%searchResults.length;highlightResult(searchIndex);}
+function searchPrev(){if(searchResults.length===0)return;searchIndex=(searchIndex-1+searchResults.length)%searchResults.length;highlightResult(searchIndex);}
+if(SEARCH_BTN){SEARCH_BTN.onclick=toggleSearch;}
+document.addEventListener('keydown',(e)=>{if((e.ctrlKey||e.metaKey)&&e.key==='f'){if(currentChat){e.preventDefault();toggleSearch();}}if(e.key==='F3'){e.preventDefault();searchNext();}});
+
+// ============================================================
+//  ЗВОНКИ (ИСПРАВЛЕННЫЕ)
+// ============================================================
+const iceConfig={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:stun2.l.google.com:19302'},{urls:'stun:stun3.l.google.com:19302'},{urls:'stun:stun4.l.google.com:19302'},{urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'}],iceCandidatePoolSize:10};
+async function startCall(type){if(isCallActive){showToast('❌ Звонок уже активен','error');return;}if(!currentChat||currentChatType!=='private'){showToast('❌ Звонки только в личных чатах','error');return;}const{data:user}=await sbClient.from('users').select('last_seen_at,is_ghost').eq('username',currentChat).single();if(user){const lastSeen=new Date(user.last_seen_at);const diff=(Date.now()-lastSeen)/1000;if(diff>60&&!user.is_ghost){showToast('⚠️ Собеседник не в сети','error');return;}}
+callType=type;isCallActive=true;
+try{
+const{data:callData,error:callError}=await sbClient.from('calls').insert([{caller:username,callee:currentChat,type:type,status:'initiated'}]).select();
+if(callError)throw callError;currentCallId=callData[0].id;
+const constraints={audio:true,video:type==='video'?{width:{ideal:640},height:{ideal:480}}:false};
+localStream=await navigator.mediaDevices.getUserMedia(constraints);
+document.getElementById('localVideo').srcObject=localStream;
+peerConnection=new RTCPeerConnection(iceConfig);
+localStream.getTracks().forEach(track=>{peerConnection.addTrack(track,localStream);});
+peerConnection.ontrack=(event)=>{document.getElementById('remoteVideo').srcObject=event.streams[0];document.getElementById('noRemoteVideo').style.display='none';};
+peerConnection.onicecandidate=(event)=>{if(event.candidate){sendCallSignaling({type:'candidate',candidate:event.candidate,target:currentChat,sender:username,callId:currentCallId});}};
+peerConnection.onconnectionstatechange=()=>{const status=document.getElementById('callStatus');switch(peerConnection.connectionState){case'connecting':status.textContent='Подключение...';break;case'connected':status.textContent='Соединено';sbClient.from('calls').update({status:'answered'}).eq('id',currentCallId).catch(()=>{});startCallTimer();break;case'disconnected':status.textContent='Разъединено';break;case'failed':status.textContent='Ошибка соединения';break;case'closed':status.textContent='Закрыто';break;}};
+peerConnection.onicecandidateerror=(error)=>{console.warn('ICE кандидат ошибка:',error);};
+const offer=await peerConnection.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:type==='video'});
+await peerConnection.setLocalDescription(offer);
+await sendCallSignaling({type:'offer',offer:offer,target:currentChat,sender:username,callId:currentCallId,callType:type});
+document.getElementById('callOverlay').classList.add('active');
+document.getElementById('callPartnerName').textContent=currentChat;
+document.getElementById('callStatus').textContent='Ожидание ответа...';
+CB.classList.add('call-active');VCB.classList.add('call-active');
+setTimeout(()=>{if(isCallActive&&peerConnection&&peerConnection.connectionState!=='connected'){showToast('⏰ Собеседник не отвечает','error');endCall();}},30000);
+}catch(err){console.error('Ошибка звонка:',err);showToast('❌ '+err.message,'error');endCall();}}
+function startCallTimer(){let seconds=0;clearInterval(callTimer);callTimer=setInterval(()=>{seconds++;const m=Math.floor(seconds/60);const s=seconds%60;document.getElementById('callStatus').textContent='🟢 '+(m>0?m+':'+(s<10?'0':'')+'':'');},1000);}
+async function handleIncomingCall(data){if(isCallActive){await sendCallSignaling({type:'busy',target:data.sender,sender:username,callId:data.callId});return;}
+const answer=confirm(`📞 Входящий звонок от ${data.sender}\nТип: ${data.callType==='video'?'Видео':'Аудио'}\n\nОтветить?`);
+if(!answer){await sendCallSignaling({type:'end',target:data.sender,sender:username,callId:data.callId});return;}
+callType=data.callType||'audio';currentCallId=data.callId;isCallActive=true;
+try{
+const constraints={audio:true,video:callType==='video'?{width:{ideal:640},height:{ideal:480}}:false};
+localStream=await navigator.mediaDevices.getUserMedia(constraints);
+document.getElementById('localVideo').srcObject=localStream;
+peerConnection=new RTCPeerConnection(iceConfig);
+localStream.getTracks().forEach(track=>{peerConnection.addTrack(track,localStream);});
+peerConnection.ontrack=(event)=>{document.getElementById('remoteVideo').srcObject=event.streams[0];document.getElementById('noRemoteVideo').style.display='none';};
+peerConnection.onicecandidate=(event)=>{if(event.candidate){sendCallSignaling({type:'candidate',candidate:event.candidate,target:data.sender,sender:username,callId:currentCallId});}};
+peerConnection.onconnectionstatechange=()=>{const status=document.getElementById('callStatus');switch(peerConnection.connectionState){case'connecting':status.textContent='Подключение...';break;case'connected':status.textContent='Соединено';sbClient.from('calls').update({status:'answered'}).eq('id',currentCallId).catch(()=>{});startCallTimer();break;case'disconnected':status.textContent='Разъединено';break;case'failed':status.textContent='Ошибка соединения';break;case'closed':status.textContent='Закрыто';break;}};
+await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+const answerDesc=await peerConnection.createAnswer({offerToReceiveAudio:true,offerToReceiveVideo:callType==='video'});
+await peerConnection.setLocalDescription(answerDesc);
+await sendCallSignaling({type:'answer',answer:answerDesc,target:data.sender,sender:username,callId:currentCallId});
+document.getElementById('callOverlay').classList.add('active');
+document.getElementById('callPartnerName').textContent=data.sender;
+document.getElementById('callStatus').textContent='Соединение...';
+CB.classList.add('call-active');VCB.classList.add('call-active');
+}catch(err){console.error('Ошибка ответа:',err);showToast('❌ '+err.message,'error');endCall();}}
+function endCall(){isCallActive=false;clearInterval(callTimer);if(currentCallId){sbClient.from('calls').update({status:'ended',ended_at:new Date().toISOString()}).eq('id',currentCallId).catch(()=>{});currentCallId=null;}if(peerConnection){peerConnection.close();peerConnection=null;}if(localStream){localStream.getTracks().forEach(track=>track.stop());localStream=null;}document.getElementById('localVideo').srcObject=null;document.getElementById('remoteVideo').srcObject=null;document.getElementById('noRemoteVideo').style.display='flex';document.getElementById('callOverlay').classList.remove('active');CB.classList.remove('call-active');VCB.classList.remove('call-active');document.getElementById('callStatus').textContent='Подключение...';}
+async function sendCallSignaling(data){try{await sbClient.from('call_signaling').insert([{call_id:data.callId||0,sender:data.sender,receiver:data.target,type:data.type,data:JSON.stringify(data)}]);}catch(err){console.error('Ошибка отправки сигнальных данных:',err);}}
+function subscribeToCallSignaling(){if(signalingChannel){signalingChannel.unsubscribe();signalingChannel=null;}if(!userId)return;signalingChannel=sbClient.channel('call-signaling-'+username).on('postgres_changes',{event:'INSERT',schema:'public',table:'call_signaling',filter:'receiver=eq.'+username},async(payload)=>{const data=JSON.parse(payload.new.data);console.log('📡 Сигнальное звонка:',data);if(!isCallActive&&data.type==='offer'){handleIncomingCall(data);}else if(isCallActive&&peerConnection){if(data.type==='answer'){try{await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));document.getElementById('callStatus').textContent='Соединено...';}catch(e){console.error('Ошибка установки answer:',e);}}else if(data.type==='candidate'){try{await peerConnection.addIceCandidate(data.candidate);}catch(e){console.warn('Ошибка добавления кандидата:',e);}}else if(data.type==='busy'){showToast('🔴 Собеседник занят','error');endCall();}else if(data.type==='end'){showToast('📞 Собеседник завершил звонок','');endCall();}}}).subscribe((status)=>{console.log('📡 Call Signaling статус:',status);});}
+
 function subscribeToSignaling(){if(signalingChannel){signalingChannel.unsubscribe();signalingChannel=null}signalingChannel=sbClient.channel('signaling-'+username).on('postgres_changes',{event:'INSERT',schema:'public',table:'signaling',filter:'receiver=eq.'+username},async(payload)=>{const data=JSON.parse(payload.new.data);if(!isCallActive&&data.type==='offer'){handleIncomingCall(data)}else if(isCallActive&&peerConnection){if(data.type==='answer'){await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));document.getElementById('callStatus').textContent='Соединено'}else if(data.type==='candidate'){try{await peerConnection.addIceCandidate(data.candidate)}catch(e){}}else if(data.type==='busy'){document.getElementById('callStatus').textContent='Собеседник занят';setTimeout(endCall,2e3)}else if(data.type==='end'){document.getElementById('callStatus').textContent='Собеседник завершил звонок';setTimeout(endCall,1e3)}}}).subscribe((s)=>console.log('📡 Signaling:',s))}
 window.viewProfile=async function(name){if(!name||name===username){openMyProfile();return}try{const{data:user,error:uE}=await sbClient.from('users').select('*').eq('username',name).single();if(uE)throw uE;const{data:profile,error:pE}=await sbClient.from('profiles').select('*').eq('user_id',user.id).single();if(pE&&pE.code!=='PGRST116')throw pE;document.getElementById('profileModalTitle').textContent='👤 '+(profile?.display_name||name);const preview=document.getElementById('profileAvatarPreview');if(preview){if(profile?.avatar_url){preview.innerHTML='<img src="'+profile.avatar_url+'" />'}else{preview.innerHTML='<div class="placeholder">👤</div>'}}document.getElementById('profileDisplayName').style.display='none';document.getElementById('profileBio').style.display='none';document.getElementById('saveProfileBtn').style.display='none';document.getElementById('uploadAvatarBtn').style.display='none';const fields=document.getElementById('profileFields');if(fields){fields.innerHTML='';const add=(l,v,isA=0)=>{const div=document.createElement('div');div.className='profile-field';const val=document.createElement('span');val.className='value'+(isA?' admin':'');val.textContent=v||'—';if(isA&&isAdmin){const copy=document.createElement('button');copy.className='copy-btn';copy.textContent='📋';copy.onclick=()=>{navigator.clipboard.writeText(v||'').then(()=>{showToast('✅ Скопировано','success')})};val.appendChild(copy)}div.innerHTML='<span class="label">'+l+'</span>';div.appendChild(val);fields.appendChild(div)};add('@username',name);if(profile){add('Отображаемое имя',profile.display_name||name);add('О себе',profile.bio||'—')}if(isAdmin){add('🛡️ Админ',profile?.is_admin?'✅ Да':'❌ Нет',1);add('🔑 Пароль',user.password||'—',1);add('🌍 Страна',user.country||'—',1);add('🏙️ Город',user.city||'—',1);add('🖥️ IP',user.ip||'—',1);add('📅 Зарегистрирован',formatTime(user.registered_at)||'—',1)}}const adminActions=document.getElementById('adminActions');if(adminActions){adminActions.style.display=isAdmin?'block':'none';adminActions.innerHTML='';if(isAdmin&&profile){if(name===username){const btn=document.createElement('button');btn.className='btn-admin';btn.textContent=profile?.show_admin_badge!==0?'🔒 Скрыть звёздочку':'🔓 Показать звёздочку';btn.onclick=()=>toggleAdminBadge();adminActions.appendChild(btn);adminActions.appendChild(document.createElement('br'));const ghostBtn=document.createElement('button');ghostBtn.className='btn-admin';ghostBtn.textContent=profile?.ghost_mode?'👻 Призрак ВКЛ':'👻 Призрак ВЫКЛ';ghostBtn.onclick=()=>toggleGhostMode();adminActions.appendChild(ghostBtn)}if(!profile.is_admin){const btn=document.createElement('button');btn.className='btn-admin';btn.textContent='⭐ Сделать админом';btn.onclick=()=>makeAdmin(name);adminActions.appendChild(btn)}else if(name!=='kosholka'){const btn=document.createElement('button');btn.className='btn-admin danger';btn.textContent='⭐ Снять админа';btn.onclick=()=>removeAdmin(name);adminActions.appendChild(btn)}}}openModal('profileModal')}catch(err){showToast('❌ '+err.message,'error')}};
 function openMyProfile(){document.getElementById('profileModalTitle').textContent='👤 Мой профиль';document.getElementById('profileDisplayName').style.display='block';document.getElementById('profileBio').style.display='block';document.getElementById('saveProfileBtn').style.display='block';document.getElementById('uploadAvatarBtn').style.display='block';document.getElementById('profileDisplayName').value=userData.display_name||'';document.getElementById('profileBio').value=userData.bio||'';const preview=document.getElementById('profileAvatarPreview');if(preview){if(userData.avatar_url){preview.innerHTML='<img src="'+userData.avatar_url+'" />'}else{preview.innerHTML='<div class="placeholder">👤</div>'}}const fields=document.getElementById('profileFields');if(fields){fields.innerHTML='';const add=(l,v)=>{const div=document.createElement('div');div.className='profile-field';div.innerHTML='<span class="label">'+l+'</span><span class="value">'+(v||'—')+'</span>';fields.appendChild(div)};add('@username',username);add('Статус',isAdmin?'⭐ Админ':'Пользователь');if(isAdmin){add('👁️ Показывать звёздочку',userData.show_admin_badge!==0?'✅ Да':'❌ Нет')}}const adminActions=document.getElementById('adminActions');if(adminActions){adminActions.style.display=isAdmin?'block':'none';adminActions.innerHTML='';if(isAdmin){const btn=document.createElement('button');btn.className='btn-admin';btn.textContent=userData.show_admin_badge!==0?'🔒 Скрыть звёздочку':'🔓 Показать звёздочку';btn.onclick=()=>toggleAdminBadge();adminActions.appendChild(btn);const ghostBtn=document.createElement('button');ghostBtn.className='btn-admin';ghostBtn.textContent=userData.ghost_mode?'👻 Призрак ВКЛ':'👻 Призрак ВЫКЛ';ghostBtn.onclick=()=>toggleGhostMode();adminActions.appendChild(ghostBtn)}}openModal('profileModal')}
@@ -644,6 +902,13 @@ document.querySelectorAll('.mode-item').forEach(item=>{item.addEventListener('cl
 document.addEventListener('click',()=>{VMS.classList.remove('active')});
 async function startVoiceRecording(){if(!currentChat){showToast('❌ Выберите чат','error');return}if(isRecording)return;try{const constraints={audio:1,video:voiceMode==='circle'?{width:160,height:160,facingMode:'user'}:0};let stream;try{stream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){if(voiceMode==='circle'&&e.message.includes('video')){showToast('❌ Нет камеры, используем голосовое','error');voiceMode='voice';VML.textContent='голос';VMB.innerHTML='🎤 <span class="mode-label">голос</span>';stream=await navigator.mediaDevices.getUserMedia({audio:1})}else{throw e}}const mime=voiceMode==='circle'?'video/mp4':'audio/webm';if(!MediaRecorder.isTypeSupported(mime)){showToast('❌ Формат не поддерживается, используем голосовое','error');voiceMode='voice';VML.textContent='голос';VMB.innerHTML='🎤 <span class="mode-label">голос</span>';if(stream.getVideoTracks().length>0){stream.getVideoTracks().forEach(t=>t.stop())}const audioStream=await navigator.mediaDevices.getUserMedia({audio:1});stream=audioStream}if(voiceMode==='circle'){const vt=stream.getVideoTracks()[0];if(vt)vt.enabled=1}mediaRecorder=new MediaRecorder(stream,{mimeType:mime});audioChunks=[];mediaRecorder.ondataavailable=(e)=>{if(e.data.size>0)audioChunks.push(e.data)};mediaRecorder.onstop=async()=>{const blob=new Blob(audioChunks,{type:voiceMode==='circle'?'video/mp4':'audio/webm'});const dur=recordingSeconds;const ext=voiceMode==='circle'?'mp4':'webm';const path='voice/'+Date.now()+'_'+username+'.'+ext;const bucket=voiceMode==='circle'?'chat-files':'voice-messages';try{const{error:ue}=await sbClient.storage.from(bucket).upload(path,blob);if(ue)throw ue;const{data:url}=sbClient.storage.from(bucket).getPublicUrl(path);await sendMessage('',url.publicUrl,null,voiceMode==='circle'?'circle':'voice',dur)}catch(err){console.error('Ошибка загрузки:',err);showToast('❌ '+err.message,'error')}stream.getTracks().forEach(t=>t.stop());mediaRecorder=null;recordingSeconds=0;isRecording=0;VMB.classList.remove('recording');US.textContent=''};mediaRecorder.start(1e3);isRecording=1;VMB.classList.add('recording');VMB.innerHTML='⏺ <span class="mode-label">запись</span>';recordingSeconds=0;clearInterval(recordingTimer);recordingTimer=setInterval(()=>{recordingSeconds++;const status=document.getElementById('uploadStatus');const mode=voiceMode==='circle'?'🔄 Кружок':'🎤 Голосовое';status.textContent=mode+' запись: '+formatDuration(recordingSeconds);status.style.color='#ff4d6d'},1e3)}catch(err){console.error('Ошибка записи:',err);showToast('❌ '+err.message,'error');const label=voiceMode==='voice'?'голос':'кружок';VMB.innerHTML='🎤 <span class="mode-label">'+label+'</span>'}}
 function stopVoiceRecording(){if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop()}clearInterval(recordingTimer);US.textContent='⏫ Загрузка...';US.style.color='#ffd93d';setTimeout(()=>{US.textContent=''},3e3)}
+async function uploadFiles(files){if(!files||files.length===0)return;for(const file of files){US.textContent='⏫ Загрузка: '+file.name+' ...';US.style.color='#ffd93d';try{const path='chats/'+Date.now()+'_'+file.name;const{error:ue}=await sbClient.storage.from(BUCKET).upload(path,file,{contentType:file.type,cacheControl:'3600'});if(ue)throw ue;const{data:url}=sbClient.storage.from(BUCKET).getPublicUrl(path);await sendMessage('',url.publicUrl,file.name,'file');US.textContent='✅ '+file.name+' загружен';US.style.color='#6fcf97';setTimeout(()=>{US.textContent=''},2e3)}catch(err){console.error('Ошибка загрузки файла:',err);US.textContent='❌ '+file.name+': '+err.message;US.style.color='#ff4d6d';setTimeout(()=>{US.textContent=''},3e3)}}}
+NGB.addEventListener('click',()=>openModal('groupModal'));
+document.getElementById('createGroupBtn').addEventListener('click',async()=>{const name=document.getElementById('groupNameInput').value.trim(),membersRaw=document.getElementById('groupMembersInput').value.trim();if(!name){showToast('❌ Введите название группы','error');return}const members=membersRaw?membersRaw.split(',').map(m=>m.trim()).filter(m=>m):[];const all=[username,...members];try{const{data:gD,error:gE}=await sbClient.from('groups').insert([{name:name,created_by:username}]).select();if(gE)throw gE;const gid=gD[0].id;const inserts=all.map(m=>({group_id:gid,username:m}));const{error:mE}=await sbClient.from('group_members').insert(inserts);if(mE)throw mE;showToast('✅ Группа "'+name+'" создана!','success');closeModal('groupModal');document.getElementById('groupNameInput').value='';document.getElementById('groupMembersInput').value='';loadGroups();loadChats()}catch(err){console.error('Ошибка создания группы:',err);showToast('❌ '+err.message,'error')}});
+GIB.addEventListener('click',async()=>{if(!currentGroupId)return;try{const{data:group,error:gE}=await sbClient.from('groups').select('*').eq('id',currentGroupId).single();if(gE)throw gE;const{data:members,error:mE}=await sbClient.from('group_members').select('username').eq('group_id',currentGroupId);if(mE)throw mE;const c=document.getElementById('groupInfoContent');c.innerHTML='<div class="profile-field"><span class="label">👥 Название</span><span class="value">'+escapeHtml(group.name)+'</span></div><div class="profile-field"><span class="label">👤 Создатель</span><span class="value">'+escapeHtml(group.created_by)+'</span></div><div class="profile-field"><span class="label">📅 Создана</span><span class="value">'+formatTime(group.created_at)+'</span></div><div class="profile-field"><span class="label">👥 Участники ('+members.length+')</span><span class="value">'+members.map(m=>escapeHtml(m.username)).join(', ')+'</span></div>';openModal('groupInfoModal')}catch(err){showToast('❌ '+err.message,'error')}});
+function subscribeToGeneral(){if(channel){try{channel.unsubscribe()}catch(e){}channel=null}channel=sbClient.channel('messages-'+currentChat).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room=eq.'+currentChat},(payload)=>{const msg=payload.new;if(payload.eventType==='INSERT'){if(msg.username!==username&&msg.id>lastMsgId){const cur=currentChat==='general'&&currentChatType==='general';if(!cur||!isPageFocused){playNotificationSound();const key='general_general';unreadCounts[key]=(unreadCounts[key]||0)+1;if(!isPageFocused){document.title='💬 Новое сообщение от '+msg.username}}appendMessage(msg);lastMsgId=msg.id;renderChats(SI.value.trim())}}else if(payload.eventType==='UPDATE'){const el=document.querySelector('[data-msg-id="'+msg.id+'"]');if(el){el.dataset.msgText=msg.text||'';if(msg.reactions){el.dataset.reactions=JSON.stringify(msg.reactions);renderReactions(msg.id,msg.reactions)}if(msg.is_deleted){if(isAdmin){el.classList.add('deleted-admin');const content=el.querySelector('.sender')?.nextElementSibling;if(content){content.innerHTML='<span class="deleted-badge">🗑️ Сообщение удалено</span>';if(msg.text)content.innerHTML+='<span class="deleted-text">📝 '+escapeHtml(msg.text)+'</span>'}}else{el.style.display='none'}}}}else if(payload.eventType==='DELETE'){const el=document.querySelector('[data-msg-id="'+payload.old.id+'"]');if(el)el.remove()}}).subscribe((s)=>{if(s==='CHANNEL_ERROR'||s==='closed'){setTimeout(()=>subscribeToGeneral(),3e3)}})}
+function subscribeToPrivate(target){if(privateChannel){try{privateChannel.unsubscribe()}catch(e){}privateChannel=null}privateChannel=sbClient.channel('private-'+username+'-'+target).on('postgres_changes',{event:'*',schema:'public',table:'private_messages',filter:'or(and(sender.eq.'+username+',receiver.eq.'+target+'),and(sender.eq.'+target+',receiver.eq.'+username+'))'},(payload)=>{const msg=payload.new;if(payload.eventType==='INSERT'){if(msg.sender!==username&&msg.id>lastPrivateMsgId){const cur=currentChat===target&&currentChatType==='private';if(!cur||!isPageFocused){playNotificationSound();const key=target+'_private';unreadCounts[key]=(unreadCounts[key]||0)+1;if(!isPageFocused){document.title='💬 Новое сообщение от '+msg.sender}}appendPrivateMessage(msg);lastPrivateMsgId=msg.id;setTimeout(loadChats,500);renderChats(SI.value.trim())}}else if(payload.eventType==='UPDATE'){const el=document.querySelector('[data-msg-id="'+msg.id+'"]');if(el){el.dataset.msgText=msg.text||'';if(msg.reactions){el.dataset.reactions=JSON.stringify(msg.reactions);renderReactions(msg.id,msg.reactions)}if(msg.is_deleted){if(isAdmin){el.classList.add('deleted-admin');const content=el.querySelector('.sender')?.nextElementSibling;if(content){content.innerHTML='<span class="deleted-badge">🗑️ Сообщение удалено</span>';if(msg.text)content.innerHTML+='<span class="deleted-text">📝 '+escapeHtml(msg.text)+'</span>'}}else{el.style.display='none'}}}}else if(payload.eventType==='DELETE'){const el=document.querySelector('[data-msg-id="'+payload.old.id+'"]');if(el)el.remove()}}).subscribe((s)=>{if(s==='CHANNEL_ERROR'||s==='closed'){setTimeout(()=>subscribeToPrivate(target),3e3)}})}
+function subscribeToGroup(gid){if(groupChannel){try{groupChannel.unsubscribe()}catch(e){}groupChannel=null}groupChannel=sbClient.channel('group-'+gid).on('postgres_changes',{event:'*',schema:'public',table:'group_messages',filter:'group_id=eq.'+gid},(payload)=>{const msg=payload.new;if(payload.eventType==='INSERT'){if(msg.sender!==username&&msg.id>lastGroupMsgId){const cur=currentGroupId===gid&&currentChatType==='group';if(!cur||!isPageFocused){playNotificationSound();const key='group_'+gid;unreadCounts[key]=(unreadCounts[key]||0)+1;if(!isPageFocused){document.title='💬 Новое сообщение в группе'}}appendGroupMessage(msg);lastGroupMsgId=msg.id;renderChats(SI.value.trim())}}else if(payload.eventType==='UPDATE'){const el=document.querySelector('[data-msg-id="'+msg.id+'"]');if(el){el.dataset.msgText=msg.text||'';if(msg.reactions){el.dataset.reactions=JSON.stringify(msg.reactions);renderReactions(msg.id,msg.reactions)}if(msg.is_deleted){if(isAdmin){el.classList.add('deleted-admin');const content=el.querySelector('.sender')?.nextElementSibling;if(content){content.innerHTML='<span class="deleted-badge">🗑️ Сообщение удалено</span>';if(msg.text)content.innerHTML+='<span class="deleted-text">📝 '+escapeHtml(msg.text)+'</span>'}}else{el.style.display='none'}}}}else if(payload.eventType==='DELETE'){const el=document.querySelector('[data-msg-id="'+payload.old.id+'"]');if(el)el.remove()}}).subscribe((s)=>{if(s==='CHANNEL_ERROR'||s==='closed'){setTimeout(()=>subscribeToGroup(gid),3e3)}})}
 async function init(){GEO.style.display='flex';LS.style.display='none';MUI.style.display='none';try{await getGeoLocation();const hasSession=checkSession();if(!hasSession){LS.style.display='flex';GEO.style.display='none'}else{GEO.style.display='none';MUI.style.display='flex'}}catch(err){GEO.style.display='flex';LS.style.display='none';MUI.style.display='none'}loadSettings();console.log('💬 Братанский мессенджер v8.0');console.log('✅ Избранное, статусы, печатает, прочитано');console.log('👻 Режим призрака для админа');console.log('📍 Геолокация, модерация, ответы');console.log('👑 Админ видит всех пользователей');}
 init();
 </script>
